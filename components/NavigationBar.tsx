@@ -52,7 +52,7 @@ const NavigationBar: React.FC = () => {
   const location = typeof window !== "undefined" ? window.location : null;
 
   // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
-  const pathname = location?.pathname!!;
+  const pathname = location?.pathname || "/"; // Default to "/"
 
   const isGameActive = pathname.startsWith("/games");
   const isTriviaActive = pathname.startsWith("/trivia");
