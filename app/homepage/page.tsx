@@ -8,7 +8,7 @@ import {
   Avatar,
   Progress,
 } from "@chakra-ui/react";
-import "../index.css";
+
 import Link from "next/link";
 import React from "react";
 import NavigationBar from "@/components/NavigationBar";
