@@ -1,7 +1,7 @@
 "use client"
 
 import { Box, Text, Flex, Avatar, Button } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import NavigationBar from "@/components/NavigationBar";
 
 const Communities = [
@@ -91,7 +91,7 @@ export default function Community() {
                 </Text>
                 </Flex>
                 </Flex>
-                <Link to={community.path}>  
+                <Link href={community.path}>  
                 <Button w={'60px'} h={'25px'} bg={'#4979d1'} color={'#fff'} fontSize={'10px'} fontWeight={600} _hover={{bg: '#4979d1'}} borderRadius={'20px'}>
                   Join
                 </Button>

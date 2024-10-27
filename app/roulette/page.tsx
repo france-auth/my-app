@@ -1,9 +1,17 @@
 "use client";
 
+
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import { Wheel } from "react-custom-roulette";
 import NavigationBar from "@/components/NavigationBar";
+
+const Wheel = dynamic(
+  () => import("react-custom-roulette").then((mod) => mod.Wheel),
+  {
+    ssr: false,
+  }
+);
 
 const data = [
   { option: "100$" },
@@ -19,6 +27,7 @@ const data = [
 export default function Roulette() {
   const [mustSpin, setMustSpin] = useState(false);
   const [prizeNumber, setPrizeNumber] = useState(0);
+
 
   const handleSpinClick = () => {
     if (!mustSpin) {

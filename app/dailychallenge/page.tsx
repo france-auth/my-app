@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Text, Flex, Image, Button } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import NavigationBar from "@/components/NavigationBar";
 
 const PlayList = [
@@ -83,7 +83,7 @@ export default function DailyChallenge() {
                     {list.name}
                   </Text>
                 </Flex>
-                <Link to={list.path}>
+                <Link href={list.path}>
                   <Button
                     w={"60px"}
                     h={"25px"}

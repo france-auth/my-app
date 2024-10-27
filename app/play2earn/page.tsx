@@ -1,7 +1,7 @@
 "use client"
 
 import { Box, Text, Flex, Image, Button } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import NavigationBar from "@/components/NavigationBar";
 
 const PlayList = [
@@ -61,7 +61,7 @@ export default function Play2Earn() {
                 <Image src={list.image} w={'32px'} alt="list img" />
                 <Text fontSize={'20px'} fontWeight={500} color={'#f5f5f5'}>{list.name}</Text>
               </Flex>
-              <Link to={list.path}>  
+              <Link href={list.path}>  
                 <Button w={'60px'} h={'25px'} bg={'#4979d1'} color={'#fff'} fontSize={'10px'} fontWeight={600} _hover={{bg: '#4979d1'}} borderRadius={'20px'}>
                   Play
                 </Button>
