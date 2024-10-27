@@ -1,8 +1,9 @@
-
+"use client"
 
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 
 
@@ -48,21 +49,23 @@ const NavItem: React.FC<NavItemProps> = ({
 );
 
 const NavigationBar: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-  const location = typeof window !== "undefined" ? window.location : null;
+ const [pathname, setPathname] = useState("/"); // Default to "/"
 
-  // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
-  const pathname = location?.pathname || "/"; // Default to "/"
+ useEffect(() => {
+   if (typeof window !== "undefined") {
+     setPathname(window.location.pathname);
+   }
+ }, []);
 
-  const isGameActive = pathname.startsWith("/games");
+  const isGameActive = pathname.startsWith("/play2earn");
   const isTriviaActive = pathname.startsWith("/trivia");
   const isRouletteActive = pathname.startsWith("/roulette");
-  const isJigsawActive = pathname.startsWith("/jigsaw");
-  const isCommunityActive = pathname.startsWith("/communities");
+  // const isJigsawActive = pathname.startsWith("/");
+  const isCommunityActive = pathname.startsWith("/community");
   const isBadgeActive = pathname.startsWith("/badges");
   const isDailyActive = pathname.startsWith("/dailytask");
-  const isSocialActive = pathname.startsWith("/socials");
-  const isDailyRewardActive = pathname.startsWith("/daily");
+  const isSocialActive = pathname.startsWith("/socialtask");
+  const isDailyRewardActive = pathname.startsWith("/dailyreward");
   const isPuzzleActive = pathname.startsWith("/puzzle");
   return (
     <nav className="fixed bottom-0  bg-[#12161E] w-[100vw] z-40 p-[5px]">
@@ -92,7 +95,6 @@ const NavigationBar: React.FC = () => {
             isGameActive ||
             isTriviaActive ||
             isRouletteActive ||
-            isJigsawActive ||
             pathname === "/"
           }
           label="Start The Rush"
