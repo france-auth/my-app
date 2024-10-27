@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import NavigationBar from "@/components/NavigationBar";
+import { useState, useEffect } from "react";
 
 const SmallCardArray = [
   {
@@ -20,14 +21,10 @@ const SmallCardArray = [
   },
 ];
 
-interface UserData {
-  user: {
-    username: string;
-    // add more properties if needed
-  };
-}
+
 
 export default function Homepage({userData}: {userData: any}) {
+  
   return (
     <Box
       display={"flex"}
@@ -53,11 +50,11 @@ export default function Homepage({userData}: {userData: any}) {
             <Avatar
               size={"sm"}
               name="Howgart Louis"
-              src="https://bit.ly/prosper-baba"
+              src={userData && userData.photoUrl}
             />
 
             <Text fontWeight={"700"} fontSize={"20px"} color={"#F5F5F5"}>
-             bolade
+            {userData && userData.username}
             </Text>
           </Flex>
           <Flex
@@ -122,7 +119,7 @@ export default function Homepage({userData}: {userData: any}) {
                 flexDirection={"column"}
                 justifyContent={"center"}
               >
-                <Text>400,345</Text>
+                <Text>400,375</Text>
               </Box>
             </Box>
           </Flex>
@@ -182,7 +179,7 @@ export default function Homepage({userData}: {userData: any}) {
             display={"flex"}
             flexDirection={"column"}
             width={"266px"}
-            h={"66px"}
+            h={"100px"}
             alignItems={"center"}
             justifyContent={"center"}
           >
@@ -193,22 +190,15 @@ export default function Homepage({userData}: {userData: any}) {
               lineHeight={"14.52px"}
             >
               {" "}
-              + 5 600 per hour
+              + {userData && userData.profitPerHour} per hour
             </Text>
-            <Flex w={"201px"} h={"36px"} gap={3} alignItems={"center"}>
+            <Flex  h={"36px"} gap={3} alignItems={"center"}>
               <Image alt="coin img"  src="/icons/coin.png" />
               <Text fontSize={"29.33px"} fontWeight={600} color={"#DDE2E7"}>
-                44 356 782
+                {userData && userData.coins}
               </Text>
             </Flex>
-            <Text
-              fontSize={"12px"}
-              fontWeight={600}
-              color={"#7585A7"}
-              lineHeight={"14.52px"}
-            >
-              Platinium XP
-            </Text>
+           
           </Box>
 
           <Box
@@ -238,7 +228,7 @@ export default function Homepage({userData}: {userData: any}) {
           <Box w={'100%'} h={'35.33px'} mt={{base: 2, sm:5}} px={'10.67px'} alignItems={'center'} justifyContent={'center'} display={'flex'}>
             <Flex width={'85%'} alignItems={'center'} justifyContent={'space-between'}>
             <Text fontSize={'13px'} fontWeight={500} color={'#DDE2E7'}>
-                125,000 / 125,000
+                {`${userData && userData.taps} / ${userData && userData.maxTaps}`}
             </Text>
 
             <Flex p={'6.67px'} gap={2}

@@ -15,31 +15,33 @@ datasource db {
 
 model User {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  telegramId      String   @unique // Telegram user identifier
+  telegramId      String   @unique
   username        String   @unique
-  level           Int      @default(0) // Corresponds to the level names array index
+  photoUrl        String?  // Optional field for photo URL
+  level           Int      @default(0)
   coins           Int      @default(0)
-  taps            Int      @default(500) // Users start with 500 taps
-  maxTaps         Int      @default(500) // Initial maximum taps for new users
-  refillRate      Int      @default(1) // Taps regained per minute
-  lastRefillTime  DateTime @default(now()) // For tracking refill logic
-  slots           Int       @default(0) 
-  referralCount   Int       @default(0)    // Number of people user has referred
-  referredBy      String?   // The user who referred this user (optional, can be null if not referred)
-  referrals       Referral[] // Relation to Referral model (who this user has referred)
-  freeSpins       Int       @default(0)    // Free spins user can use (from referral or other bonuses)
-  multitap        Int      @default(1) // Multiplier for points per tap
-  tapLimitBoost   Int      @default(1) // Additional taps from tap limit boosters
-  tappingGuruUses Int      @default(3) // Free booster uses per day
-  profitPerHour   Int      @default(0) // Total profit per hour from owned cards
+  taps            Int      @default(500)
+  maxTaps         Int      @default(500)
+  refillRate      Int      @default(1)
+  lastRefillTime  DateTime @default(now())
+  slots           Int      @default(0)
+  referralCount   Int      @default(0)
+  referredBy      String?
+  referrals       Referral[]
+  freeSpins       Int      @default(0)
+  multitap        Int      @default(1)
+  tapLimitBoost   Int      @default(1)
+  tappingGuruUses Int      @default(3)
+  profitPerHour   Int      @default(0)
   lastEarningsUpdate DateTime @default(now())
-  lastCheckIn    DateTime?
-  checkInStreak  Int      @default(0) // Optional: for consecutive check-in rewards
+  lastCheckIn     DateTime?
+  checkInStreak   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   cards           CardPurchase[]
   userTasks       UserTask[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+
 }
 
 model CardPurchase {
