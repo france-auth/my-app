@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import NavigationBar from "@/components/NavigationBar";
-import { useState, useEffect } from "react";
+
 
 const SmallCardArray = [
   {
@@ -23,6 +23,7 @@ const SmallCardArray = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Homepage({ userData }: { userData: any }) {
   return (
     <Box

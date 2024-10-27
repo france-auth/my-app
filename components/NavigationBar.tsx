@@ -3,7 +3,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 
 
 interface NavItemProps {
@@ -48,9 +48,10 @@ const NavItem: React.FC<NavItemProps> = ({
 );
 
 const NavigationBar: React.FC = () => {
- const location = typeof window !== "undefined" ? window.location : null;
- const pathname = location?.pathname!!
-
+  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+  const location = typeof window !== "undefined" ? window.location : null;
+  // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
+  const pathname = location?.pathname!!;
 
   const isGameActive = pathname.startsWith("/games");
   const isTriviaActive = pathname.startsWith("/trivia");
