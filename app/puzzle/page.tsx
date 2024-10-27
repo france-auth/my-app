@@ -1,39 +1,50 @@
-import { Box, Flex, Text, Icon, Progress, Image, Button, useToast } from "@chakra-ui/react";
+"use client";
+
+import {
+  Box,
+  Flex,
+  Text,
+  Icon,
+  Progress,
+  Image,
+  Button,
+  useToast,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
 
-const Rectangle =[
-    {
-        image: "./Rectangle.png",
-    },
-    {
-        image: "./Rectangle.png",
-    },
-    {
-        image: "./Rectangle.png",
-    },
-    {
-        image: "./Rectangle.png",
-    },
-    {
-        image: "./Rectangle.png",
-    },
-    {
-        image: "./Rectangle.png",
-    },
-    {
-        image: "./Rectangle.png",
-    },
-    {
-        image: "./Rectangle.png",
-    },
-    {
-        image: "./Rectangle.png",
-    },
-]
+const Rectangle = [
+  {
+    image: "./Rectangle.png",
+  },
+  {
+    image: "./Rectangle.png",
+  },
+  {
+    image: "./Rectangle.png",
+  },
+  {
+    image: "./Rectangle.png",
+  },
+  {
+    image: "./Rectangle.png",
+  },
+  {
+    image: "./Rectangle.png",
+  },
+  {
+    image: "./Rectangle.png",
+  },
+  {
+    image: "./Rectangle.png",
+  },
+  {
+    image: "./Rectangle.png",
+  },
+];
 export default function Puzzle() {
-    const [isSolved, setIsSolved] = useState(false); // State to track if the puzzle is solved
+  const [isSolved, setIsSolved] = useState(false); // State to track if the puzzle is solved
   const toast = useToast(); // Chakra UI toast
 
   const handleClaimPoints = () => {
@@ -145,50 +156,43 @@ export default function Puzzle() {
             </Box>
           </Flex>
         </Box>
-        
-        <Flex width={'146px'} justifyContent={'space-between'}>
-            <Box w={'36px'}
-            h={'36px'}
-            bg={'#d9d9d9'}
-            borderRadius={'50%'}>
-            </Box>
-            <Box w={'36px'}
-            h={'36px'}
-            bg={'#d9d9d9'}
-            borderRadius={'50%'}>
-            </Box>
-            <Box w={'36px'}
-            h={'36px'}
-            bg={'#d9d9d9'}
-            borderRadius={'50%'}>
-            </Box>
+
+        <Flex width={"146px"} justifyContent={"space-between"}>
+          <Box w={"36px"} h={"36px"} bg={"#d9d9d9"} borderRadius={"50%"}></Box>
+          <Box w={"36px"} h={"36px"} bg={"#d9d9d9"} borderRadius={"50%"}></Box>
+          <Box w={"36px"} h={"36px"} bg={"#d9d9d9"} borderRadius={"50%"}></Box>
         </Flex>
-        
-        <Box width={'90%'}
-        h={'396px'}
-        p={'4px 16px'}
-        >
-        <Box
-        w={'100%'}
-        h={'388px'}
-        bgImage={"./rock.png"}
-        bgPosition={'center'}
-        bgRepeat={'no-repeat'}
-        bgSize={'173%'}
-        mx={'auto'}
-        display={'grid'}
-        gap={'8px'}
-        gridTemplateColumns={"repeat(3, 1fr)"}>
+
+        <Box width={"90%"} h={"396px"} p={"4px 16px"}>
+          <Box
+            w={"100%"}
+            h={"388px"}
+            bgImage={"./rock.png"}
+            bgPosition={"center"}
+            bgRepeat={"no-repeat"}
+            bgSize={"173%"}
+            mx={"auto"}
+            display={"grid"}
+            gap={"8px"}
+            gridTemplateColumns={"repeat(3, 1fr)"}
+          >
             {Rectangle.map((box, id) => {
-                return(
-                <Image src={box.image} alt="box img" w={'100%'} h={'123px'} key={id} opacity={'0.9'}/>
-            )
+              return (
+                <Image
+                  src={box.image}
+                  alt="box img"
+                  w={"100%"}
+                  h={"123px"}
+                  key={id}
+                  opacity={"0.9"}
+                />
+              );
             })}
+          </Box>
         </Box>
-        </Box>
-            <Text color={'#f5f5f5'} fontWeight={700}>
-                Score/Reward
-            </Text>
+        <Text color={"#f5f5f5"} fontWeight={700}>
+          Score/Reward
+        </Text>
 
         <Button
           w={"342px"}
@@ -205,7 +209,6 @@ export default function Puzzle() {
         >
           0.00
         </Button>
-
       </Flex>
       <NavigationBar />
     </Box>

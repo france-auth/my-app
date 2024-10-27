@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -21,10 +23,7 @@ const SmallCardArray = [
   },
 ];
 
-
-
-export default function Homepage({userData}: {userData: any}) {
-  
+export default function Homepage({ userData }: { userData: any }) {
   return (
     <Box
       display={"flex"}
@@ -54,7 +53,7 @@ export default function Homepage({userData}: {userData: any}) {
             />
 
             <Text fontWeight={"700"} fontSize={"20px"} color={"#F5F5F5"}>
-            {userData && userData.username}
+              {userData && userData.username}
             </Text>
           </Flex>
           <Flex
@@ -132,114 +131,165 @@ export default function Homepage({userData}: {userData: any}) {
           borderTopRadius={"10px"}
           justifyContent={"center"}
           alignItems={"center"}
-          bgGradient={'conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)'
+          bgGradient={
+            "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
           }
-          
-        > 
-          <Flex flexDirection={'column'} bgGradient={'linear-gradient(360deg, #00283A 0%, #12161E 88.17%)'} w={'100%'} borderTopRadius={'15px'} h={'80vh'} pt={{base: 2, sm: 5}} alignItems={'center'} gap={{base:3, sm:3}}>
-          <Flex w={"80%"} p={"3px"} gap={"4px"} bg={'red'} borderRadius={'10px'} mx={'auto'} bgGradient={'conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)'}>
-            {SmallCardArray.map((card, id) => {
-              return (
-                <Link href={card.path} className="w-[100%]" key={id}>
+        >
+          <Flex
+            flexDirection={"column"}
+            bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+            w={"100%"}
+            borderTopRadius={"15px"}
+            h={"80vh"}
+            pt={{ base: 2, sm: 5 }}
+            alignItems={"center"}
+            gap={{ base: 3, sm: 3 }}
+          >
+            <Flex
+              w={"80%"}
+              p={"3px"}
+              gap={"4px"}
+              bg={"red"}
+              borderRadius={"10px"}
+              mx={"auto"}
+              bgGradient={
+                "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
+              }
+            >
+              {SmallCardArray.map((card, id) => {
+                return (
+                  <Link href={card.path} className="w-[100%]" key={id}>
+                    <Flex
+                      width={"100%"}
+                      flexDirection={"column"}
+                      alignItems={"center"}
+                      height={"100px"}
+                      justifyContent={"center"}
+                      p={"22px"}
+                      bgColor={"#1D222E"}
+                      gap={"8px"}
+                      borderRadius={"10px"}
+                    >
+                      <Image alt="card img" src={card.image} w={"32px"} />
+                      <Text
+                        w={""}
+                        textAlign={"center"}
+                        fontSize={"12px"}
+                        fontWeight={500}
+                        color={"white"}
+                      >
+                        {card.text}
+                      </Text>
+                      <Text
+                        fontSize={"9.33px"}
+                        fontWeight={"500"}
+                        color={"#7585A7"}
+                      >
+                        {card.timer}
+                      </Text>
+                    </Flex>
+                  </Link>
+                );
+              })}
+            </Flex>
+
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              width={"266px"}
+              h={"100px"}
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
+              <Text
+                fontSize={"12px"}
+                fontWeight={600}
+                color={"#7585A7"}
+                lineHeight={"14.52px"}
+              >
+                {" "}
+                + {userData && userData.profitPerHour} per hour
+              </Text>
+              <Flex h={"36px"} gap={3} alignItems={"center"}>
+                <Image alt="coin img" src="/icons/coin.png" />
+                <Text fontSize={"29.33px"} fontWeight={600} color={"#DDE2E7"}>
+                  {userData && userData.coins}
+                </Text>
+              </Flex>
+            </Box>
+
+            <Box
+              w={"100%"}
+              h={{ base: "200px", sm: "341.73px" }}
+              display={"flex"}
+              flexDirection={"column"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Box
+                width={"100%"}
+                h={"100%"}
+                display={"flex"}
+                flexDirection={"column"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                // overflow={'hidden'}
+                mt={{ base: 2, sm: 5 }}
+              >
+                <Image
+                  alt="floating coin img"
+                  src="/FloatingCoins.png"
+                  position={"relative"}
+                  zIndex={1}
+                  w={{ base: "60%", sm: "90%" }}
+                />
+                <Image
+                  alt="mascot img"
+                  src="/Mascot.png"
+                  zIndex={0}
+                  position={"absolute"}
+                  w={{ base: "50%", sm: "auto" }}
+                />
+              </Box>
+            </Box>
+
+            <Box
+              w={"100%"}
+              h={"35.33px"}
+              mt={{ base: 2, sm: 5 }}
+              px={"10.67px"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              display={"flex"}
+            >
+              <Flex
+                width={"85%"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+              >
+                <Text fontSize={"13px"} fontWeight={500} color={"#DDE2E7"}>
+                  {`${userData && userData.taps} / ${
+                    userData && userData.maxTaps
+                  }`}
+                </Text>
+
                 <Flex
-                  width={"100%"}
-                  flexDirection={"column"}
+                  p={"6.67px"}
+                  gap={2}
+                  width={"103.33px"}
+                  height={"35.53px"}
                   alignItems={"center"}
-                  height={"100px"}
-                  justifyContent={"center"}
-                  p={"22px"}
-                  bgColor={"#1D222E"}
-                  gap={"8px"}
-                  borderRadius={'10px'}
                 >
-                  <Image alt="card img" src={card.image} w={"32px"} />
-                  <Text
-                    w={""}
-                    textAlign={"center"}
-                    fontSize={"12px"}
-                    fontWeight={500}
-                    color={"white"}
-                  >
-                    {card.text}
-                  </Text>
-                  <Text
-                    fontSize={"9.33px"}
-                    fontWeight={"500"}
-                    color={"#7585A7"}
-                  >
-                    {card.timer}
+                  <Image
+                    alt="white booster img"
+                    src="/icons/whiteBooster.png"
+                  />
+                  <Text fontSize={"13px"} fontWeight={500} color={"#DDE2E7"}>
+                    Explore
                   </Text>
                 </Flex>
-                </Link>
-              );
-            })}
-          </Flex>
-
-          <Box
-            display={"flex"}
-            flexDirection={"column"}
-            width={"266px"}
-            h={"100px"}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <Text
-              fontSize={"12px"}
-              fontWeight={600}
-              color={"#7585A7"}
-              lineHeight={"14.52px"}
-            >
-              {" "}
-              + {userData && userData.profitPerHour} per hour
-            </Text>
-            <Flex  h={"36px"} gap={3} alignItems={"center"}>
-              <Image alt="coin img"  src="/icons/coin.png" />
-              <Text fontSize={"29.33px"} fontWeight={600} color={"#DDE2E7"}>
-                {userData && userData.coins}
-              </Text>
-            </Flex>
-           
-          </Box>
-
-          <Box
-            w={"100%"}
-            h={{ base: "200px",sm: "341.73px"}}
-            display={"flex"}
-            flexDirection={"column"}
-            justifyContent={"center"}
-            alignItems={"center"}
-          >
-            <Box
-              width={"100%"}
-              h={"100%"}
-              display={'flex'}
-              flexDirection={'column'}
-              justifyContent={'center'}
-              alignItems={'center'}
-              // overflow={'hidden'}
-              mt={{base: 2, sm: 5, }}
-
-            >
-                <Image alt="floating coin img"  src="/FloatingCoins.png" position={'relative'} zIndex={1} w={{base:'60%', sm: "90%"}}/>
-                <Image alt="mascot img"  src="/Mascot.png" zIndex={0} position={'absolute'} w={{base:'50%', sm: "auto"}}/>
+              </Flex>
             </Box>
-          </Box>
-
-          <Box w={'100%'} h={'35.33px'} mt={{base: 2, sm:5}} px={'10.67px'} alignItems={'center'} justifyContent={'center'} display={'flex'}>
-            <Flex width={'85%'} alignItems={'center'} justifyContent={'space-between'}>
-            <Text fontSize={'13px'} fontWeight={500} color={'#DDE2E7'}>
-                {`${userData && userData.taps} / ${userData && userData.maxTaps}`}
-            </Text>
-
-            <Flex p={'6.67px'} gap={2}
-            width={'103.33px'} height={'35.53px'} alignItems={'center'}>
-                <Image alt="white booster img"  src="/icons/whiteBooster.png"/>
-                <Text fontSize={'13px'} fontWeight={500} color={'#DDE2E7'}>
-                    Explore
-                </Text>
-            </Flex>
-            </Flex>
-          </Box>
           </Flex>
         </Flex>
       </Flex>

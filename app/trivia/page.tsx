@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Box, Flex, Text, Button } from "@chakra-ui/react";
 import NavigationBar from "@/components/NavigationBar";
@@ -73,7 +75,7 @@ export default function Trivia() {
           <Box py={"15px"} mt={5} w={"90%"} mx={"auto"}>
             {Option.map((option, id) => (
               <Box
-              key={id}
+                key={id}
                 p={"2px"}
                 bgGradient={
                   "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
@@ -84,10 +86,18 @@ export default function Trivia() {
                 <Button
                   key={option.value}
                   onClick={() => setSelectedValue(option.value)}
-                  bg={selectedValue === option.value ? 'linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)' : "#293042"}
+                  bg={
+                    selectedValue === option.value
+                      ? "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)"
+                      : "#293042"
+                  }
                   color="white"
-                  _hover={{ bg: 'linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)' }}
-                  _focus={{ bg: 'linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)' }}
+                  _hover={{
+                    bg: "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)",
+                  }}
+                  _focus={{
+                    bg: "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)",
+                  }}
                   w={"100%"}
                   h={"69px"}
                   display={"flex"}
@@ -111,8 +121,8 @@ export default function Trivia() {
               "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
             }
             borderRadius={"20px"}
-            mx={'auto'}
-            w={'80%'}
+            mx={"auto"}
+            w={"80%"}
           >
             <Button
               w={"100%"}
@@ -126,7 +136,6 @@ export default function Trivia() {
               bg={"#4979D1"}
               isDisabled={!selectedValue}
               _disabled={{ bg: "#293042" }} // Disabled until an option is selected
-              
             >
               Let&apos;s Go
             </Button>
