@@ -50,7 +50,7 @@ const NavItem: React.FC<NavItemProps> = ({
 const NavigationBar: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
   const location = typeof window !== "undefined" ? window.location : null;
-  // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
+  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
   const pathname = location?.pathname!!;
 
   const isGameActive = pathname.startsWith("/games");

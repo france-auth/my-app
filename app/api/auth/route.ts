@@ -111,7 +111,8 @@ export async function POST(request: NextRequest) {
 
     if (existingUserTasks.length === 0) {
       const tasks = await prisma.task.findMany();
-
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const userTaskPromises = tasks.map((task: any) =>
         prisma.userTask.create({
           data: {
