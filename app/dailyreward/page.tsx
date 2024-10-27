@@ -1,5 +1,13 @@
-
-import { Flex, Box, Text, HStack, Progress, Heading, Button } from "@chakra-ui/react";
+"use client";
+import {
+  Flex,
+  Box,
+  Text,
+  HStack,
+  Progress,
+  Heading,
+  Button,
+} from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
 
@@ -32,9 +40,8 @@ function DailyReward({}: Props) {
 
   return (
     <Flex
-
       minH={"100vh"}
-      bgGradient={'linear-gradient(360deg, #00283A 0%, #12161E 88.17%)'}
+      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
       minW={"100vw"}
       color={"white"}
       direction={"column"}
@@ -42,7 +49,9 @@ function DailyReward({}: Props) {
     >
       <Flex direction={"column"} gap={2} p={5}>
         <Flex gap={1} justifyContent={"center"}>
-          <Heading fontSize={"24px"} color={'#93BAFF'}>Daily Reward</Heading>
+          <Heading fontSize={"24px"} color={"#93BAFF"}>
+            Daily Reward
+          </Heading>
         </Flex>
 
         <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -136,8 +145,17 @@ function DailyReward({}: Props) {
         ))}
       </Box>
 
-      <Button alignSelf={"center"} bgColor={"#4979D1"} color={"#fff"} w={"85vw"}
-      borderRadius={"20px"} fontWeight={"500"} fontSize={"20px"}>Claim Bonus</Button>
+      <Button
+        alignSelf={"center"}
+        bgColor={"#4979D1"}
+        color={"#fff"}
+        w={"85vw"}
+        borderRadius={"20px"}
+        fontWeight={"500"}
+        fontSize={"20px"}
+      >
+        Claim Bonus
+      </Button>
 
       <NavigationBar />
     </Flex>

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Flex,
   Text,
@@ -10,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import NavigationBar from "@/components/NavigationBar";
 
-type Props = Record<string, never>;;
+type Props = Record<string, never>;
 
 function Badges({}: Props) {
   return (
@@ -64,13 +66,22 @@ function Badges({}: Props) {
         </Flex>
       </Flex>
 
-      <Flex direction={"column"} p={5} 
-        height={'70vh'} justifyContent={'center'} alignItems={'center'}>
-
-          <Text fontSize={'24px'} fontWeight={700} color={'#f5f5f5'} width={'228px'} textAlign={'center'}>
-          ZERO ACHIEVEMENT & BADGES 
-          </Text>
-        
+      <Flex
+        direction={"column"}
+        p={5}
+        height={"70vh"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <Text
+          fontSize={"24px"}
+          fontWeight={700}
+          color={"#f5f5f5"}
+          width={"228px"}
+          textAlign={"center"}
+        >
+          ZERO ACHIEVEMENT & BADGES
+        </Text>
       </Flex>
 
       <NavigationBar />

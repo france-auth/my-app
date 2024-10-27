@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Text, Flex, Image, Icon, Progress } from "@chakra-ui/react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@chakra-ui/icons";
@@ -5,49 +7,49 @@ import NavigationBar from "@/components/NavigationBar";
 
 const dailyTask = [
   {
-      image: "/icons/twitter.png",
-      name: "Follow our X account",
-      reward: "100,000",
-      path: "/",
+    image: "/icons/twitter.png",
+    name: "Follow our X account",
+    reward: "100,000",
+    path: "/",
   },
   {
-      image: "/icons/telegram.png",
-      name: "Join our Telegram Main Channel",
-      reward: "100,000",
-      path: "/",
+    image: "/icons/telegram.png",
+    name: "Join our Telegram Main Channel",
+    reward: "100,000",
+    path: "/",
   },
   {
-      image: "/icons/telegram.png",
-      name: "Join our Telegram New Channel",
-      reward: "100,000",
-      path: "/",
+    image: "/icons/telegram.png",
+    name: "Join our Telegram New Channel",
+    reward: "100,000",
+    path: "/",
   },
   {
-      image: "/icons/instagram.png",
-      name: "Follow us on Instagram",
-      reward: "100,000",
-      path: "/",
+    image: "/icons/instagram.png",
+    name: "Follow us on Instagram",
+    reward: "100,000",
+    path: "/",
   },
   {
-      image: "/icons/facebook.png",
-      name: "Follow us on Facebook",
-      reward: "100,000",
-      path: "/",
+    image: "/icons/facebook.png",
+    name: "Follow us on Facebook",
+    reward: "100,000",
+    path: "/",
   },
   {
-      image: "/icons/gcoin.png",
-      name: "Choose your Exchange",
-      reward: "100,000",
-      path: "/",
+    image: "/icons/gcoin.png",
+    name: "Choose your Exchange",
+    reward: "100,000",
+    path: "/",
   },
-]
+];
 
 export default function DailyTask() {
   return (
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgGradient={'linear-gradient(360deg, #00283A 0%, #12161E 88.17%)'}
+      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -140,7 +142,6 @@ export default function DailyTask() {
           </Flex>
         </Box>
 
-
         <Box
           width={"100%"}
           px={"16px"}
@@ -153,38 +154,58 @@ export default function DailyTask() {
             Task List
           </Text>
           {dailyTask.map((task, id) => {
-            return(
-          <Link href={"/"}
-              key={id}>
-            <Flex
-              h={"80px"}
-              bg={"#1D222E"}
-              borderRadius={"16px"}
-              padding={"18px 16px"}
-              borderBottom={"0.9px solid #4979D1"}
-              gap={4}
-              alignItems={"center"}
-              justifyContent={"space-between"}
-            >
-              <Flex alignItems={"center"} gap={4}>
-                <Image src={task.image} w={"48px"} h={"48px"} alt="task image" />
-                <Flex direction={"column"}>
-                  <Text fontSize={"16px"} fontWeight={500} color={"#f5f5f5"}>
-                    {task.name}
-                  </Text>
-                  <Flex alignItems={"center"}>
-                    <Image src="/icons/BigCoin.png" w={"14px"} alt="big coin"/>
-                    <Text fontSize={"12px"} fontWeight={500} color={"#f5f5f5"}>
-                      + {task.reward} XP
-                    </Text>
+            return (
+              <Link href={"/"} key={id}>
+                <Flex
+                  h={"80px"}
+                  bg={"#1D222E"}
+                  borderRadius={"16px"}
+                  padding={"18px 16px"}
+                  borderBottom={"0.9px solid #4979D1"}
+                  gap={4}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                >
+                  <Flex alignItems={"center"} gap={4}>
+                    <Image
+                      src={task.image}
+                      w={"48px"}
+                      h={"48px"}
+                      alt="task image"
+                    />
+                    <Flex direction={"column"}>
+                      <Text
+                        fontSize={"16px"}
+                        fontWeight={500}
+                        color={"#f5f5f5"}
+                      >
+                        {task.name}
+                      </Text>
+                      <Flex alignItems={"center"}>
+                        <Image
+                          src="/icons/BigCoin.png"
+                          w={"14px"}
+                          alt="big coin"
+                        />
+                        <Text
+                          fontSize={"12px"}
+                          fontWeight={500}
+                          color={"#f5f5f5"}
+                        >
+                          + {task.reward} XP
+                        </Text>
+                      </Flex>
+                    </Flex>
                   </Flex>
+                  <Box
+                    w={"12px"}
+                    h={"12px"}
+                    bg={"#f5f5f5"}
+                    borderRadius={"50%"}
+                  />
                 </Flex>
-              </Flex>
-              <Box w={"12px"} h={"12px"} bg={"#f5f5f5"} borderRadius={"50%"} />
-            </Flex>
-          </Link>
-
-            )
+              </Link>
+            );
           })}
         </Box>
       </Flex>
