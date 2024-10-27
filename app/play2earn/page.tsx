@@ -1,3 +1,5 @@
+"use client"
+
 import { Box, Text, Flex, Image, Button } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import NavigationBar from "@/components/NavigationBar";

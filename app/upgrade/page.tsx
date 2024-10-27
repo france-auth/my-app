@@ -1,3 +1,5 @@
+"use client"
+
 import { Box, Text, Flex, Image, Icon, Progress } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
