@@ -1,3 +1,5 @@
+"use client"
+
 import { Box, Button, Flex, Text, useToast, Icon, Progress } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { useState } from "react";
