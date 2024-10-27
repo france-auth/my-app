@@ -21,7 +21,7 @@ const SmallCardArray = [
     path: "/games",
   },
 ];
-export interface UserData {
+type UserData =  {
   id: string;
   telegramId: string;
   username: string;
