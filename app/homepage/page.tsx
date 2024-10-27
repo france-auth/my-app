@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import "../index.css";
 import Link from "next/link";
+import React from "react";
 import NavigationBar from "@/components/NavigationBar";
 
 const SmallCardArray = [
@@ -21,14 +22,9 @@ const SmallCardArray = [
   },
 ];
 
-interface UserData {
-  user: {
-    username: string;
-    // add more properties if needed
-  };
-}
 
-export default function Homepage({userData}: {userData: UserData}) {
+
+export default function Homepage({userData}: {userData: any}) {
   return (
     <Box
       display={"flex"}

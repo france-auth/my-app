@@ -27,7 +27,7 @@ interface UserData {
   };
 }
 
-export default function Homepage({userData}: {userData: UserData}) {
+export default function Homepage({userData}: {userData: any}) {
   return (
     <Box
       display={"flex"}
@@ -57,7 +57,7 @@ export default function Homepage({userData}: {userData: UserData}) {
             />
 
             <Text fontWeight={"700"} fontSize={"20px"} color={"#F5F5F5"}>
-              {userData && userData.user.username}
+             bolade
             </Text>
           </Flex>
           <Flex
@@ -137,6 +137,7 @@ export default function Homepage({userData}: {userData: UserData}) {
           alignItems={"center"}
           bgGradient={'conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)'
           }
+          
         > 
           <Flex flexDirection={'column'} bgGradient={'linear-gradient(360deg, #00283A 0%, #12161E 88.17%)'} w={'100%'} borderTopRadius={'15px'} h={'80vh'} pt={{base: 2, sm: 5}} alignItems={'center'} gap={{base:3, sm:3}}>
           <Flex w={"80%"} p={"3px"} gap={"4px"} bg={'red'} borderRadius={'10px'} mx={'auto'} bgGradient={'conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)'}>
@@ -226,7 +227,7 @@ export default function Homepage({userData}: {userData: UserData}) {
               justifyContent={'center'}
               alignItems={'center'}
               // overflow={'hidden'}
-              mt={{base: 2, sm: 5}}
+              mt={{base: 2, sm: 5, }}
 
             >
                 <Image alt="floating coin img"  src="/FloatingCoins.png" position={'relative'} zIndex={1} w={{base:'60%', sm: "90%"}}/>

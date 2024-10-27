@@ -17,30 +17,14 @@ interface UserData {
 }
 
 export default function Home() {
-  const [userData, setUserData] = useState<UserData | null>(null); // Set initial state to null
 
-  // Get referral code from URL
-  const queryString = window.location.search; 
-  const urlParams = new URLSearchParams(queryString);
-  const referralId = urlParams.get("referralCode") || undefined; // Ensure it's either string or undefined
+  let userData = "dray"
 
-  // Get the initial data needed for login
-  const initData = WebApp.initData;
+  
 
-  // Call useUserLogin at the top level of the component
-  const { userData: loginData, loading } = useUserLogin(initData, referralId);
 
-  // Update userData based on loginData from useUserLogin
-  useEffect(() => {
-    if (loginData) {
-      setUserData(loginData);
-    }
-  }, [loginData]);
 
-  // Show loading screen if data is still being fetched
-  if (loading || !userData) {
-    return <Loading />;
-  }
+
 
   return (
     <Box width={"100vw"} overflowX={"hidden"} fontFamily={"sans-serif"}>

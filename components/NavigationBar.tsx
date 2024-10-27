@@ -1,6 +1,10 @@
+
+
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -15,7 +19,7 @@ const NavItem: React.FC<NavItemProps> = ({
   isActive = false,
   to,
 }) => (
-  <Link to={to}>
+  <Link href={to}>
     <Box
       borderRadius={"10px"}
       w={{ base: "72px", sm: "76px" }}
@@ -44,17 +48,20 @@ const NavItem: React.FC<NavItemProps> = ({
 );
 
 const NavigationBar: React.FC = () => {
-  const location = useLocation();
-  const isGameActive = location.pathname.startsWith("/games");
-  const isTriviaActive = location.pathname.startsWith("/trivia");
-  const isRouletteActive = location.pathname.startsWith("/roulette");
-  const isJigsawActive = location.pathname.startsWith("/jigsaw");
-  const isCommunityActive = location.pathname.startsWith("/communities");
-  const isBadgeActive = location.pathname.startsWith("/badges");
-  const isDailyActive = location.pathname.startsWith("/dailytask");
-  const isSocialActive = location.pathname.startsWith("/socials");
-  const isDailyRewardActive = location.pathname.startsWith("/daily");
-  const isPuzzleActive= location.pathname.startsWith('/puzzle');
+ const location = typeof window !== "undefined" ? window.location : null;
+ const pathname = location?.pathname!!
+
+
+  const isGameActive = pathname.startsWith("/games");
+  const isTriviaActive = pathname.startsWith("/trivia");
+  const isRouletteActive = pathname.startsWith("/roulette");
+  const isJigsawActive = pathname.startsWith("/jigsaw");
+  const isCommunityActive = pathname.startsWith("/communities");
+  const isBadgeActive = pathname.startsWith("/badges");
+  const isDailyActive = pathname.startsWith("/dailytask");
+  const isSocialActive = pathname.startsWith("/socials");
+  const isDailyRewardActive = pathname.startsWith("/daily");
+  const isPuzzleActive = pathname.startsWith("/puzzle");
   return (
     <nav className="fixed bottom-0  bg-[#12161E] w-[100vw] z-40 p-[5px]">
       <div className="flex justify-center items-center w-[100%] gap-1">
@@ -84,7 +91,7 @@ const NavigationBar: React.FC = () => {
             isTriviaActive ||
             isRouletteActive ||
             isJigsawActive ||
-            location.pathname === "/"
+            pathname === "/"
           }
           label="Start The Rush"
           to="/"
@@ -113,7 +120,7 @@ const NavigationBar: React.FC = () => {
             </svg>
           }
           label="Power Up"
-          isActive={location.pathname === "/powerUps"}
+          isActive={pathname === "/powerUps"}
           to="/powerUps"
         />
         <NavItem
@@ -141,9 +148,12 @@ const NavigationBar: React.FC = () => {
           }
           label="Daily Challenge"
           isActive={
-            isDailyActive || isDailyRewardActive ||
-            isSocialActive || isCommunityActive || isPuzzleActive ||
-            location.pathname === "/challenges"
+            isDailyActive ||
+            isDailyRewardActive ||
+            isSocialActive ||
+            isCommunityActive ||
+            isPuzzleActive ||
+            pathname === "/challenges"
           }
           to="/challenges"
         />
@@ -176,7 +186,7 @@ const NavigationBar: React.FC = () => {
             </svg>
           }
           label="Invite & earn"
-          isActive={location.pathname === "/referral"}
+          isActive={pathname === "/referral"}
           to="/referral"
         />
         <NavItem
@@ -203,7 +213,7 @@ const NavigationBar: React.FC = () => {
             </svg>
           }
           label="Leaderboard"
-          isActive={isBadgeActive || location.pathname === "/achievement"}
+          isActive={isBadgeActive || pathname === "/achievement"}
           to="/achievement"
         />
       </div>
