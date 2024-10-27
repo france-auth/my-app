@@ -22,9 +22,35 @@ const SmallCardArray = [
     path: "/games",
   },
 ];
+export interface UserData {
+  id: string;
+  telegramId: string;
+  username: string;
+  photoUrl?: string; // Optional field
+  level: number;
+  coins: number;
+  taps: number;
+  maxTaps: number;
+  refillRate: number;
+  lastRefillTime: Date;
+  slots: number;
+  referralCount: number;
+  referredBy?: string; // Optional field
+  freeSpins: number;
+  multitap: number;
+  tapLimitBoost: number;
+  tappingGuruUses: number;
+  profitPerHour: number;
+  lastEarningsUpdate: Date;
+  lastCheckIn?: Date; // Optional field
+  checkInStreak: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function Homepage({ userData }: { userData: any }) {
+
+
+export default function Homepage({ userData }: { userData: UserData }) {
   return (
     <Box
       display={"flex"}
