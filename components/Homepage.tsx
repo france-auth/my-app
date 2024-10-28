@@ -155,6 +155,7 @@ export default function Homepage() {
         console.error("Error refilling taps:", error);
       }
     };
+    console.log(coins)
 
     // Set an interval to refill taps every 5 seconds
     const intervalId = setInterval(refillTaps, 10000);

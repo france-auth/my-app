@@ -23,20 +23,21 @@ const NavItem: React.FC<NavItemProps> = ({
   <Link href={to}>
     <Box
       borderRadius={"10px"}
-      w={{ base: "72px", sm: "76px" }}
+      // w={{ base: "72px", sm: "76px" }}
       height={"80px"}
       p={"6px 16px"}
       textAlign={"center"}
       gap={"8px"}
       alignItems={"center"}
       justifyContent={"center"}
-      className={`flex flex-col ${
+      className={`flex flex-col w-[72px] sm:w-[76px] ${
         isActive ? "text-[#f5f5f5] bg-[#1d222e]" : "text-[#4979d1] bg-[#1f2024]"
       }`}
     >
       {icon}
       <Text
         fontSize={{ base: "9px", sm: "10.67px" }}
+        className="font-[9px] sm:font-[10.67px]"
         fontWeight={500}
         textAlign={"center"}
         lineHeight={"12.91px"}

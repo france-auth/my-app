@@ -1,7 +1,7 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { ChakraProvider, createExtendTheme, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { UserProvider } from "@/context/context"; // Adjust this path if necessary
 import "./globals.css";
 
