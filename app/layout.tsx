@@ -1,12 +1,12 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { ChakraProvider, /* extendTheme */ } from "@chakra-ui/react";
+import { ChakraProvider, createExtendTheme, extendTheme } from "@chakra-ui/react";
+import { UserProvider } from "@/context/context"; // Adjust this path if necessary
 import "./globals.css";
-import { UserProvider } from "@/context/context";
-//import BackButtonHandler from "@/components/BackButtonHandler";
 
-// Import your local fonts
+
+// Import local fonts
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -18,20 +18,6 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-// Extend Chakra UI theme with custom breakpoints and fonts
-/* const theme = extendTheme({
-  fonts: {
-    body: "InterVariable, sans-serif",
-    heading: "InterVariable, sans-serif",
-  },
-  breakpoints: {
-    sm: "390px",
-    md: "768px",
-    lg: "992px",
-    xl: "1280px",
-    "2xl": "1536px",
-  },
-}); */
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -48,11 +34,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ChakraProvider /* theme={theme} */>
-          <UserProvider>
-            {/* <BackButtonHandler /> */}
-            {children}
-          </UserProvider>
+        <ChakraProvider>
+          <UserProvider>{children}</UserProvider>
         </ChakraProvider>
       </body>
     </html>

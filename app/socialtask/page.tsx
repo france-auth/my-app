@@ -7,6 +7,7 @@ import NavigationBar from "@/components/NavigationBar";
 import { useUser } from "@/context/context";
 import { useState, useEffect } from "react";
 
+
 const socialTask = [
   {
     image: "/icons/invite.png",
@@ -100,7 +101,7 @@ export default function SocialTask() {
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
-      textColor={"white"}
+      color={"white"}
       overflow={"hidden"}
     >
       <Flex

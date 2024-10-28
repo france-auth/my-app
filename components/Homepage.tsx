@@ -157,7 +157,7 @@ export default function Homepage() {
     };
 
     // Set an interval to refill taps every 5 seconds
-    const intervalId = setInterval(refillTaps, 5000);
+    const intervalId = setInterval(refillTaps, 10000);
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -191,7 +191,6 @@ export default function Homepage() {
       console.log("User updated:", updatedUser);
     }
   };
-  console.log(coins)
 
   const handleAnimationEnd = (id: number) => {
     setClicks((prevClicks) => prevClicks.filter((click) => click.id !== id));
@@ -360,9 +359,9 @@ export default function Homepage() {
             w={"100%"}
             borderTopRadius={"15px"}
             h={"80vh"}
-            pt={{ base: 2, sm: 5 }}
+            // pt={{ base: 2, sm: 5 }}
+            className="gap-0 pt-2 sm:gap-0 sm:pt-2 xl:pt-5 xl:gap-1"
             alignItems={"center"}
-            gap={{ base: 3, sm: 3 }}
           >
             <Flex
               w={"80%"}
@@ -440,12 +439,12 @@ export default function Homepage() {
 
             <Box
               w={"100%"}
-              h={{ base: "200px", sm: "341.73px" }}
+              // h={"30vh"}
               display={"flex"}
               flexDirection={"column"}
               justifyContent={"center"}
               alignItems={"center"}
-              className="circle-outer"
+              className="circle-outer h-[30vh] sm:h-[45vh]"
               onClick={handleCardClick}
             >
               <Box
@@ -464,14 +463,15 @@ export default function Homepage() {
                   src="/FloatingCoins.png"
                   position={"relative"}
                   zIndex={1}
-                  w={{ base: "60%", sm: "90%" }}
+                  // w={{ base: "70%", sm: "90%" }}
+                  className="w-[70%] sm:w-[100%]"
                 />
                 <Image
                   alt="mascot img"
                   src="/Mascot.png"
                   zIndex={0}
                   position={"absolute"}
-                  w={{ base: "50%", sm: "auto" }}
+                  className="w-[60%] sm:w-[auto]"
                 />
               </Box>
             </Box>
