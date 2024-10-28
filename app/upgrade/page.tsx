@@ -1,8 +1,10 @@
 "use client"
 
-import { Box, Text, Flex, Image, Icon, Progress } from "@chakra-ui/react";
+import { Box, Text, Flex, Image, Icon, Progress, Spinner } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
+import { useState, useEffect } from "react";
+import { useUser } from "@/context/context";
 
 const Upgrade = [
   {
@@ -16,80 +18,115 @@ const Upgrade = [
   },
 ];
 
-const Details = [
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "1k",
-    cost: "24k",
-    level: "2",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "2k",
-    cost: "48k",
-    level: "2",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "3k",
-    cost: "64k",
-    level: "3",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "4k",
-    cost: "86k",
-    level: "4",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "5k",
-    cost: "98k",
-    level: "5",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "6k",
-    cost: "120k",
-    level: "6",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "7k",
-    cost: "148k",
-    level: "7",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "8k",
-    cost: "156k",
-    level: "8",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "9k",
-    cost: "198k",
-    level: "9",
-  },
-  {
-    name: "CEO",
-    image: "/Bot.png",
-    pph: "10k",
-    cost: "215k",
-    level: "10",
-  },
+interface Card {
+  id: string;
+  name: string;
+  category: "SKILL" | "BUSINESS" | "SPECIAL";
+  baseProfit: number;
+  profitIncrease: number;
+  maxLevel: number;
+  baseCost: number;
+  costIncrease: number;
+  requires?: string;
+  imagePath: string;
+  coinIcon: string;
+}
+const levelNames = [
+  "Bronze", // From 0 to 4999 coins
+  "Silver", // From 5000 coins to 24,999 coins
+  "Gold", // From 25,000 coins to 99,999 coins
+  "Platinum", // From 100,000 coins to 999,999 coins
+  "Diamond", // From 1,000,000 coins to 2,000,000 coins
+  "Epic", // From 2,000,000 coins to 10,000,000 coins
+  "Legendary", // From 10,000,000 coins to 50,000,000 coins
+  "Master", // From 50,000,000 coins to 100,000,000 coins
+  "GrandMaster", // From 100,000,000 coins to 1,000,000,000 coins
+  "Lord", // From 1,000,000,000 coins to ∞
 ];
 
+const levelMinPoints = [
+  0, // Bronze
+  5000, // Silver
+  25000, // Gold
+  100000, // Platinum
+  1000000, // Diamond
+  2000000, // Epic
+  10000000, // Legendary
+  50000000, // Master
+  100000000, // GrandMaster
+  1000000000, // Lord
+];
+
+
 export default function Upgrades() {
+  const [cards, setCards] = useState<Card[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+      const { user } = useUser();
+      // const toast = useToast();
+
+      const [levelIndex, setLevelIndex] = useState(0);
+      const [points, setPoints] = useState(0);
+      
+
+      useEffect(() => {
+        if (user) {
+          setPoints(user.coins);
+          setLevelIndex(user.level);
+        }
+      }, [user]);
+
+       useEffect(() => {
+         const currentLevelMin = levelMinPoints[levelIndex];
+         const nextLevelMin = levelMinPoints[levelIndex + 1];
+         if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+           setLevelIndex(levelIndex + 1);
+         } else if (points < currentLevelMin && levelIndex > 0) {
+           setLevelIndex(levelIndex - 1);
+         }
+       }, [points, levelIndex, levelMinPoints, levelNames.length]);
+
+         const calculateProgress = () => {
+        if (levelIndex >= levelNames.length - 1) {
+          return 100;
+        }
+        const currentLevelMin = levelMinPoints[levelIndex];
+        const nextLevelMin = levelMinPoints[levelIndex + 1];
+        const progress =
+          ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+        return Math.min(progress, 100);
+      };
+  
+
+  // Fetch cards from the backend API
+  const fetchCards = async () => {
+    try {
+      const response = await fetch("/api/getCards", { method: "GET" });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch cards");
+      }
+
+      const data: Card[] = await response.json();
+      setCards(data); // Set the fetched cards in state
+    } catch (error) {
+      console.error("Error fetching cards:", error);
+    } finally {
+      setLoading(false); // Stop loading after fetching
+    }
+  };
+
+  // Use useEffect to fetch cards on component mount
+  useEffect(() => {
+    fetchCards();
+  }, []);
+
+  if (loading) {
+    return (
+      <Flex justify="center" align="center" height="100vh">
+        <Spinner size="xl" color="blue.500" />
+      </Flex>
+    );
+  }
   return (
     <Box
       display={"flex"}
@@ -129,16 +166,16 @@ export default function Upgrades() {
             >
               <Flex justifyContent={"space-between"}>
                 <Text fontSize={"12px"} color={"#F5F5F5"}>
-                  Ambassador
+                  {levelNames[levelIndex]}
                   <Icon as={ChevronRightIcon} />
                 </Text>
                 <Text fontSize={"12px"} color={"#F5F5F5"}>
-                  2/4
+                  {levelIndex + 1} / {levelNames.length}
                 </Text>
               </Flex>
               <Flex alignItems={"center"} bg={"green"}>
                 <Progress
-                  value={80}
+                  value={calculateProgress()}
                   size="sm"
                   borderRadius={"full"}
                   bg={"#1D222E"}
@@ -211,7 +248,12 @@ export default function Upgrades() {
                   display={"flex"}
                   flexDirection={"column"}
                 >
-                  <Image src={upgrade.image} w={"44px"} h={"59px"} alt="upgrade img" />
+                  <Image
+                    src={upgrade.image}
+                    w={"44px"}
+                    h={"59px"}
+                    alt="upgrade img"
+                  />
                 </Box>
               );
             })}
@@ -223,10 +265,10 @@ export default function Upgrades() {
             gap={"16px"}
             mt={5}
           >
-            {Details.map((detail, id) => {
+            {cards && cards.map((card, index) => {
               return (
                 <Box
-                  key={id}
+                  key={index}
                   w={"100%"}
                   borderRadius={"16px"}
                   border={"0.67px solid #99999933"}
@@ -234,26 +276,30 @@ export default function Upgrades() {
                   p={"16px 6px"}
                 >
                   <Flex alignItems={"center"} gap={"10px"}>
-                    <Image src={detail.image} w={"48px"} alt="detail img" />
+                    <Image src={"/upgrade.png"} w={"48px"} alt="detail img" />
                     <Flex flexDirection={"column"} w={"99px"}>
                       <Text
-                        fontSize={"16px"}
+                        fontSize={"14px"}
                         fontWeight={600}
                         lineHeight={"19.36px"}
                       >
-                        {detail.name}
+                        {card.name}
                       </Text>
                       <Text
-                        fontSize={"12px"}
+                        fontSize={"11px"}
                         fontWeight={500}
                         lineHeight={"14.52px"}
                       >
                         Profit per Hour
                       </Text>
                       <Flex alignItems={"center"}>
-                        <Image src="/icons/coin.png" w={"16px"} alt="coin img" />
+                        <Image
+                          src="/icons/coin.png"
+                          w={"16px"}
+                          alt="coin img"
+                        />
                         <Text fontSize={"14px"} fontWeight={500}>
-                          {detail.pph}
+                          {card.baseProfit}
                         </Text>
                       </Flex>
                     </Flex>
@@ -265,12 +311,12 @@ export default function Upgrades() {
                     lineHeight={"10px"}
                   >
                     <Text fontSize={"12px"} fontWeight={500}>
-                      Level {detail.level}
+                      Level 0
                     </Text>
                     <Flex alignItems={"center"}>
                       <Image src="/icons/coin.png" w={"16px"} alt="coin img" />
                       <Text fontSize={"14px"} fontWeight={500}>
-                        {detail.cost}
+                        {card.baseCost}
                       </Text>
                     </Flex>
                   </Flex>

@@ -13,7 +13,7 @@ const PlayList = [
   {
     image: "/icons/badge.png",
     name: "Daily Reward",
-    path: "/daily",
+    path: "/dailyreward",
   },
   {
     image: "/icons/list.png",
@@ -23,12 +23,12 @@ const PlayList = [
   {
     image: "/icons/app.png",
     name: "Social Tasks",
-    path: "/socials",
+    path: "/socialtask",
   },
   {
     image: "/icons/people-add.png",
     name: "Softnote Community",
-    path: "/communities",
+    path: "/community",
   },
 ];
 

@@ -60,7 +60,7 @@ const NavigationBar: React.FC = () => {
   const isGameActive = pathname.startsWith("/play2earn");
   const isTriviaActive = pathname.startsWith("/trivia");
   const isRouletteActive = pathname.startsWith("/roulette");
-  // const isJigsawActive = pathname.startsWith("/");
+  const isJigsawActive = pathname.startsWith("/jigsaw");
   const isCommunityActive = pathname.startsWith("/community");
   const isBadgeActive = pathname.startsWith("/badges");
   const isDailyActive = pathname.startsWith("/dailytask");
@@ -95,6 +95,7 @@ const NavigationBar: React.FC = () => {
             isGameActive ||
             isTriviaActive ||
             isRouletteActive ||
+            isJigsawActive||
             pathname === "/"
           }
           label="Start The Rush"
@@ -125,7 +126,7 @@ const NavigationBar: React.FC = () => {
           }
           label="Power Up"
           isActive={pathname === "/powerUps"}
-          to="/powerUps"
+          to="/upgrade"
         />
         <NavItem
           icon={
@@ -157,9 +158,9 @@ const NavigationBar: React.FC = () => {
             isSocialActive ||
             isCommunityActive ||
             isPuzzleActive ||
-            pathname === "/challenges"
+            pathname === "/dailychallenge"
           }
-          to="/challenges"
+          to="/dailychallenge"
         />
 
         <NavItem
@@ -190,8 +191,8 @@ const NavigationBar: React.FC = () => {
             </svg>
           }
           label="Invite & earn"
-          isActive={pathname === "/referral"}
-          to="/referral"
+          isActive={pathname === "/friends"}
+          to="/friends"
         />
         <NavItem
           icon={
@@ -217,8 +218,8 @@ const NavigationBar: React.FC = () => {
             </svg>
           }
           label="Leaderboard"
-          isActive={isBadgeActive || pathname === "/achievement"}
-          to="/achievement"
+          isActive={isBadgeActive || pathname === "/achievements"}
+          to="/achievements"
         />
       </div>
     </nav>

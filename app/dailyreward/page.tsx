@@ -7,9 +7,38 @@ import {
   Progress,
   Heading,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
+import { useState, useEffect } from "react";
+import { useUser } from "@/context/context";
+
+const levelNames = [
+  "Bronze", // From 0 to 4999 coins
+  "Silver", // From 5000 coins to 24,999 coins
+  "Gold", // From 25,000 coins to 99,999 coins
+  "Platinum", // From 100,000 coins to 999,999 coins
+  "Diamond", // From 1,000,000 coins to 2,000,000 coins
+  "Epic", // From 2,000,000 coins to 10,000,000 coins
+  "Legendary", // From 10,000,000 coins to 50,000,000 coins
+  "Master", // From 50,000,000 coins to 100,000,000 coins
+  "GrandMaster", // From 100,000,000 coins to 1,000,000,000 coins
+  "Lord", // From 1,000,000,000 coins to ∞
+];
+
+const levelMinPoints = [
+  0, // Bronze
+  5000, // Silver
+  25000, // Gold
+  100000, // Platinum
+  1000000, // Diamond
+  2000000, // Epic
+  10000000, // Legendary
+  50000000, // Master
+  100000000, // GrandMaster
+  1000000000, // Lord
+];
 
 type Props = Record<string, never>;
 const cards = [
@@ -36,7 +65,78 @@ const cards = [
 ];
 
 function DailyReward({}: Props) {
-  const activeDay = 1;
+    const {user, setUser} = useUser()
+    const toast= useToast()
+
+    const [levelIndex, setLevelIndex] = useState(0);
+     const [points, setPoints] = useState(0);
+     const [activeDay, setActiveDay] = useState(0)
+
+     useEffect(()=>{
+      if(user){
+        setPoints(user.coins);
+        setLevelIndex(user.level);
+      }
+     },[user])
+
+      const calculateProgress = () => {
+        if (levelIndex >= levelNames.length - 1) {
+          return 100;
+        }
+        const currentLevelMin = levelMinPoints[levelIndex];
+        const nextLevelMin = levelMinPoints[levelIndex + 1];
+        const progress =
+          ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+        return Math.min(progress, 100);
+      };
+
+      useEffect(() => {
+        const currentLevelMin = levelMinPoints[levelIndex];
+        const nextLevelMin = levelMinPoints[levelIndex + 1];
+        if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+          setLevelIndex(levelIndex + 1);
+        } else if (points < currentLevelMin && levelIndex > 0) {
+          setLevelIndex(levelIndex - 1);
+        }
+      }, [points, levelIndex, levelMinPoints, levelNames.length]);
+  
+      const claimBonus = async () => {
+        if (!user) return;
+
+        try {
+          const response = await fetch("/api/checkIn", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.telegramId }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            alert(errorData.message);
+            return;
+          }
+
+          const { user: updatedUser, reward } = await response.json();
+          toast({
+            title: "Check-in successful",
+            description: `You received ${reward} coins!`,
+            duration: 3000,
+            status: "success",
+            isClosable: true,
+          });
+          setUser(updatedUser); // Update user data in context
+          setActiveDay(updatedUser.checkInStreak);
+        } catch (error) {
+          console.error("Error claiming bonus:", error);
+           toast({
+             title: "Check-in failed",
+             description:"Please try again later.",
+             status: "error",
+             duration: 3000,
+             isClosable: true,
+           });
+        }
+      };
 
   return (
     <Flex
@@ -58,15 +158,18 @@ function DailyReward({}: Props) {
           <Flex direction={"column"}>
             <HStack spacing={10}>
               <Text fontSize={"small"}>
-                Ambassador
+                {levelNames[levelIndex]}
                 <ChevronRightIcon />
               </Text>
-              <Text fontSize={"small"}>1/4</Text>
+              <Text fontSize={"small"}>
+                {" "}
+                {levelIndex + 1} / {levelNames.length}
+              </Text>
             </HStack>
 
             <Flex alignItems={"center"} borderRadius={"20px"} mt={2}>
               <Progress
-                value={20}
+                value={calculateProgress()}
                 size="sm"
                 borderRadius={"full"}
                 bg={"#1D222E"}
@@ -111,13 +214,13 @@ function DailyReward({}: Props) {
         justifyContent={"center"}
         w="90%"
       >
-        {cards.map((card) => (
+        {cards.map((card, index) => (
           <Box
-            key={card.day}
+            key={index}
             mt={3}
             position="relative"
             border={
-              activeDay === card.day ? "1px solid #00FF29" : "1px solid #4979D1"
+              activeDay === index ? "1px solid #00FF29" : "1px solid #4979D1"
             }
             p={2}
             borderRadius={"8px"}
@@ -153,6 +256,7 @@ function DailyReward({}: Props) {
         borderRadius={"20px"}
         fontWeight={"500"}
         fontSize={"20px"}
+        onClick={claimBonus}
       >
         Claim Bonus
       </Button>

@@ -1,9 +1,11 @@
 "use client";
 
-import { Box, Text, Flex, Image, Icon, Progress } from "@chakra-ui/react";
+import { Box, Text, Flex, Image, Icon, Progress} from "@chakra-ui/react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
+import { useUser } from "@/context/context";
+import { useState, useEffect } from "react";
 
 const socialTask = [
   {
@@ -31,8 +33,65 @@ const socialTask = [
     path: "/",
   },
 ];
+const levelNames = [
+  "Bronze", // From 0 to 4999 coins
+  "Silver", // From 5000 coins to 24,999 coins
+  "Gold", // From 25,000 coins to 99,999 coins
+  "Platinum", // From 100,000 coins to 999,999 coins
+  "Diamond", // From 1,000,000 coins to 2,000,000 coins
+  "Epic", // From 2,000,000 coins to 10,000,000 coins
+  "Legendary", // From 10,000,000 coins to 50,000,000 coins
+  "Master", // From 50,000,000 coins to 100,000,000 coins
+  "GrandMaster", // From 100,000,000 coins to 1,000,000,000 coins
+  "Lord", // From 1,000,000,000 coins to ∞
+];
+
+const levelMinPoints = [
+  0, // Bronze
+  5000, // Silver
+  25000, // Gold
+  100000, // Platinum
+  1000000, // Diamond
+  2000000, // Epic
+  10000000, // Legendary
+  50000000, // Master
+  100000000, // GrandMaster
+  1000000000, // Lord
+];
 
 export default function SocialTask() {
+    const { user } = useUser();
+
+    const [levelIndex, setLevelIndex] = useState(0);
+    const [points, setPoints] = useState(0);
+
+    useEffect(() => {
+      if (user) {
+        setPoints(user.coins);
+        setLevelIndex(user.level);
+      }
+    }, [user]);
+
+    const calculateProgress = () => {
+      if (levelIndex >= levelNames.length - 1) {
+        return 100;
+      }
+      const currentLevelMin = levelMinPoints[levelIndex];
+      const nextLevelMin = levelMinPoints[levelIndex + 1];
+      const progress =
+        ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+      return Math.min(progress, 100);
+    };
+
+    useEffect(() => {
+      const currentLevelMin = levelMinPoints[levelIndex];
+      const nextLevelMin = levelMinPoints[levelIndex + 1];
+      if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+        setLevelIndex(levelIndex + 1);
+      } else if (points < currentLevelMin && levelIndex > 0) {
+        setLevelIndex(levelIndex - 1);
+      }
+    }, [points, levelIndex, levelMinPoints, levelNames.length]);
   return (
     <Box
       display={"flex"}
@@ -75,16 +134,16 @@ export default function SocialTask() {
             >
               <Flex justifyContent={"space-between"}>
                 <Text fontSize={"12px"} color={"#F5F5F5"}>
-                  Ambassador
+                  {levelNames[levelIndex]}
                   <Icon as={ChevronRightIcon} />
                 </Text>
                 <Text fontSize={"12px"} color={"#F5F5F5"}>
-                  2/4
+                  {levelIndex + 1} / {levelNames.length}
                 </Text>
               </Flex>
               <Flex alignItems={"center"} bg={"green"}>
                 <Progress
-                  value={80}
+                  value={calculateProgress()}
                   size="sm"
                   borderRadius={"full"}
                   bg={"#1D222E"}

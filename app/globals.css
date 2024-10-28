@@ -81,3 +81,31 @@ button:focus-visible {
 } */
 
 
+.circle-outer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90vw;
+  height: 90vw;
+  max-width: 360px;
+  max-height: 360px;
+}
+
+.circle-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes float {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}

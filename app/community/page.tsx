@@ -43,7 +43,11 @@ const Communities = [
     },
 ]
 
+
 export default function Community() {
+    
+
+   
   return (
     <Box
     display={"flex"}

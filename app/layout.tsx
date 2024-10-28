@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ChakraProvider, /* extendTheme */ } from "@chakra-ui/react";
 import "./globals.css";
+import { UserProvider } from "@/context/context";
 //import BackButtonHandler from "@/components/BackButtonHandler";
 
 // Import your local fonts
@@ -48,8 +49,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ChakraProvider /* theme={theme} */>
-          {/* <BackButtonHandler /> */}
-          {children}
+          <UserProvider>
+            {/* <BackButtonHandler /> */}
+            {children}
+          </UserProvider>
         </ChakraProvider>
       </body>
     </html>
