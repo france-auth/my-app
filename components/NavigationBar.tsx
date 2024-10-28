@@ -23,7 +23,6 @@ const NavItem: React.FC<NavItemProps> = ({
   <Link href={to}>
     <Box
       borderRadius={"10px"}
-      // w={{ base: "72px", sm: "76px" }}
       height={"80px"}
       p={"6px 16px"}
       textAlign={"center"}
@@ -36,8 +35,8 @@ const NavItem: React.FC<NavItemProps> = ({
     >
       {icon}
       <Text
-        fontSize={{ base: "9px", sm: "10.67px" }}
-        className="font-[9px] sm:font-[10.67px]"
+        // fontSize={{ base: "9px", sm: "10.67px" }}
+        className="text-[9px] sm:text-[10.67px]"
         fontWeight={500}
         textAlign={"center"}
         lineHeight={"12.91px"}

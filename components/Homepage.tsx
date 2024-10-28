@@ -261,7 +261,7 @@ export default function Homepage() {
         alignItems={"center"}
         justifyContent={"center"}
         pt={3}
-        gap={5}
+        gap={3}
       >
         <Box w={"90%"}>
           <Flex alignItems={"center"} gap={2}>
@@ -361,7 +361,7 @@ export default function Homepage() {
             borderTopRadius={"15px"}
             h={"80vh"}
             // pt={{ base: 2, sm: 5 }}
-            className="gap-0 pt-2 sm:gap-0 sm:pt-2 xl:pt-5 xl:gap-1"
+            className="gap-0 pt-2 sm:pt-2 xl:pt-3"
             alignItems={"center"}
           >
             <Flex
