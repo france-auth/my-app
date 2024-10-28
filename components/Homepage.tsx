@@ -359,8 +359,8 @@ export default function Homepage() {
             bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
             w={"100%"}
             borderTopRadius={"15px"}
-            h={"80vh"}
-            // pt={{ base: 2, sm: 5 }}
+            h={"77vh"}
+            // bg={'yellow'}
             className="gap-0 pt-2 sm:pt-2 xl:pt-3"
             alignItems={"center"}
           >
@@ -368,7 +368,6 @@ export default function Homepage() {
               w={"80%"}
               p={"3px"}
               gap={"4px"}
-              bg={"red"}
               borderRadius={"10px"}
               mx={"auto"}
               bgGradient={
@@ -440,12 +439,11 @@ export default function Homepage() {
 
             <Box
               w={"100%"}
-              // h={"30vh"}
               display={"flex"}
               flexDirection={"column"}
               justifyContent={"center"}
               alignItems={"center"}
-              className="circle-outer h-[30vh] sm:h-[45vh]"
+              className="circle-outer h-[30vh] sm:h-[35vh]"
               onClick={handleCardClick}
             >
               <Box
@@ -456,7 +454,7 @@ export default function Homepage() {
                 justifyContent={"center"}
                 alignItems={"center"}
                 // overflow={'hidden'}
-                mt={{ base: 2, sm: 5 }}
+                mt={2}
                 className="circle-inner"
               >
                 <Image
@@ -464,7 +462,6 @@ export default function Homepage() {
                   src="/FloatingCoins.png"
                   position={"relative"}
                   zIndex={1}
-                  // w={{ base: "70%", sm: "90%" }}
                   className="w-[70%] sm:w-[100%]"
                 />
                 <Image
@@ -480,7 +477,7 @@ export default function Homepage() {
             <Box
               w={"100%"}
               h={"35.33px"}
-              mt={{ base: 2, sm: 5 }}
+              mt={2}
               px={"10.67px"}
               alignItems={"center"}
               justifyContent={"center"}
