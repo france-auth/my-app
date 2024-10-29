@@ -15,14 +15,14 @@ const Wheel = dynamic(
 );
 
 const data = [
-  { option: "100$" },
-  { option: "200$" },
-  { option: "300$" },
-  { option: "400$" },
-  { option: "500$" },
-  { option: "600$" },
-  { option: "700$" },
-  { option: "800$" },
+  { option: "100XP" },
+  { option: "200XP" },
+  { option: "300XP" },
+  { option: "400XP" },
+  { option: "500XP" },
+  { option: "600XP" },
+  { option: "700XP" },
+  { option: "800XP" },
 ];
 
 type UserData = {
