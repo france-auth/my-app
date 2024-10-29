@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
       where: { id: userCard.id },
       data: { level: nextLevel },
     });
+    console.log(updatedCardPurchase)
 
     const nextCost = Math.floor(
       card.baseCost * Math.pow(card.costIncrease, nextLevel)

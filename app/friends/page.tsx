@@ -47,11 +47,12 @@ const levelMinPoints = [
 ];
 
 export default function Friends() {
-  const {user} = useUser()
+  const { user } = useUser();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [referredUser, setReferredUsers] = useState<any[]>([]);
-const { onCopy, value, hasCopied } = useClipboard(
-  `https://t.me/Slothgames_bot?start=${user?.telegramId}`
-);
+  const { onCopy, value, hasCopied } = useClipboard(
+    `https://t.me/Slothgames_bot?start=${user?.telegramId}`
+  );
   const handleInviteFriend = () => {
     const utils = initUtils();
     const inviteLink = `https://t.me/Slothgames_bot?start=${user?.telegramId}`;
@@ -78,45 +79,43 @@ const { onCopy, value, hasCopied } = useClipboard(
     }
   };
 
-  useEffect(()=>{
-    if(user){
-      fetchReferredUsers(user.telegramId)
+  useEffect(() => {
+    if (user) {
+      fetchReferredUsers(user.telegramId);
     }
-  }, [user])
+  }, [user]);
+  console.log(referredUser);
 
+  const [levelIndex, setLevelIndex] = useState(0);
+  const [points, setPoints] = useState(0);
 
-   const [levelIndex, setLevelIndex] = useState(0);
-   const [points, setPoints] = useState(0);
+  useEffect(() => {
+    if (user) {
+      setPoints(user.coins);
+      setLevelIndex(user.level);
+    }
+  }, [user]);
 
-   useEffect(() => {
-     if (user) {
-       setPoints(user.coins);
-       setLevelIndex(user.level);
-     }
-   }, [user]);
+  const calculateProgress = () => {
+    if (levelIndex >= levelNames.length - 1) {
+      return 100;
+    }
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    const progress =
+      ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+    return Math.min(progress, 100);
+  };
 
-   const calculateProgress = () => {
-     if (levelIndex >= levelNames.length - 1) {
-       return 100;
-     }
-     const currentLevelMin = levelMinPoints[levelIndex];
-     const nextLevelMin = levelMinPoints[levelIndex + 1];
-     const progress =
-       ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
-     return Math.min(progress, 100);
-   };
-
-   useEffect(() => {
-     const currentLevelMin = levelMinPoints[levelIndex];
-     const nextLevelMin = levelMinPoints[levelIndex + 1];
-     if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
-       setLevelIndex(levelIndex + 1);
-     } else if (points < currentLevelMin && levelIndex > 0) {
-       setLevelIndex(levelIndex - 1);
-     }
-   }, [points, levelIndex, levelMinPoints, levelNames.length]);
-
-
+  useEffect(() => {
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+      setLevelIndex(levelIndex + 1);
+    } else if (points < currentLevelMin && levelIndex > 0) {
+      setLevelIndex(levelIndex - 1);
+    }
+  }, [points, levelIndex, levelMinPoints, levelNames.length]);
 
   return (
     <Box

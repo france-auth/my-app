@@ -234,6 +234,7 @@ function Achievements({}: Props) {
           {remainingUsers.map((user: User, index: number) => {
             return (
               <Flex
+              key={index}
                 mt={4}
                 h={"10vh"}
                 w={"95%"}

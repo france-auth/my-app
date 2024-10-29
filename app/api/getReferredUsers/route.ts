@@ -3,9 +3,13 @@ import { prisma } from '@/lib/prisma'; // Adjust the path to your Prisma client
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
 ) {
-  const { userId } = params;
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get('userId'); // Extract userId from query params
+
+  if (!userId) {
+    return NextResponse.json({ message: 'User ID is required' }, { status: 400 });
+  }
 
   try {
     // Step 1: Find the user with the given telegramId
@@ -27,6 +31,7 @@ export async function GET(
 
     // Step 3: Fetch the details of each referred user using the referredId
     const referredUsers = await Promise.all(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
       referrals.map((referral: any) =>
         prisma.user.findUnique({
           where: {

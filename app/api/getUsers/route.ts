@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma'; // Adjust the path to your Prisma client
 
 export async function GET(request: NextRequest) {
+  request.json()
   try {
     // Fetch all users from the database
     const users = await prisma.user.findMany();

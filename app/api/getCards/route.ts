@@ -24,12 +24,14 @@ export async function GET(request: NextRequest) {
     const userPurchases = await prisma.cardPurchase.findMany({
       where: {
         userId,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         cardId: { in: cards.map((card: any) => card.id) }, // Match the card IDs
       },
     });
 
     // Map the user's purchases for quick lookup by cardId
     const purchaseMap: Record<string, CardPurchase> = userPurchases.reduce(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (acc: any, purchase: any) => {
         acc[purchase.cardId] = purchase;
         return acc;
@@ -38,6 +40,7 @@ export async function GET(request: NextRequest) {
     );
 
     // Format the cards with user-specific details
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const formattedCards = cards.map((card:any) => {
       const userPurchase = purchaseMap[card.id]; // Find the user's purchase record for this card
       const level = userPurchase ? userPurchase.level : 0;

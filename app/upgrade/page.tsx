@@ -179,8 +179,9 @@ export default function Upgrades() {
         duration: 5000,
         isClosable: true,
       });
-      setUser(result.updatedUser)
+      setUser(result.updatedUser);
       console.log("Purchase Result:", result);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Error:", err);
       toast.update(toastId, {
@@ -221,32 +222,33 @@ export default function Upgrades() {
       isClosable: true,
     });
     try {
-          const response = await fetch("/api/upgradeCard", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ userId, cardId }),
-          });
+      const response = await fetch("/api/upgradeCard", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, cardId }),
+      });
 
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Failed to purchase card");
-          }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to purchase card");
+      }
 
-          const result = await response.json();
-          setCards((prevCards) =>
-            prevCards?.map((card) => (card.id === cardId ? result.card : card))
-          );
+      const result = await response.json();
+      setCards((prevCards) =>
+        prevCards?.map((card) => (card.id === cardId ? result.card : card))
+      );
 
-               toast.update(toastId, {
-                 title: "Card Upgrade successful!",
-                 status: "success",
-                 duration: 5000,
-                 isClosable: true,
-               });
-               setUser(result.updatedUser);
-               console.log("Purchase Result:", result);
+      toast.update(toastId, {
+        title: "Card Upgrade successful!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      setUser(result.updatedUser);
+      console.log("Purchase Result:", result);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error("Error upgrading card:", err);
       toast.update(toastId, {
