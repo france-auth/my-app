@@ -145,11 +145,12 @@ export default function Roulette() {
       setPrizeNumber(newPrizeNumber);
       setMustSpin(true);
       try {
-       const user =  await updateUserProfile({ lastSpinTime: now });
-       setUser(user)
-      } catch (error) {
-        console.log(error)
-      }
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Ensure the wheel starts
+      const updatedUser = await updateUserProfile({ lastSpinTime: now });
+      setUser(updatedUser);
+    } catch (error) {
+      console.log("Error updating user profile:", error);
+    }
     }
   };
 
