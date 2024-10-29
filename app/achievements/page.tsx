@@ -9,7 +9,6 @@ import {
   WrapItem,
   Avatar,
 } from "@chakra-ui/react";
-import Link from "next/link";
 import NavigationBar from "@/components/NavigationBar";
 import { useEffect, useState } from "react";
 import { useUser } from "@/context/context";
