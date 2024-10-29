@@ -239,7 +239,8 @@ export default function Homepage() {
   }, [userData]);
 
    useEffect(() => {
-     if (user) {
+    const handlePPh = async ()=>{
+         if (user) {
        const now = new Date();
        const lastUpdate = user.lastEarningsUpdate
          ? new Date(user.lastEarningsUpdate)
@@ -253,11 +254,19 @@ export default function Homepage() {
 
        // Update the points and sync with backend
        const newPoints = user.coins + earnedCoins;
-       setPoints(newPoints);
+       
 
        // Update the backend with new coins and the latest earnings update time
-       updateUserProfile({ coins: newPoints, lastEarningsUpdate: now });
+       await updateUserProfile({ coins: newPoints, lastEarningsUpdate: now });
+    
+       setPoints(newPoints);
+       
      }
+    }
+
+    if(user){
+      handlePPh();
+    }
    }, [user]);
 
 useEffect(() => {

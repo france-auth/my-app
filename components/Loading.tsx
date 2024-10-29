@@ -5,26 +5,24 @@ export default function Loading() {
   return (
     <Flex
       minH={"100vh"}
-      bgImage={"/bgImage.png"}
-      bgColor={"#12161F"}
+      bgGradient="linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"
       minW={"100vw"}
       bgSize={"auto"}
       justifyContent={"space-between"}
       alignItems={"center"}
       color={"white"}
-      direction={'column'}
+      direction={"column"}
       gap={10}
-      bgRepeat={'no-repeat'}
     >
-      <Box pt={'35%'}>
-        <Heading>
-          SoftNote<sup>™</sup>
+      <Box pt={"35%"}>
+        <Heading fontSize={'36px'}>
+          SoftNote Rush
         </Heading>
-        <Text color={"#4979D1"}>-Rush By TECTUM-</Text>
+        <Text color={"#4979D1"} textAlign={'center'} fontSize={'20px'}> By TECTUM</Text>
       </Box>
 
-      <Box >
-        <Image src="/Welcome.png" width={'300px'} alt="welcome img" />
+      <Box>
+        <Image src="/Welcome.png" width={"300px"} alt="welcome img" />
       </Box>
     </Flex>
   );

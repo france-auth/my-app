@@ -112,6 +112,20 @@ model UserTask {
   task        Task     @relation(fields: [taskId], references: [id])
 }
 
+model TriviaState {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  tid             Int       @default(1) @unique
+  questions      Json
+  lastTriviaDate String
+}
+
+model Question {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  text     String
+  options  String[] // Array of answer options
+  answer   String   // Correct answer
+  createdAt DateTime @default(now())
+}
 
 enum CardCategory {
   SKILL
