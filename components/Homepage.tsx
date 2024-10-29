@@ -225,13 +225,7 @@ export default function Homepage() {
     return `+${profit}`;
   };
 
-  useEffect(() => {
-    const pointsPerSecond = Math.floor(profitPerHour / 3600);
-    const interval = setInterval(() => {
-      setPoints((prevPoints) => prevPoints + pointsPerSecond);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [profitPerHour]);
+
 
   useEffect(() => {
     if (userData) {
@@ -243,6 +237,45 @@ export default function Homepage() {
       setFloatingEnergy(userData.taps);
     }
   }, [userData]);
+
+   useEffect(() => {
+     if (user) {
+       const now = new Date();
+       const lastUpdate = user.lastEarningsUpdate
+         ? new Date(user.lastEarningsUpdate)
+         : now; // If null, set to now
+       const elapsedSeconds = Math.floor(
+         (now.getTime() - lastUpdate.getTime()) / 1000
+       );
+
+       // Calculate the earned coins since the last update
+       const earnedCoins = (user.profitPerHour / 3600) * elapsedSeconds;
+
+       // Update the points and sync with backend
+       const newPoints = user.coins + earnedCoins;
+       setPoints(newPoints);
+
+       // Update the backend with new coins and the latest earnings update time
+       updateUserProfile({ coins: newPoints, lastEarningsUpdate: now });
+     }
+   }, [user]);
+
+useEffect(() => {
+  if (profitPerHour > 0) {
+  
+    const interval = setInterval(() => {
+      const pointsToAdd = profitPerHour / 3600; // Fractional points per second
+      
+
+      setPoints((prevPoints) => prevPoints + pointsToAdd); // Add fractional points
+      
+    }, 1000); // Every second
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }
+}, [profitPerHour]);
+
+
   return (
     <Box
       display={"flex"}
@@ -426,13 +459,13 @@ export default function Homepage() {
                 lineHeight={"14.52px"}
               >
                 {" "}
-                {userData && formatProfitPerHour(userData.profitPerHour)} per
+                {userData && formatProfitPerHour(profitPerHour)} per
                 hour
               </Text>
               <Flex h={"36px"} gap={3} alignItems={"center"}>
                 <Image alt="coin img" src="/icons/coin.png" />
                 <Text fontSize={"29.33px"} fontWeight={600} color={"#DDE2E7"}>
-                  {points}
+                  {points.toFixed(0)}
                 </Text>
               </Flex>
             </Box>

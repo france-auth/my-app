@@ -33,7 +33,7 @@ model User {
   tapLimitBoost   Int      @default(1)
   tappingGuruUses Int      @default(3)
   profitPerHour   Int      @default(0)
-  lastEarningsUpdate DateTime @default(now())
+  lastEarningsUpdate DateTime? 
   lastCheckIn     DateTime?
   checkInStreak   Int      @default(0)
   lastSpinTime  DateTime?
