@@ -16,11 +16,107 @@ import { CheckIcon } from "@chakra-ui/icons";
 import { FaShareAlt } from "react-icons/fa";
 import { MdContentCopy } from "react-icons/md";
 import NavigationBar from "@/components/NavigationBar";
+import { initUtils } from "@telegram-apps/sdk";
+import { useUser } from "@/context/context";
+import { useEffect, useState } from "react";
 
+const levelNames = [
+  "Bronze", // From 0 to 4999 coins
+  "Silver", // From 5000 coins to 24,999 coins
+  "Gold", // From 25,000 coins to 99,999 coins
+  "Platinum", // From 100,000 coins to 999,999 coins
+  "Diamond", // From 1,000,000 coins to 2,000,000 coins
+  "Epic", // From 2,000,000 coins to 10,000,000 coins
+  "Legendary", // From 10,000,000 coins to 50,000,000 coins
+  "Master", // From 50,000,000 coins to 100,000,000 coins
+  "GrandMaster", // From 100,000,000 coins to 1,000,000,000 coins
+  "Lord", // From 1,000,000,000 coins to ∞
+];
+
+const levelMinPoints = [
+  0, // Bronze
+  5000, // Silver
+  25000, // Gold
+  100000, // Platinum
+  1000000, // Diamond
+  2000000, // Epic
+  10000000, // Legendary
+  50000000, // Master
+  100000000, // GrandMaster
+  1000000000, // Lord
+];
 
 export default function Friends() {
-  const placeholder = "http://example.com/aBcD1234EfGh5678IjKlMnOpQrStUvWxYz9876";
-const { onCopy, value, setValue, hasCopied } = useClipboard("http://example.com/aBcD1234EfGh5678IjKlMnOpQrStUvWxYz9876");
+  const {user} = useUser()
+  const [referredUser, setReferredUsers] = useState<any[]>([]);
+const { onCopy, value, hasCopied } = useClipboard(
+  `https://t.me/Slothgames_bot?start=${user?.telegramId}`
+);
+  const handleInviteFriend = () => {
+    const utils = initUtils();
+    const inviteLink = `https://t.me/Slothgames_bot?start=${user?.telegramId}`;
+    const shareText = `Join me on this awesome Telegram mini app!`;
+    const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(
+      inviteLink
+    )}&text=${encodeURIComponent(shareText)}`;
+    utils.openTelegramLink(fullUrl);
+  };
+
+  const fetchReferredUsers = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/getReferredUsers?userId=${userId}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch referred users");
+      }
+
+      const data = await response.json();
+      setReferredUsers(data.referredUsers);
+      console.log(data.referredUsers);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(()=>{
+    if(user){
+      fetchReferredUsers(user.telegramId)
+    }
+  }, [user])
+
+
+   const [levelIndex, setLevelIndex] = useState(0);
+   const [points, setPoints] = useState(0);
+
+   useEffect(() => {
+     if (user) {
+       setPoints(user.coins);
+       setLevelIndex(user.level);
+     }
+   }, [user]);
+
+   const calculateProgress = () => {
+     if (levelIndex >= levelNames.length - 1) {
+       return 100;
+     }
+     const currentLevelMin = levelMinPoints[levelIndex];
+     const nextLevelMin = levelMinPoints[levelIndex + 1];
+     const progress =
+       ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+     return Math.min(progress, 100);
+   };
+
+   useEffect(() => {
+     const currentLevelMin = levelMinPoints[levelIndex];
+     const nextLevelMin = levelMinPoints[levelIndex + 1];
+     if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+       setLevelIndex(levelIndex + 1);
+     } else if (points < currentLevelMin && levelIndex > 0) {
+       setLevelIndex(levelIndex - 1);
+     }
+   }, [points, levelIndex, levelMinPoints, levelNames.length]);
+
+
 
   return (
     <Box
@@ -64,16 +160,16 @@ const { onCopy, value, setValue, hasCopied } = useClipboard("http://example.com/
             >
               <Flex justifyContent={"space-between"}>
                 <Text fontSize={"12px"} color={"#F5F5F5"}>
-                  Ambassador
+                  {levelNames[levelIndex]}
                   <Icon as={ChevronRightIcon} />
                 </Text>
                 <Text fontSize={"12px"} color={"#F5F5F5"}>
-                  2/4
+                  {levelIndex + 1} / {levelNames.length}
                 </Text>
               </Flex>
               <Flex alignItems={"center"} bg={"green"}>
                 <Progress
-                  value={80}
+                  value={calculateProgress()}
                   size="sm"
                   borderRadius={"full"}
                   bg={"#1D222E"}
@@ -137,66 +233,74 @@ const { onCopy, value, setValue, hasCopied } = useClipboard("http://example.com/
             <span className="text-[#93BAFF]">cool rewards</span>
           </Text>
 
-          <Image src="/yellow-dude.png" w={"344px"} h={"295px"} mx={"auto"} alt="yellow dude" />
+          <Image
+            src="/yellow-dude.png"
+            w={"344px"}
+            h={"295px"}
+            mx={"auto"}
+            alt="yellow dude"
+          />
 
           <Flex
-          w={'90%'}
-          borderRadius={'10px'}
-          mx={'auto'}
-          bgGradient={
-            "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
-          }
-          p={'2px'}
-          alignItems={'center'}
+            w={"90%"}
+            borderRadius={"10px"}
+            mx={"auto"}
+            bgGradient={
+              "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
+            }
+            p={"2px"}
+            alignItems={"center"}
           >
-
-            <Box display={'flex'} w={'100%'} h={'100%'} bg={"#1d222e"} borderRadius={"10px"} alignItems={'center'}>
-            <Input
-              placeholder={placeholder}
-              value={value}
-              onChange={(e) => {
-                setValue(e.target.value);
-              }}
-              mr={2}
-              alignSelf={'center'}
-              height={"41px"}
-              outline="none"
-              boxShadow="none"
-              _focus={{ boxShadow: "none" }}
-              border="none"
-              color="white"
-              fontSize="10px"
-              _placeholder={{ color: "white", fontSize: "10px" }}
-              alignItems={'center'}
-            />
-            <Button
-              w={'41px'}
-              height={"41px"}
-              onClick={onCopy}
-              bg={"#4979d1"}
-              borderRadius={'0px'}
-              mr={'0.5'}
-              _hover={{ bg: "#4979d1", border: "none", outline: "none" }}
+            <Box
+              display={"flex"}
+              w={"100%"}
+              h={"100%"}
+              bg={"#1d222e"}
+              borderRadius={"10px"}
+              alignItems={"center"}
             >
-              {hasCopied ? (
-                <CheckIcon boxSize={5} color={'white'}/>
-              ) : (
-                <Icon as={MdContentCopy} boxSize={5} color={'white'}/>
-              )}{" "}
-              {/* Switches between icons */}
-            </Button>
-            <Button
-              w={'41px'}
-              height={"41px"}
-              onClick={onCopy}
-              bg={"#4979d1"}
-              borderRadius={'0px 10px 10px 0px'}
-              _hover={{ bg: "#4979d1", border: "none", outline: "none" }}
-            >
-                <Icon as={FaShareAlt} boxSize={5} color={'white'}/>
-              {/* Switches between icons */}
-            </Button>
-            
+              <Input
+                value={value}
+                mr={2}
+                alignSelf={"center"}
+                height={"41px"}
+                outline="none"
+                boxShadow="none"
+                _focus={{ boxShadow: "none" }}
+                border="none"
+                color="white"
+                fontSize="10px"
+                _placeholder={{ color: "white", fontSize: "10px" }}
+                alignItems={"center"}
+                isDisabled={true}
+              />
+              <Button
+                w={"41px"}
+                height={"41px"}
+                onClick={onCopy}
+                bg={"#4979d1"}
+                borderRadius={"0px"}
+                mr={"0.5"}
+                _hover={{ bg: "#4979d1", border: "none", outline: "none" }}
+              >
+                {hasCopied ? (
+                  <CheckIcon boxSize={5} color={"white"} />
+                ) : (
+                  <Icon as={MdContentCopy} boxSize={5} color={"white"} />
+                )}{" "}
+                {/* Switches between icons */}
+              </Button>
+              <Button
+                w={"41px"}
+                height={"41px"}
+                onClick={handleInviteFriend}
+                bg={"#4979d1"}
+                borderRadius={"0px 10px 10px 0px"}
+                _hover={{ bg: "#4979d1", border: "none", outline: "none" }}
+              >
+                <Icon as={FaShareAlt} boxSize={5} color={"white"} />
+                {/* Switches between icons */}
+              </Button>
             </Box>
           </Flex>
 

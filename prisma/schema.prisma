@@ -36,6 +36,7 @@ model User {
   lastEarningsUpdate DateTime @default(now())
   lastCheckIn     DateTime?
   checkInStreak   Int      @default(0)
+  lastSpinTime  DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

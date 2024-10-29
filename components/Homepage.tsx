@@ -477,7 +477,7 @@ export default function Homepage() {
             <Box
               w={"100%"}
               h={"35.33px"}
-              mt={2}
+              mt={5}
               px={"10.67px"}
               alignItems={"center"}
               justifyContent={"center"}

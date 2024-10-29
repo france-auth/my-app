@@ -29,18 +29,21 @@ const NavItem: React.FC<NavItemProps> = ({
       gap={"8px"}
       alignItems={"center"}
       justifyContent={"center"}
-      className={`flex flex-col w-[72px] sm:w-[76px] ${
+      width={"72px"}
+      minW={"72px"}
+      className={`flex flex-col ${
         isActive ? "text-[#f5f5f5] bg-[#1d222e]" : "text-[#4979d1] bg-[#1f2024]"
       }`}
     >
       {icon}
       <Text
         // fontSize={{ base: "9px", sm: "10.67px" }}
-        className="text-[9px] sm:text-[10.67px]"
+        // className="text-[9px] sm:text-[10.67px]"
+        className="text-[9px] "
         fontWeight={500}
         textAlign={"center"}
         lineHeight={"12.91px"}
-        width={label === "Power Up" ? "35px" : ""}
+        width={label === "Power Up" ? "35px" : "60px"}
       >
         {label}
       </Text>
@@ -49,13 +52,13 @@ const NavItem: React.FC<NavItemProps> = ({
 );
 
 const NavigationBar: React.FC = () => {
- const [pathname, setPathname] = useState("/"); // Default to "/"
+  const [pathname, setPathname] = useState("/"); // Default to "/"
 
- useEffect(() => {
-   if (typeof window !== "undefined") {
-     setPathname(window.location.pathname);
-   }
- }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setPathname(window.location.pathname);
+    }
+  }, []);
 
   const isGameActive = pathname.startsWith("/play2earn");
   const isTriviaActive = pathname.startsWith("/trivia");
@@ -67,8 +70,9 @@ const NavigationBar: React.FC = () => {
   const isSocialActive = pathname.startsWith("/socialtask");
   const isDailyRewardActive = pathname.startsWith("/dailyreward");
   const isPuzzleActive = pathname.startsWith("/puzzle");
+  const isPowerUpActive = pathname.startsWith("/upgrade"); // Match the route properly
   return (
-    <nav className="fixed bottom-0  bg-[#12161E] w-[100vw] z-40 p-[5px]">
+    <nav className="fixed bottom-0 bg-[#12161E] w-[100vw] z-40 p-[5px]">
       <div className="flex justify-center items-center w-[100%] gap-1">
         <NavItem
           icon={
@@ -95,7 +99,7 @@ const NavigationBar: React.FC = () => {
             isGameActive ||
             isTriviaActive ||
             isRouletteActive ||
-            isJigsawActive||
+            isJigsawActive ||
             pathname === "/"
           }
           label="Start The Rush"
@@ -125,7 +129,7 @@ const NavigationBar: React.FC = () => {
             </svg>
           }
           label="Power Up"
-          isActive={pathname === "/powerUps"}
+          isActive={isPowerUpActive}
           to="/upgrade"
         />
         <NavItem

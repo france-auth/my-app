@@ -76,6 +76,7 @@ function DailyReward({}: Props) {
       if(user){
         setPoints(user.coins);
         setLevelIndex(user.level);
+        setActiveDay(user.checkInStreak)
       }
      },[user])
 

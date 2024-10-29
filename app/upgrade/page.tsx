@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Text, Flex, Image, Icon, Progress, Spinner } from "@chakra-ui/react";
+import { Box, Text, Flex, Image, Icon, Progress, Spinner, useToast} from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
 import { useState, useEffect } from "react";
@@ -21,16 +21,20 @@ const Upgrade = [
 interface Card {
   id: string;
   name: string;
-  category: "SKILL" | "BUSINESS" | "SPECIAL";
+  category: string;
   baseProfit: number;
   profitIncrease: number;
-  maxLevel: number;
   baseCost: number;
   costIncrease: number;
-  requires?: string;
   imagePath: string;
   coinIcon: string;
+  level: number; // Level is included here
+  userPurchased: boolean;
+  nextCost: number;
+  profitPerHour: number;
+  nextProfitPerHour: number;
 }
+
 const levelNames = [
   "Bronze", // From 0 to 4999 coins
   "Silver", // From 5000 coins to 24,999 coins
@@ -61,8 +65,8 @@ const levelMinPoints = [
 export default function Upgrades() {
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-      const { user } = useUser();
-      // const toast = useToast();
+      const { user, setUser } = useUser();
+      const toast = useToast();
 
       const [levelIndex, setLevelIndex] = useState(0);
       const [points, setPoints] = useState(0);
@@ -100,13 +104,14 @@ export default function Upgrades() {
   // Fetch cards from the backend API
   const fetchCards = async () => {
     try {
-      const response = await fetch("/api/getCards", { method: "GET" });
+      const response = await fetch(`/api/getCards?userId=${user?.id}`, { method: "GET" });
 
       if (!response.ok) {
         throw new Error("Failed to fetch cards");
       }
 
       const data: Card[] = await response.json();
+      console.log(data)
       setCards(data); // Set the fetched cards in state
     } catch (error) {
       console.error("Error fetching cards:", error);
@@ -118,11 +123,147 @@ export default function Upgrades() {
   // Use useEffect to fetch cards on component mount
   useEffect(() => {
     fetchCards();
-  }, []);
+  }, [user]);
+
+
+  const handlePurchase = async (
+    cardId: string,
+    userId: string,
+    cost: number
+  ) => {
+    if (!user) {
+      console.error("User data not available.");
+      return;
+    }
+
+    if (cost > user.coins) {
+      toast({
+        title: "Insufficient funds",
+        description: "You don't have enough coins to buy this card.",
+        duration: 3000,
+        isClosable: true,
+        status: "error",
+      });
+      return;
+    }
+
+    const toastId = toast({
+      title: "Purchasing card...",
+      status: "loading",
+      duration: null,
+      isClosable: true,
+    });
+
+    try {
+      const response = await fetch("/api/purchaseCard", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, cardId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to purchase card");
+      }
+
+      const result = await response.json();
+      setCards((prevCards) =>
+        prevCards?.map((card) => (card.id === cardId ? result.card : card))
+      );
+
+      toast.update(toastId, {
+        title: "Card purchased successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      setUser(result.updatedUser)
+      console.log("Purchase Result:", result);
+    } catch (err: any) {
+      console.error("Error:", err);
+      toast.update(toastId, {
+        title: "Failed to purchase the card. Please try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+
+  const handleUpgrade = async (
+    cardId: string,
+    userId: string,
+    cost: number
+  ) => {
+       if (!user) {
+         console.error("User data not available.");
+         return;
+       }
+
+    if (cost > user.coins) {
+      toast({
+        title: "Insufficient funds",
+        description: "You don't have enough coins to upgrade this card ",
+        duration: 3000,
+        isClosable: true,
+        status: "error",
+      });
+      return;
+    }
+
+    const toastId = toast({
+      title: "Upgrading card...",
+      status: "loading",
+      duration: null, // Keeps the toast open until manually closed or replaced
+      isClosable: true,
+    });
+    try {
+          const response = await fetch("/api/upgradeCard", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId, cardId }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to purchase card");
+          }
+
+          const result = await response.json();
+          setCards((prevCards) =>
+            prevCards?.map((card) => (card.id === cardId ? result.card : card))
+          );
+
+               toast.update(toastId, {
+                 title: "Card Upgrade successful!",
+                 status: "success",
+                 duration: 5000,
+                 isClosable: true,
+               });
+               setUser(result.updatedUser);
+               console.log("Purchase Result:", result);
+    } catch (err: any) {
+      console.error("Error upgrading card:", err);
+      toast.update(toastId, {
+        title: "Failed to upgrade the card. Please try again.",
+        description: err.response ? err.response.data : "Error purchasing card",
+        status: "error",
+        duration: 5000, // Automatically closes after 5 seconds
+        isClosable: true,
+      });
+    }
+  };
+
+
 
   if (loading) {
     return (
-      <Flex justify="center" align="center" height="100vh">
+      <Flex justify="center" align="center" height="100vh" direction={'column'} w={"full"}>
         <Spinner size="xl" color="blue.500" />
       </Flex>
     );
@@ -131,11 +272,7 @@ export default function Upgrades() {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgColor={"#12161F"}
-      bgImage={"./background.png"}
-      bgRepeat={"no-repeat"}
-      bgSize={"auto"}
-      bgPos={"center"}
+      bgColor={"#12161E"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -265,32 +402,65 @@ export default function Upgrades() {
             gap={"16px"}
             mt={5}
           >
-            {cards && cards.map((card, index) => {
-              return (
-                <Box
-                  key={index}
-                  w={"100%"}
-                  borderRadius={"16px"}
-                  border={"0.67px solid #99999933"}
-                  bg={"#1f2024"}
-                  p={"16px 6px"}
-                >
-                  <Flex alignItems={"center"} gap={"10px"}>
-                    <Image src={"/upgrade.png"} w={"48px"} alt="detail img" />
-                    <Flex flexDirection={"column"} w={"99px"}>
-                      <Text
-                        fontSize={"14px"}
-                        fontWeight={600}
-                        lineHeight={"19.36px"}
-                      >
-                        {card.name}
-                      </Text>
-                      <Text
-                        fontSize={"11px"}
-                        fontWeight={500}
-                        lineHeight={"14.52px"}
-                      >
-                        Profit per Hour
+            {cards &&
+              cards.map((card, index) => {
+                return (
+                  <Box
+                    key={index}
+                    w={"100%"}
+                    borderRadius={"16px"}
+                    border={"0.67px solid #99999933"}
+                    bg={"#1f2024"}
+                    p={"16px 6px"}
+                    onClick={() => {
+                      if (!user) return; // Ensure the user exists
+
+                      if (card.level >= 1) {
+                        handleUpgrade(card.id, user.id, card.nextCost); // Upgrade if level >= 1
+                      } else {
+                        handlePurchase(card.id, user.id, card.baseCost); // Purchase if level < 1
+                      }
+                    }}
+                  >
+                    <Flex alignItems={"center"} gap={"10px"}>
+                      <Image src={"/upgrade.png"} w={"48px"} alt="detail img" />
+                      <Flex flexDirection={"column"} w={"99px"}>
+                        <Text
+                          fontSize={"14px"}
+                          fontWeight={600}
+                          lineHeight={"19.36px"}
+                        >
+                          {card.name}
+                        </Text>
+                        <Text
+                          fontSize={"11px"}
+                          fontWeight={500}
+                          lineHeight={"14.52px"}
+                        >
+                          Profit per Hour
+                        </Text>
+                        <Flex alignItems={"center"}>
+                          <Image
+                            src="/icons/coin.png"
+                            w={"16px"}
+                            alt="coin img"
+                          />
+                          <Text fontSize={"14px"} fontWeight={500}>
+                            {card.nextProfitPerHour
+                              ? card.nextProfitPerHour
+                              : card.baseProfit}
+                          </Text>
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                    <Flex
+                      justifyContent={"space-between"}
+                      w={"147px"}
+                      mt={3}
+                      lineHeight={"10px"}
+                    >
+                      <Text fontSize={"12px"} fontWeight={500}>
+                        Level {card.level}
                       </Text>
                       <Flex alignItems={"center"}>
                         <Image
@@ -299,30 +469,13 @@ export default function Upgrades() {
                           alt="coin img"
                         />
                         <Text fontSize={"14px"} fontWeight={500}>
-                          {card.baseProfit}
+                          {card.nextCost ? card.nextCost : card.baseCost}
                         </Text>
                       </Flex>
                     </Flex>
-                  </Flex>
-                  <Flex
-                    justifyContent={"space-between"}
-                    w={"147px"}
-                    mt={3}
-                    lineHeight={"10px"}
-                  >
-                    <Text fontSize={"12px"} fontWeight={500}>
-                      Level 0
-                    </Text>
-                    <Flex alignItems={"center"}>
-                      <Image src="/icons/coin.png" w={"16px"} alt="coin img" />
-                      <Text fontSize={"14px"} fontWeight={500}>
-                        {card.baseCost}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                </Box>
-              );
-            })}
+                  </Box>
+                );
+              })}
           </Box>
         </Box>
       </Flex>
