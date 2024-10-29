@@ -145,7 +145,7 @@ export default function Roulette() {
       setPrizeNumber(newPrizeNumber);
       setMustSpin(true);
       try {
-      await new Promise((resolve) => setTimeout(resolve, 100)); // Ensure the wheel starts
+      await new Promise((resolve) => setTimeout(resolve, 12000)); // Ensure the wheel starts
       const updatedUser = await updateUserProfile({ lastSpinTime: now });
       setUser(updatedUser);
     } catch (error) {
