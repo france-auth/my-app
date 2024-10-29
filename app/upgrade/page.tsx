@@ -382,15 +382,18 @@ export default function Upgrades() {
                   height={"89px"}
                   borderRadius={"16px"}
                   border={"1px solid #4979D133"}
-                  p={"20px 30px"}
+                  // p={"20px 30px"}
+                  alignItems={'center'}
+                  justifyContent={'center'}
                   gap={"10px"}
                   display={"flex"}
                   flexDirection={"column"}
                 >
                   <Image
                     src={upgrade.image}
-                    w={"44px"}
-                    h={"59px"}
+                    w={"80%"}
+                    // h={"59px"}
+                    // mx={'auto'}
                     alt="upgrade img"
                   />
                 </Box>
@@ -425,7 +428,7 @@ export default function Upgrades() {
                     }}
                   >
                     <Flex alignItems={"center"} gap={"10px"}>
-                      <Image src={"/upgrade.png"} w={"48px"} alt="detail img" />
+                      <Image src={card.imagePath} w={"60px"} borderRadius={'10px'} alt="detail img" />
                       <Flex flexDirection={"column"} w={"99px"}>
                         <Text
                           fontSize={"14px"}
