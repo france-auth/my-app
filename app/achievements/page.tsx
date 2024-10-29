@@ -109,13 +109,13 @@ function Achievements({}: Props) {
                 <Flex alignItems={"center"} gap={2}>
                   <Wrap border={"1px solid white"} borderRadius={"50%"}>
                     <WrapItem>
-                      <Link href={"/badges"}>
+                      
                         <Avatar
                           size="sm"
                           name={currentUser?.username}
                           src={currentUser?.photoUrl}
                         />
-                      </Link>
+                     
                     </WrapItem>
                   </Wrap>
                   <Flex direction={"column"} lineHeight={"14px"}>
