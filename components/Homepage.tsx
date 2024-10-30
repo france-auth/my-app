@@ -379,7 +379,7 @@ useEffect(() => {
                 flexDirection={"column"}
                 justifyContent={"center"}
               >
-                <Text>400,375</Text>
+                <Text>{points.toFixed(0)}</Text>
               </Box>
             </Box>
           </Flex>
@@ -440,13 +440,6 @@ useEffect(() => {
                       >
                         {card.text}
                       </Text>
-                      <Text
-                        fontSize={"9.33px"}
-                        fontWeight={"500"}
-                        color={"#7585A7"}
-                      >
-                        {card.timer}
-                      </Text>
                     </Flex>
                   </Link>
                 );
@@ -468,8 +461,7 @@ useEffect(() => {
                 lineHeight={"14.52px"}
               >
                 {" "}
-                {userData && formatProfitPerHour(profitPerHour)} per
-                hour
+                {userData && formatProfitPerHour(profitPerHour)} per hour
               </Text>
               <Flex h={"36px"} gap={3} alignItems={"center"}>
                 <Image alt="coin img" src="/icons/coin.png" />
@@ -533,8 +525,6 @@ useEffect(() => {
                 <Text fontSize={"13px"} fontWeight={500} color={"#DDE2E7"}>
                   {`${floatingEnergy} / ${userData && userData.maxTaps}`}
                 </Text>
-
-             
               </Flex>
             </Box>
           </Flex>
