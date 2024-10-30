@@ -45,6 +45,7 @@ export default function Puzzle() {
   const [won, setWon] = useState<boolean>(false);
 
   const { user } = useUser();
+  console.log(user)
   const [levelIndex, setLevelIndex] = useState(0);
   const [points, setPoints] = useState(0);
   const toast = useToast();
@@ -53,6 +54,12 @@ export default function Puzzle() {
   useEffect(() => {
     NewGame();
   }, []);
+
+  useEffect(()=>{
+    if(user){
+      setPoints(user.coins)
+    }
+  },[user])
 
   // Handle game stop logic after win or loss
   useEffect(() => {
@@ -76,14 +83,17 @@ export default function Puzzle() {
     setSecondCard(null);
     setWon(false);
     setGameOver(false);
-
-    // Reset indication boxes to initial color (light gray)
     resetIndicate();
   }
 
   function handleSelectedCards(item: CardType): void {
     if (stopFlip || gameOver || won) return; // Prevent further actions if game is over or won
-    firstCard ? setSecondCard(item) : setFirstCard(item);
+
+    if(firstCard){
+      setSecondCard(item) 
+    } else{
+      setFirstCard(item);
+    }
   }
 
   useEffect(() => {
@@ -105,6 +115,12 @@ export default function Puzzle() {
     );
     setMatches((prevMatches) => prevMatches + 1);
     updateIndicate("green");
+    toast({
+      title: "Match success",
+      duration: 3000,
+      isClosable: true,
+      status: "success"
+    })
     resetSelection();
   }
 
@@ -216,7 +232,7 @@ export default function Puzzle() {
           <Box className="indicate" w="36px" h="36px" borderRadius="50%"></Box>
         </Flex>
 
-        <Box width="90%" p="4px 16px" bg={'red'}>
+        <Box width="90%" p="4px 16px" >
           <div className="board">
             {cardsArray.map((item) => (
               <Card

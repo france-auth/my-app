@@ -1,187 +1,188 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   Box,
   Flex,
   Text,
-  Icon,
-  Progress,
   Button,
+  Spinner,
+  Icon,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import Data, { CardType } from "@/components/data";
-import Card from "@/components/card";
-import { useState, useEffect } from "react";
-import { ChevronRightIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon, CloseIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
 import { useUser } from "@/context/context";
 
-const levelNames = [
-  "Bronze",
-  "Silver",
-  "Gold",
-  "Platinum",
-  "Diamond",
-  "Epic",
-  "Legendary",
-  "Master",
-  "GrandMaster",
-  "Lord",
-];
+interface Question {
+  text: string;
+  options: string[];
+  answer: string;
+}
+type UserData = {
+  id: string;
+  telegramId: string;
+  username: string;
+  photoUrl?: string; // Optional field
+  level: number;
+  coins: number;
+  taps: number;
+  maxTaps: number;
+  refillRate: number;
+  lastRefillTime: Date;
+  slots: number;
+  referralCount: number;
+  referredBy?: string; // Optional field
+  freeSpins: number;
+  multitap: number;
+  tapLimitBoost: number;
+  tappingGuruUses: number;
+  profitPerHour: number;
+  lastEarningsUpdate: Date;
+  lastCheckIn?: Date; // Optional field
+  checkInStreak: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-const levelMinPoints = [
-  0, 5000, 25000, 100000, 1000000, 2000000, 10000000, 50000000, 100000000,
-  1000000000,
-];
+type UpdateData = Partial<UserData>;
 
-const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-
-export default function Puzzle() {
-  const [cardsArray, setCardsArray] = useState<CardType[]>([]);
-  const [moves, setMoves] = useState<number>(0);
-  const [matches, setMatches] = useState<number>(0);
-  const [firstCard, setFirstCard] = useState<CardType | null>(null);
-  const [secondCard, setSecondCard] = useState<CardType | null>(null);
-  const [stopFlip, setStopFlip] = useState<boolean>(false);
-  const [gameOver, setGameOver] = useState<boolean>(false);
-  const [won, setWon] = useState<boolean>(false);
-  const [disabled, setDisabled] = useState<boolean>(false); // Track if the game is locked
-  const [buttonText, setButtonText] = useState<string>("Play Again"); // Track button text
-  const toast = useToast();
-
-  const { user } = useUser();
-  const [levelIndex, setLevelIndex] = useState(0);
-  const [points, setPoints] = useState(0);
+export default function Trivia() {
+  const {user, setUser} = useUser()
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+  const [selectedValue, setSelectedValue] = useState<string>("");
+  const [score, setScore] = useState<number | null>(null);
+  const toast = useToast()
+  const [loading, setLoading] = useState<boolean>(true);
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Modal control
 
   useEffect(() => {
-    checkLastPlayTime(); // Check if the player is locked out on load
-    NewGame();
+    const fetchTrivia = async () => {
+      try {
+        const response = await fetch("/api/trivia");
+        if (!response.ok) {
+          throw new Error("Failed to fetch trivia questions");
+        }
+        const data = await response.json();
+        setQuestions(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching trivia questions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrivia();
   }, []);
 
-  // Check if 24 hours have passed since the last play
-  function checkLastPlayTime() {
-    const lastPlay = localStorage.getItem("lastPlayTime");
-    if (lastPlay) {
-      const elapsed = Date.now() - parseInt(lastPlay);
-      if (elapsed < TWENTY_FOUR_HOURS) {
-        setDisabled(true); // Lock the game if within 24 hours
-        setButtonText(won ? "Claim 100 XP" : "Try Again");
-      } else {
-        setDisabled(false); // Unlock if 24 hours have passed
-        setButtonText("Play Again");
-      }
+  const handleNextQuestion = () => {
+    const newAnswers = [...selectedAnswers];
+    newAnswers[currentQuestionIndex] = selectedValue;
+    setSelectedAnswers(newAnswers);
+    setSelectedValue("");
+
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
-  }
+  };
 
-  // Store the last play timestamp in localStorage
-  function setLastPlayTime() {
-    localStorage.setItem("lastPlayTime", Date.now().toString());
-  }
+   const handleSubmit = () => {
+     // Ensure the last selected answer is stored before submitting
+     const newAnswers = [...selectedAnswers];
+     newAnswers[currentQuestionIndex] = selectedValue;
+     setSelectedAnswers(newAnswers);
 
-  // Start a new game if not locked
-  function NewGame(): void {
-    if (disabled) return; // Prevent playing if locked
+     let correctCount = 0;
 
-    const shuffledArray = Data.sort(() => 0.5 - Math.random()).map((card) => ({
-      ...card,
-      matched: false,
-    }));
-    setCardsArray(shuffledArray);
-    setMoves(0);
-    setMatches(0);
-    setFirstCard(null);
-    setSecondCard(null);
-    setWon(false);
-    setGameOver(false);
-    resetIndicate();
-  }
+     newAnswers.forEach((answer, index) => {
+       if (answer === questions[index].answer) {
+         correctCount++;
+       }
+     });
 
-  // Handle card selection
-  function handleSelectedCards(item: CardType): void {
-    if (stopFlip || gameOver || won || disabled) return; // Prevent actions if locked or game over
-    firstCard ? setSecondCard(item) : setFirstCard(item);
-  }
+     setScore(correctCount);
+     onOpen(); // Open the modal
+   };
 
-  useEffect(() => {
-    if (firstCard && secondCard) {
-      setStopFlip(true);
-      if (firstCard.name === secondCard.name) {
-        handleMatchSuccess();
-      } else {
-        handleMatchFailure();
-      }
+     const updateUserProfile = async (updatedFields: UpdateData) => {
+       if (!user || !user.telegramId) {
+         console.error("User data or telegramId is missing.");
+         return;
+       }
+
+       try {
+         const response = await fetch(
+           `/api/updateprofile?userId=${user.telegramId}`,
+           {
+             method: "PATCH",
+             headers: {
+               "Content-Type": "application/json",
+             },
+             body: JSON.stringify(updatedFields),
+           }
+         );
+
+         if (!response.ok) {
+           const errorText = await response.text(); // Read raw text to handle empty responses
+           console.error(
+             "Failed to update profile:",
+             errorText || "Unknown error"
+           );
+           return null;
+         }
+
+         const updatedUser = await response.json();
+         console.log("Profile updated successfully:", updatedUser);
+         return updatedUser; // Return the updated user if needed
+       } catch (error) {
+         console.error("Error updating profile:", error);
+       }
+     };
+
+
+   const handleClaim =async()=>{
+    if(!user) return;
+    try {
+      const updateduser = await updateUserProfile({coins: user.coins + 100})
+      toast({
+        title: "Claim Successful",
+        description: "You've successfully claimed 100xp",
+        duration: 3000,
+        isClosable: true
+      })
+      setUser(updateduser)
+      onClose();
+    } catch (error) {
+      console.log(error)
     }
-  }, [firstCard, secondCard]);
+   }
 
-  function handleMatchSuccess() {
-    setCardsArray((prevArray) =>
-      prevArray.map((card) =>
-        card.name === firstCard!.name ? { ...card, matched: true } : card
-      )
-    );
-    setMatches((prevMatches) => prevMatches + 1);
-    updateIndicate("green");
-    resetSelection();
-  }
-
-  function handleMatchFailure() {
-    updateIndicate("red");
-    setTimeout(resetSelection, 1000);
-  }
-
-  function resetSelection(): void {
-    setFirstCard(null);
-    setSecondCard(null);
-    setStopFlip(false);
-    setMoves((prevMoves) => prevMoves + 1);
-  }
-
-  useEffect(() => {
-    if (moves >= 3 && matches < 2) {
-      setGameOver(true);
-      setButtonText("Try Again");
-      setLastPlayTime(); // Record last play time on loss
-      setDisabled(true);
-    }
-    if (matches >= 2) {
-      setWon(true);
-      setButtonText("Claim 100 XP");
-      setLastPlayTime(); // Record last play time on win
-      setDisabled(true);
-    }
-  }, [moves, matches]);
-
-  function updateIndicate(color: string) {
-    const indicateBoxes = document.querySelectorAll(".indicate");
-    indicateBoxes[moves]?.setAttribute("style", `background-color: ${color}`);
-  }
-
-  function resetIndicate() {
-    const indicateBoxes = document.querySelectorAll(".indicate");
-    indicateBoxes.forEach((box) =>
-      box.setAttribute("style", "background-color: lightgray")
+  if (loading) {
+    return (
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+        w="full"
+        height="100vh"
+        direction="column"
+      >
+        <Spinner size="xl" />
+      </Flex>
     );
   }
 
-  const handleClaimXP = () => {
-    toast({
-      title: "100 XP Claimed!",
-      description: "Come back in 24 hours to play again.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
-    setDisabled(true); // Disable the game after claiming XP
-    setButtonText("Play Again"); // Reset button text
-  };
-
-  const calculateProgress = () => {
-    const currentLevelMin = levelMinPoints[levelIndex];
-    const nextLevelMin = levelMinPoints[levelIndex + 1] || Infinity;
-    const progress =
-      ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
-    return Math.min(progress, 100);
-  };
+  const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <Box
@@ -204,74 +205,130 @@ export default function Puzzle() {
         gap={5}
         pb={32}
       >
-        <Box width="100%" px="20px" pb={10}>
+        <Text color="#93BAFF" fontWeight="700" fontSize="24px">
+          Crypto Trivia
+        </Text>
+
+        <Box width="100%" display="flex" flexDirection="column" gap={4} mt={10}>
           <Text
-            color="#93BAFF"
-            fontWeight="700"
-            fontSize="24px"
+            width="100%"
+            px={10}
             textAlign="center"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            fontSize="35px"
+            lineHeight="42.36px"
+            fontWeight={700}
           >
-            Daily Puzzle
+            {currentQuestion.text}
           </Text>
 
-          <Flex
-            w="100%"
-            alignItems="center"
-            mt={4}
-            justifyContent="space-between"
-          >
-            <Box width="40%" display="flex" flexDirection="column" gap={1}>
-              <Progress
-                value={calculateProgress()}
-                size="sm"
-                borderRadius="full"
-              />
-            </Box>
-          </Flex>
-        </Box>
-
-        <Flex gap={5}>
-          <Box className="indicate" w="36px" h="36px" borderRadius="50%"></Box>
-          <Box className="indicate" w="36px" h="36px" borderRadius="50%"></Box>
-          <Box className="indicate" w="36px" h="36px" borderRadius="50%"></Box>
-        </Flex>
-
-        <Box width="90%" h="396px" p="4px 16px">
-          <div className="board">
-            {cardsArray.map((item) => (
-              <Card
-                key={item.id}
-                item={item}
-                handleSelectedCards={handleSelectedCards}
-                toggled={
-                  item === firstCard || item === secondCard || item.matched
-                }
-                stopflip={stopFlip}
-              />
+          <Box py="15px" mt={5} w="90%" mx="auto">
+            {currentQuestion.options.map((option, id) => (
+              <Box
+                key={id}
+                p="2px"
+                bgGradient="conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
+                borderRadius="10px"
+                mb={3}
+              >
+                <Button
+                  onClick={() => setSelectedValue(option)}
+                  bg={
+                    selectedValue === option
+                      ? "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)"
+                      : "#293042"
+                  }
+                  color="white"
+                  _hover={{
+                    bg: "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)",
+                  }}
+                  _focus={{
+                    bg: "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)",
+                  }}
+                  w="100%"
+                  minHeight="69px"
+                  borderRadius="10px"
+                  fontSize="20px"
+                  fontWeight={600}
+                  textAlign="center"
+                  whiteSpace="normal"
+                >
+                  {option}
+                </Button>
+              </Box>
             ))}
-          </div>
+          </Box>
 
-          {gameOver ? (
-            <div className="comments">😢 Game Over! 😢</div>
-          ) : won ? (
-            <div className="comments">🎉 You won! 🎉</div>
-          ) : (
-            <div className="comments">Moves: {moves} / 3</div>
-          )}
+          <Box
+            p="2px"
+            bgGradient="conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
+            borderRadius="20px"
+            mx="auto"
+            w="80%"
+          >
+            <Button
+              onClick={() =>
+                currentQuestionIndex >= questions.length - 1
+                  ? handleSubmit()
+                  : handleNextQuestion()
+              }
+              w="100%"
+              h="49px"
+              fontSize="24px"
+              color="#f5f5f5"
+              fontWeight={700}
+              borderRadius="20px"
+              bg="#4979D1"
+              _hover={{ bg: "#4979D1" }}
+              isDisabled={!selectedValue}
+              _disabled={{ bg: "#293042" }}
+            >
+              {currentQuestionIndex >= questions.length - 1
+                ? "Submit"
+                : "Next Question"}
+            </Button>
+          </Box>
         </Box>
-
-        <Button
-          onClick={won ? handleClaimXP : NewGame}
-          w="342px"
-          h="49px"
-          bg="#4979d1"
-          fontSize="24px"
-          disabled={disabled}
-        >
-          {buttonText}
-        </Button>
       </Flex>
+
       <NavigationBar />
+
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+        <ModalContent
+          alignItems={"center"}
+          p={6}
+          height={"300px"}
+          bgGradient="linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"
+          color={"white"}
+        >
+          {score === questions.length ? (
+            <Icon as={CheckCircleIcon} boxSize={16} color="green.400" mb={3} /> // Green check icon for perfect score
+          ) : (
+            <Icon as={CloseIcon} boxSize={16} color="red.400" mb={3} /> // Red X icon for incorrect answers
+          )}
+
+          <ModalHeader>
+            {score === questions.length ? "Perfect Score!" : "Good Effort!, Try again soon"}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody mt={-4}>
+            <Text fontSize="20px" textAlign={'center'}>
+              You answered {score} out of {questions.length} questions
+              correctly!
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleClaim}>
+              {score === questions.length
+                ? "Claim 100 XP"
+                : "Try Again Tomorrow"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
