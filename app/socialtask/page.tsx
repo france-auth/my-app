@@ -177,7 +177,7 @@ export default function SocialTask() {
                 flexDirection={"column"}
                 justifyContent={"center"}
               >
-                <Text>400,345</Text>
+                <Text>{user && user.coins}</Text>
               </Box>
             </Box>
           </Flex>

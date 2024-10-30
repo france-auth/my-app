@@ -198,7 +198,7 @@ function DailyReward({}: Props) {
               h={"4vh"}
             >
               <Text textAlign={"center"} fontSize={"xs"}>
-                400,035
+                {user && user.coins}
               </Text>
             </Box>
           </Flex>

@@ -6,10 +6,13 @@ import { useState } from "react";
 import { JigsawPuzzle } from "react-jigsaw-puzzle/lib";
 import "react-jigsaw-puzzle/lib/jigsaw-puzzle.css";
 import NavigationBar from "@/components/NavigationBar";
+import { useUser } from "@/context/context";
+
 
 export default function Jigsaw() {
   const [isSolved, setIsSolved] = useState(false); // State to track if the puzzle is solved
   const toast = useToast(); // Chakra UI toast
+  const {user} = useUser()
 
   const handleSolved = () => {
     setIsSolved(true); // Set the puzzle as solved
@@ -26,7 +29,7 @@ export default function Jigsaw() {
   const handleClaimPoints = () => {
     toast({
       title: "Points claimed!",
-      description: "You have successfully claimed 10 XP.",
+      description: "You have successfully claimed 100 XP.",
       status: "success",
       duration: 5000,
       isClosable: true,
@@ -128,7 +131,7 @@ export default function Jigsaw() {
                 flexDirection={"column"}
                 justifyContent={"center"}
               >
-                <Text>400,345</Text>
+                <Text>{user && user.coins}</Text>
               </Box>
             </Box>
           </Flex>
