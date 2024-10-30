@@ -25,11 +25,6 @@ const PlayList = [
     name: "Social Tasks",
     path: "/socialtask",
   },
-  {
-    image: "/icons/people-add.png",
-    name: "Softnote Community",
-    path: "/community",
-  },
 ];
 
 export default function DailyChallenge() {
