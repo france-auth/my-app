@@ -6,269 +6,250 @@ import {
   Text,
   Icon,
   Progress,
-  Image,
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import Data, { CardType } from "@/components/data";
+import Card from "@/components/card";
+import { useState, useEffect } from "react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
 import { useUser } from "@/context/context";
-import { useEffect } from "react";
-
-const Rectangle = [
-  {
-    image: "./Rectangle.png",
-  },
-  {
-    image: "./Rectangle.png",
-  },
-  {
-    image: "./Rectangle.png",
-  },
-  {
-    image: "./Rectangle.png",
-  },
-  {
-    image: "./Rectangle.png",
-  },
-  {
-    image: "./Rectangle.png",
-  },
-  {
-    image: "./Rectangle.png",
-  },
-  {
-    image: "./Rectangle.png",
-  },
-  {
-    image: "./Rectangle.png",
-  },
-];
 
 const levelNames = [
-  "Bronze", // From 0 to 4999 coins
-  "Silver", // From 5000 coins to 24,999 coins
-  "Gold", // From 25,000 coins to 99,999 coins
-  "Platinum", // From 100,000 coins to 999,999 coins
-  "Diamond", // From 1,000,000 coins to 2,000,000 coins
-  "Epic", // From 2,000,000 coins to 10,000,000 coins
-  "Legendary", // From 10,000,000 coins to 50,000,000 coins
-  "Master", // From 50,000,000 coins to 100,000,000 coins
-  "GrandMaster", // From 100,000,000 coins to 1,000,000,000 coins
-  "Lord", // From 1,000,000,000 coins to ∞
+  "Bronze",
+  "Silver",
+  "Gold",
+  "Platinum",
+  "Diamond",
+  "Epic",
+  "Legendary",
+  "Master",
+  "GrandMaster",
+  "Lord",
 ];
 
 const levelMinPoints = [
-  0, // Bronze
-  5000, // Silver
-  25000, // Gold
-  100000, // Platinum
-  1000000, // Diamond
-  2000000, // Epic
-  10000000, // Legendary
-  50000000, // Master
-  100000000, // GrandMaster
-  1000000000, // Lord
+  0, 5000, 25000, 100000, 1000000, 2000000, 10000000, 50000000, 100000000,
+  1000000000,
 ];
 
 export default function Puzzle() {
-  const [isSolved, setIsSolved] = useState(false); // State to track if the puzzle is solved
-  const toast = useToast(); // Chakra UI toast
+  const [cardsArray, setCardsArray] = useState<CardType[]>([]);
+  const [moves, setMoves] = useState<number>(0);
+  const [matches, setMatches] = useState<number>(0);
+  const [firstCard, setFirstCard] = useState<CardType | null>(null);
+  const [secondCard, setSecondCard] = useState<CardType | null>(null);
+  const [stopFlip, setStopFlip] = useState<boolean>(false);
+  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [won, setWon] = useState<boolean>(false);
 
-  const handleClaimPoints = () => {
-    toast({
-      title: "Points claimed!",
-      description: "You have successfully claimed 10 XP.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
-    // Reset the puzzle state to restart the game
-    setIsSolved(false);
+  const { user } = useUser();
+  const [levelIndex, setLevelIndex] = useState(0);
+  const [points, setPoints] = useState(0);
+  const toast = useToast();
+
+  // Start new game automatically on load/reload
+  useEffect(() => {
+    NewGame();
+  }, []);
+
+  // Handle game stop logic after win or loss
+  useEffect(() => {
+    if (moves >= 3 && matches < 2) {
+      setGameOver(true); // Game over if no 2 matches within 3 moves
+    }
+    if (matches >= 2) {
+      setWon(true); // Player wins after 2 matches
+    }
+  }, [moves, matches]);
+
+  function NewGame(): void {
+    const shuffledArray = Data.sort(() => 0.5 - Math.random()).map((card) => ({
+      ...card,
+      matched: false,
+    }));
+    setCardsArray(shuffledArray);
+    setMoves(0);
+    setMatches(0);
+    setFirstCard(null);
+    setSecondCard(null);
+    setWon(false);
+    setGameOver(false);
+
+    // Reset indication boxes to initial color (light gray)
+    resetIndicate();
+  }
+
+  function handleSelectedCards(item: CardType): void {
+    if (stopFlip || gameOver || won) return; // Prevent further actions if game is over or won
+    firstCard ? setSecondCard(item) : setFirstCard(item);
+  }
+
+  useEffect(() => {
+    if (firstCard && secondCard) {
+      setStopFlip(true);
+      if (firstCard.name === secondCard.name) {
+        handleMatchSuccess();
+      } else {
+        handleMatchFailure();
+      }
+    }
+  }, [firstCard, secondCard]);
+
+  function handleMatchSuccess() {
+    setCardsArray((prevArray) =>
+      prevArray.map((card) =>
+        card.name === firstCard!.name ? { ...card, matched: true } : card
+      )
+    );
+    setMatches((prevMatches) => prevMatches + 1);
+    updateIndicate("green");
+    resetSelection();
+  }
+
+  function handleMatchFailure() {
+    updateIndicate("red");
+    setTimeout(resetSelection, 1000);
+  }
+
+  function resetSelection(): void {
+    setFirstCard(null);
+    setSecondCard(null);
+    setStopFlip(false);
+    setMoves((prevMoves) => prevMoves + 1);
+  }
+
+  function updateIndicate(color: string) {
+    const indicateBoxes = document.querySelectorAll(".indicate");
+    indicateBoxes[moves]?.setAttribute("style", `background-color: ${color}`);
+  }
+
+  function resetIndicate() {
+    const indicateBoxes = document.querySelectorAll(".indicate");
+    indicateBoxes.forEach((box) =>
+      box.setAttribute("style", "background-color: lightgray")
+    );
+  }
+
+  const calculateProgress = () => {
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1] || Infinity;
+    const progress =
+      ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+    return Math.min(progress, 100);
   };
-   const { user } = useUser();
 
-   const [levelIndex, setLevelIndex] = useState(0);
-   const [points, setPoints] = useState(0);
+  useEffect(() => {
+    if (
+      points >= levelMinPoints[levelIndex + 1] &&
+      levelIndex < levelNames.length - 1
+    ) {
+      setLevelIndex(levelIndex + 1);
+    }
+  }, [points]);
 
-   useEffect(() => {
-     if (user) {
-       setPoints(user.coins);
-       setLevelIndex(user.level);
-     }
-   }, [user]);
-
-   const calculateProgress = () => {
-     if (levelIndex >= levelNames.length - 1) {
-       return 100;
-     }
-     const currentLevelMin = levelMinPoints[levelIndex];
-     const nextLevelMin = levelMinPoints[levelIndex + 1];
-     const progress =
-       ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
-     return Math.min(progress, 100);
-   };
-
-   useEffect(() => {
-     const currentLevelMin = levelMinPoints[levelIndex];
-     const nextLevelMin = levelMinPoints[levelIndex + 1];
-     if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
-       setLevelIndex(levelIndex + 1);
-     } else if (points < currentLevelMin && levelIndex > 0) {
-       setLevelIndex(levelIndex - 1);
-     }
-   }, [points, levelIndex, levelMinPoints, levelNames.length]);
   return (
     <Box
-      display={"flex"}
-      flexDirection={"column"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
-      width={"100vw"}
-      minHeight={"100vh"}
-      alignItems={"center"}
-      textColor={"white"}
-      overflow={"hidden"}
+      display="flex"
+      flexDirection="column"
+      bgGradient="linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"
+      width="100vw"
+      height="100vh"
+      alignItems="center"
+      textColor="white"
+      overflow="hidden"
     >
       <Flex
-        width={"100%"}
-        height={"100%"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        justifyContent={"center"}
+        width="100%"
+        height="100%"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
         pt={12}
-        gap={{ base: 5, sm: 5 }}
+        gap={5}
         pb={32}
       >
-        <Box width={"100%"} px={"20px"} pb={10}>
+        <Box width="100%" px="20px" pb={10}>
           <Text
-            color={"#93BAFF"}
-            fontWeight={"700"}
-            fontSize={"24px"}
-            textAlign={"center"}
+            color="#93BAFF"
+            fontWeight="700"
+            fontSize="24px"
+            textAlign="center"
           >
             Daily Puzzle
           </Text>
+
           <Flex
-            w={"100%"}
-            alignItems={"center"}
+            w="100%"
+            alignItems="center"
             mt={4}
-            justifyContent={"space-between"}
+            justifyContent="space-between"
           >
-            <Box
-              width={"40%"}
-              display={"flex"}
-              flexDirection={"column"}
-              gap={1}
-            >
-              <Flex justifyContent={"space-between"}>
-                <Text fontSize={"12px"} color={"#F5F5F5"}>
+            <Box width="40%" display="flex" flexDirection="column" gap={1}>
+              <Flex justifyContent="space-between">
+                <Text fontSize="12px" color="#F5F5F5">
                   {levelNames[levelIndex]}
                   <Icon as={ChevronRightIcon} />
                 </Text>
-                <Text fontSize={"12px"} color={"#F5F5F5"}>
+                <Text fontSize="12px" color="#F5F5F5">
                   {levelIndex + 1} / {levelNames.length}
                 </Text>
               </Flex>
-              <Flex alignItems={"center"} bg={"green"}>
+              <Flex alignItems="center" bg="green">
                 <Progress
                   value={calculateProgress()}
                   size="sm"
-                  borderRadius={"full"}
-                  bg={"#1D222E"}
-                  border={"1px solid #7585A7"}
-                  w={"full"}
-                  sx={{
-                    "& > div": {
-                      background:
-                        "linear-gradient(90deg, #4979D1 0%, #4979D1 48.17%, #B5CFFE 100%)",
-                    },
-                  }}
+                  borderRadius="full"
+                  bg="#1D222E"
+                  border="1px solid #7585A7"
+                  w="full"
                 />
               </Flex>
-            </Box>
-            <Box
-              display={"flex"}
-              flexDirection={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-            >
-              <Text fontWeight={500} fontSize={"12px"} color={"#f5f5f5"}>
-                XP Reward
-              </Text>
-              <Box
-                width={"80px"}
-                height={"21px"}
-                padding={"2px 12px"}
-                border={"1px solid #f5f5f5"}
-                borderRadius={"10px"}
-                fontWeight={"600"}
-                fontSize={"14px"}
-                color={"#f5f5f5"}
-                textAlign={"center"}
-                alignItems={"center"}
-                display={"flex"}
-                flexDirection={"column"}
-                justifyContent={"center"}
-              >
-                <Text>400,345</Text>
-              </Box>
             </Box>
           </Flex>
         </Box>
 
-        <Flex width={"146px"} justifyContent={"space-between"}>
-          <Box w={"36px"} h={"36px"} bg={"#d9d9d9"} borderRadius={"50%"}></Box>
-          <Box w={"36px"} h={"36px"} bg={"#d9d9d9"} borderRadius={"50%"}></Box>
-          <Box w={"36px"} h={"36px"} bg={"#d9d9d9"} borderRadius={"50%"}></Box>
+        <Flex width="" gap={5}>
+          <Box className="indicate" w="36px" h="36px" borderRadius="50%"></Box>
+          <Box className="indicate" w="36px" h="36px" borderRadius="50%"></Box>
+          <Box className="indicate" w="36px" h="36px" borderRadius="50%"></Box>
         </Flex>
 
-        <Box width={"90%"} h={"396px"} p={"4px 16px"}>
-          <Box
-            w={"100%"}
-            h={"388px"}
-            bgImage={"./rock.png"}
-            bgPosition={"center"}
-            bgRepeat={"no-repeat"}
-            bgSize={"173%"}
-            mx={"auto"}
-            display={"grid"}
-            gap={"8px"}
-            gridTemplateColumns={"repeat(3, 1fr)"}
-          >
-            {Rectangle.map((box, id) => {
-              return (
-                <Image
-                  src={box.image}
-                  alt="box img"
-                  w={"100%"}
-                  h={"123px"}
-                  key={id}
-                  opacity={"0.9"}
-                />
-              );
-            })}
-          </Box>
+        <Box width="90%" p="4px 16px" bg={'red'}>
+          <div className="board">
+            {cardsArray.map((item) => (
+              <Card
+                key={item.id}
+                item={item}
+                handleSelectedCards={handleSelectedCards}
+                toggled={
+                  item === firstCard || item === secondCard || item.matched
+                }
+                stopflip={stopFlip}
+              />
+            ))}
+          </div>
+
+          {gameOver ? (
+            <div className="comments">😢 Game Over! 😢</div>
+          ) : won ? (
+            <div className="comments">🎉 You won! 🎉</div>
+          ) : (
+            <div className="comments">Moves: {moves} / 3</div>
+          )}
         </Box>
-        <Text color={"#f5f5f5"} fontWeight={700}>
-          Score/Reward
-        </Text>
 
         <Button
-          w={"342px"}
-          h={"49px"}
-          bg={"#4979d1"}
-          boxShadow={"0px -2px 8px 0px #F8F9FD33 inset"}
-          fontSize={"24px"}
-          fontWeight={700}
-          color={"#f5f5f5"}
-          borderRadius={"20px"}
-          onClick={handleClaimPoints}
-          disabled={!isSolved} // Disable button until the puzzle is solved
-          _disabled={{ bg: "#293042" }} // Styling for the disabled state
+          onClick={NewGame}
+          mt={10}
+          w="342px"
+          h="49px"
+          bg="#4979d1"
+          fontSize="24px"
+          _hover={{bg: "#4979d1"}}
         >
-          0.00
+          Play Again
         </Button>
       </Flex>
       <NavigationBar />

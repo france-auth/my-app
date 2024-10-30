@@ -85,21 +85,15 @@ export async function POST(request: NextRequest) {
             },
           });
 
-          const updatedReferrer = await prisma.user.update({
+          await prisma.user.update({
             where: { telegramId: referralId },
             data: {
               referralCount: { increment: 1 },
+              coins: referringUser.coins + 100000
             },
           });
 
-          if (updatedReferrer.referralCount % 5 === 0) {
-            await prisma.user.update({
-              where: { telegramId: referralId },
-              data: {
-                freeSpins: { increment: 1 },
-              },
-            });
-          }
+
         }
       }
     }
@@ -111,7 +105,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUserTasks.length === 0) {
       const tasks = await prisma.task.findMany();
-      
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const userTaskPromises = tasks.map((task: any) =>
         prisma.userTask.create({

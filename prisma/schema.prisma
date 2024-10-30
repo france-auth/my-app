@@ -85,17 +85,18 @@ model Referral {
 
   @@map("referrals")
 }
-model Task {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  category    TaskCategory  // Enum: INVITE, CHALLENGE
-  description String   // Task description
-  levelName   String?  // Only for CHALLENGE category tasks
-  reward      Int      // Reward amount in coins
-  requiredInvites Int? // For INVITE tasks, number of invites required
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userTasks   UserTask[]  // Relationship to track user-specific tasks
+model Task {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  taskType     String   // daily or social
+  title        String
+  imagePath    String?
+  rewards      Int    //xp: 100
+  taskUrl      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userTasks   UserTask[] 
 }
 
 model UserTask {
@@ -135,6 +136,6 @@ enum CardCategory {
 
 
 enum TaskCategory {
-  INVITE
-  CHALLENGE
+  Daily
+  Social
 }

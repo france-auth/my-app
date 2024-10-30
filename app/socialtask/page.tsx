@@ -27,12 +27,6 @@ const socialTask = [
     reward: "100,000",
     path: "/",
   },
-  {
-    image: "/icons/peers.png",
-    name: "Join Softnote Community",
-    reward: "100,000",
-    path: "/",
-  },
 ];
 const levelNames = [
   "Bronze", // From 0 to 4999 coins

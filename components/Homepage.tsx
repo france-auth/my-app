@@ -86,6 +86,7 @@ export default function Homepage() {
   const [clicks, setClicks] = useState<{ id: number; x: number; y: number }[]>(
     []
   );
+   const [isFirstImage, setIsFirstImage] = useState(true);
 
   const [points, setPoints] = useState(0);
   const [pointsToAdd, setPointsToAdd] = useState(0);
@@ -165,6 +166,13 @@ export default function Homepage() {
   }, [userData?.telegramId]);
 
   const handleCardClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+   
+    setIsFirstImage((prev) => !prev);
+
+     const flickerTimer = setTimeout(() => {
+       setIsFirstImage(true);
+     }, 100);
+
     if (floatingEnergy <= 0) return;
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
@@ -191,6 +199,7 @@ export default function Homepage() {
     if (updatedUser) {
       console.log("User updated:", updatedUser);
     }
+    return () => clearTimeout(flickerTimer);
   };
 
   const handleAnimationEnd = (id: number) => {
@@ -498,13 +507,33 @@ useEffect(() => {
                   zIndex={1}
                   className="w-[70%] sm:w-[100%]"
                 />
-                <Image
-                  alt="mascot img"
-                  src="/Mascot.png"
-                  zIndex={0}
+                <Box
+                  className="spin w-[200px] h-[200px] sm:w-[300px] sm:h-[300px]"
+                  bgGradient={
+                    "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
+                  }
+                  // w={"200px"}
+                  // h={"200÷px"}
+                  borderRadius={"50%"}
                   position={"absolute"}
-                  className="w-[60%] sm:w-[auto]"
-                />
+                  p={"5px"}
+                  display={"flex"}
+                >
+                  <Box
+                    bgGradient={
+                      "linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"
+                    }
+                    borderRadius={"50%"}
+                    overflow={"hidden"}
+                    className="spin-reverse"
+                  >
+                    <Image
+                      src={isFirstImage ? "/MASCOT NORMAL.png" : "/MASCOT HAPPY.png"}
+                      w={{ base: "80%", sm: "auto" }}
+                      mx={"auto"}
+                    />
+                  </Box>
+                </Box>
               </Box>
             </Box>
 
@@ -520,8 +549,8 @@ useEffect(() => {
               <Flex
                 width={"85%"}
                 alignItems={"center"}
-                justifyContent={"space-between"}
               >
+                <Image src="/icons/thunder.png" width={'20px'}/>
                 <Text fontSize={"13px"} fontWeight={500} color={"#DDE2E7"}>
                   {`${floatingEnergy} / ${userData && userData.maxTaps}`}
                 </Text>
