@@ -51,11 +51,11 @@ export default function Friends() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [referredUser, setReferredUsers] = useState<any[]>([]);
   const { onCopy, value, hasCopied } = useClipboard(
-    `https://t.me/Slothgames_bot?start=${user?.telegramId}`
+    `https://t.me/softnote_bot?start=${user?.telegramId}`
   );
   const handleInviteFriend = () => {
     const utils = initUtils();
-    const inviteLink = `https://t.me/Slothgames_bot?start=${user?.telegramId}`;
+    const inviteLink = `https://t.me/softnote_bot?start=${user?.telegramId}`;
     const shareText = `Join me on this awesome Telegram mini app!`;
     const fullUrl = `https://t.me/share/url?url=${encodeURIComponent(
       inviteLink

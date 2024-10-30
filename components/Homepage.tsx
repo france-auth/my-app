@@ -534,21 +534,7 @@ useEffect(() => {
                   {`${floatingEnergy} / ${userData && userData.maxTaps}`}
                 </Text>
 
-                <Flex
-                  p={"6.67px"}
-                  gap={2}
-                  width={"103.33px"}
-                  height={"35.53px"}
-                  alignItems={"center"}
-                >
-                  <Image
-                    alt="white booster img"
-                    src="/icons/whiteBooster.png"
-                  />
-                  <Text fontSize={"13px"} fontWeight={500} color={"#DDE2E7"}>
-                    Explore
-                  </Text>
-                </Flex>
+             
               </Flex>
             </Box>
           </Flex>
