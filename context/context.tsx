@@ -23,6 +23,8 @@ type UserData = {
   profitPerHour: number;
   lastEarningsUpdate: Date;
   lastCheckIn?: Date; // Optional field
+  lastTriviaAttempt?: Date;
+  lastPuzzleAttempt?: Date;
   checkInStreak: number;
   createdAt: Date;
   updatedAt: Date;

@@ -48,6 +48,7 @@ type UserData = {
   profitPerHour: number;
   lastEarningsUpdate: Date;
   lastCheckIn?: Date; // Optional field
+  lastTriviaAttempt?: Date,
   checkInStreak: number;
   createdAt: Date;
   updatedAt: Date;
@@ -65,6 +66,7 @@ export default function Trivia() {
   const toast = useToast()
   const [loading, setLoading] = useState<boolean>(true);
   const { isOpen, onOpen, onClose } = useDisclosure(); // Modal control
+  const [timeLeft, setTimeLeft] = useState("");
 
   useEffect(() => {
     const fetchTrivia = async () => {
@@ -97,7 +99,7 @@ export default function Trivia() {
     }
   };
 
-   const handleSubmit = () => {
+   const handleSubmit = async () => {
      // Ensure the last selected answer is stored before submitting
      const newAnswers = [...selectedAnswers];
      newAnswers[currentQuestionIndex] = selectedValue;
@@ -110,8 +112,10 @@ export default function Trivia() {
          correctCount++;
        }
      });
-
+     const now= new Date()
      setScore(correctCount);
+     const updatedUser = await updateUserProfile({lastTriviaAttempt: now })
+     setUser(updatedUser)
      onOpen(); // Open the modal
    };
 
@@ -152,7 +156,11 @@ export default function Trivia() {
 
 
    const handleClaim =async()=>{
-    if(!user) return;
+    console.log("score from handleclaim",score)
+    if (!user || score !== questions.length){
+      onClose()
+      return;
+    }
     try {
       const updateduser = await updateUserProfile({coins: user.coins + 100})
       toast({
@@ -167,6 +175,33 @@ export default function Trivia() {
       console.log(error)
     }
    }
+
+   useEffect(()=>{
+     const calculateTimeLeft = () => {
+       if (!user || !user.lastTriviaAttempt) return; 
+         const now = new Date();
+         const nextReset = new Date(user.lastTriviaAttempt); // This will only execute if lastTriviaAttempt exists
+         nextReset.setDate(nextReset.getDate() + 1); // Next reset at 24 hours
+
+         const timeDiff = nextReset.getTime() - now.getTime();
+
+         if (timeDiff > 0) {
+           const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
+           const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+           const seconds = Math.floor((timeDiff / 1000) % 60);
+
+           setTimeLeft(
+             `${hours.toString().padStart(2, "0")}:${minutes
+               .toString()
+               .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+           );
+         } 
+     };
+
+     // Run the timer every second
+     const timer = setInterval(calculateTimeLeft, 1000);
+     return () => clearInterval(timer);
+   }, [user])
 
   if (loading) {
     return (
@@ -282,12 +317,10 @@ export default function Trivia() {
               borderRadius="20px"
               bg="#4979D1"
               _hover={{ bg: "#4979D1" }}
-              isDisabled={!selectedValue}
+              isDisabled={!selectedValue || timeLeft !== "" }
               _disabled={{ bg: "#293042" }}
             >
-              {currentQuestionIndex >= questions.length - 1
-                ? "Submit"
-                : "Next Question"}
+              {timeLeft === "00:00:00" || timeLeft === "" ? "Submit" : timeLeft}
             </Button>
           </Box>
         </Box>
@@ -311,17 +344,23 @@ export default function Trivia() {
           )}
 
           <ModalHeader>
-            {score === questions.length ? "Perfect Score!" : "Good Effort!, Try again soon"}
+            {score === questions.length
+              ? "Perfect Score!"
+              : "Good Effort!, Try again soon"}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody mt={-4}>
-            <Text fontSize="20px" textAlign={'center'}>
+            <Text fontSize="20px" textAlign={"center"}>
               You answered {score} out of {questions.length} questions
               correctly!
             </Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleClaim}>
+            <Button
+              colorScheme="blue"
+              onClick={handleClaim}
+              isDisabled={score !== questions.length} // Only enable for perfect score
+            >
               {score === questions.length
                 ? "Claim 100 XP"
                 : "Try Again Tomorrow"}

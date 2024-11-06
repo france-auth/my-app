@@ -33,6 +33,35 @@ const levelMinPoints = [
   0, 5000, 25000, 100000, 1000000, 2000000, 10000000, 50000000, 100000000,
   1000000000,
 ];
+type UserData = {
+  id: string;
+  telegramId: string;
+  username: string;
+  photoUrl?: string; // Optional field
+  level: number;
+  coins: number;
+  taps: number;
+  maxTaps: number;
+  refillRate: number;
+  lastRefillTime: Date;
+  slots: number;
+  referralCount: number;
+  referredBy?: string; // Optional field
+  freeSpins: number;
+  multitap: number;
+  tapLimitBoost: number;
+  tappingGuruUses: number;
+  profitPerHour: number;
+  lastEarningsUpdate: Date;
+  lastCheckIn?: Date; // Optional field
+  lastTriviaAttempt?: Date;
+  lastPuzzleAttempt?: Date;
+  checkInStreak: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type UpdateData = Partial<UserData>;
 
 export default function Puzzle() {
   const [cardsArray, setCardsArray] = useState<CardType[]>([]);
@@ -43,13 +72,50 @@ export default function Puzzle() {
   const [stopFlip, setStopFlip] = useState<boolean>(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [won, setWon] = useState<boolean>(false);
+  const [timeLeft, setTimeLeft] = useState("");
 
-  const { user } = useUser();
+  const { user , setUser} = useUser();
   console.log(user)
   const [levelIndex, setLevelIndex] = useState(0);
   const [points, setPoints] = useState(0);
   const toast = useToast();
 
+
+
+     const updateUserProfile = async (updatedFields: UpdateData) => {
+       if (!user || !user.telegramId) {
+         console.error("User data or telegramId is missing.");
+         return;
+       }
+
+       try {
+         const response = await fetch(
+           `/api/updateprofile?userId=${user.telegramId}`,
+           {
+             method: "PATCH",
+             headers: {
+               "Content-Type": "application/json",
+             },
+             body: JSON.stringify(updatedFields),
+           }
+         );
+
+         if (!response.ok) {
+           const errorText = await response.text(); // Read raw text to handle empty responses
+           console.error(
+             "Failed to update profile:",
+             errorText || "Unknown error"
+           );
+           return null;
+         }
+
+         const updatedUser = await response.json();
+         console.log("Profile updated successfully:", updatedUser);
+         return updatedUser; // Return the updated user if needed
+       } catch (error) {
+         console.error("Error updating profile:", error);
+       }
+     };
   // Start new game automatically on load/reload
   useEffect(() => {
     NewGame();
@@ -62,14 +128,75 @@ export default function Puzzle() {
   },[user])
 
   // Handle game stop logic after win or loss
+useEffect(() => {
+  const handleMoves = async () => {
+    if (!user) return;
+
+    try {
+      const now = new Date();
+
+      // Handle game over condition
+      if (moves >= 3 && matches < 2) {
+        setGameOver(true);
+        if (moves === 3) {
+          const updatedUser = await updateUserProfile({
+            lastPuzzleAttempt: now,
+          });
+          setUser(updatedUser);
+        }
+      }
+
+      // Handle win condition
+      if (matches >= 2) {
+        setWon(true);
+        const newCoin = user.coins + 100;
+        const updatedUser = await updateUserProfile({
+          lastPuzzleAttempt: now,
+          coins: newCoin,
+        });
+        setUser(updatedUser);
+
+        toast({
+          title: "You won 100Xp",
+          duration: 3000,
+          isClosable: true,
+          status: "success",
+        });
+      }
+    } catch (error) {
+      console.error("Error handling moves:", error);
+    }
+  };
+
+  handleMoves();
+}, [moves, matches]);
+
   useEffect(() => {
-    if (moves >= 3 && matches < 2) {
-      setGameOver(true); // Game over if no 2 matches within 3 moves
-    }
-    if (matches >= 2) {
-      setWon(true); // Player wins after 2 matches
-    }
-  }, [moves, matches]);
+    const calculateTimeLeft = () => {
+      if (!user || !user.lastPuzzleAttempt) return;
+      const now = new Date();
+      const nextReset = new Date(user.lastPuzzleAttempt); // This will only execute if lastTriviaAttempt exists
+      nextReset.setDate(nextReset.getDate() + 1); // Next reset at 24 hours
+
+      const timeDiff = nextReset.getTime() - now.getTime();
+
+      if (timeDiff > 0) {
+        const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+        const seconds = Math.floor((timeDiff / 1000) % 60);
+
+        setTimeLeft(
+          `${hours.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+        );
+      }
+    };
+
+    // Run the timer every second
+    const timer = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, [user]);
 
   function NewGame(): void {
     const shuffledArray = Data.sort(() => 0.5 - Math.random()).map((card) => ({
@@ -115,12 +242,7 @@ export default function Puzzle() {
     );
     setMatches((prevMatches) => prevMatches + 1);
     updateIndicate("green");
-    toast({
-      title: "Match success",
-      duration: 3000,
-      isClosable: true,
-      status: "success"
-    })
+
     resetSelection();
   }
 
@@ -232,8 +354,8 @@ export default function Puzzle() {
           <Box className="indicate" w="36px" h="36px" borderRadius="50%"></Box>
         </Flex>
 
-        <Box width="90%" p="4px 16px" >
-          <div className="board">
+        <Box width="90%" p="4px 16px" display={timeLeft !== "" ? "none" : "block"} >
+          <div className="board" >
             {cardsArray.map((item) => (
               <Card
                 key={item.id}
@@ -256,17 +378,17 @@ export default function Puzzle() {
           )}
         </Box>
 
-        <Button
-          onClick={NewGame}
+      {timeLeft !== " " && <Button
           mt={10}
           w="342px"
           h="49px"
           bg="#4979d1"
           fontSize="24px"
           _hover={{bg: "#4979d1"}}
+          isDisabled={timeLeft !== ""}
         >
-          Play Again
-        </Button>
+          {timeLeft}
+        </Button>}
       </Flex>
       <NavigationBar />
     </Box>

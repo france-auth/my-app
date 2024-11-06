@@ -15,14 +15,14 @@ const Wheel = dynamic(
 );
 
 const data = [
-  { option: "100XP" },
-  { option: "200XP" },
-  { option: "300XP" },
-  { option: "400XP" },
-  { option: "500XP" },
-  { option: "600XP" },
-  { option: "700XP" },
-  { option: "800XP" },
+  { option: "100" },
+  { option: "200" },
+  { option: "300" },
+  { option: "400" },
+  { option: "500" },
+  { option: "600" },
+  { option: "700" },
+  { option: "800" },
 ];
 
 type UserData = {
@@ -126,6 +126,7 @@ export default function Roulette() {
 
 
   const handleSpinClick = async () => {
+    if(!user) return;
     const now = new Date()
        if (!canSpin) {
          const countdown = nextSpinTime
@@ -145,8 +146,11 @@ export default function Roulette() {
       setPrizeNumber(newPrizeNumber);
       setMustSpin(true);
       try {
+        console.log(newPrizeNumber)
+        console.log("user deets", user)
+        const newCoin = user.coins + parseInt(data[newPrizeNumber].option)
       await new Promise((resolve) => setTimeout(resolve, 12000)); // Ensure the wheel starts
-      const updatedUser = await updateUserProfile({ lastSpinTime: now });
+      const updatedUser = await updateUserProfile({ lastSpinTime: now, coins: newCoin});
       setUser(updatedUser);
     } catch (error) {
       console.log("Error updating user profile:", error);
