@@ -10,8 +10,6 @@ import {
   useToast,
   Drawer,
   DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
@@ -154,7 +152,7 @@ const handleTaskCompletion = async (taskId: string) => {
     // Update points with the returned user data
     setPoints(updatedUser.coins);
 
-    setUser(updatedUser)
+    setUser(updatedUser);
 
     toast({
       title: "Task reward claimed successfully!",
@@ -162,17 +160,19 @@ const handleTaskCompletion = async (taskId: string) => {
       duration: 3000,
       isClosable: true,
     });
-    setLoading(false)
-    onClose()
+    setLoading(false);
+    onClose();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     toast({
       title: error.message || "Error claiming task reward",
       status: "error",
       duration: 3000,
       isClosable: true,
     });
-    onClose()
-     setLoading(false);
+    onClose();
+    setLoading(false);
   }
 };
 
