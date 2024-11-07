@@ -176,7 +176,7 @@ export default function Jigsaw() {
       // Reset the puzzle state to restart the game
       setIsSolved(false);
     } catch (error) {
-      
+      console.log(error)
     }
   };
 

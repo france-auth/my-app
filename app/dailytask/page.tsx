@@ -47,8 +47,6 @@ const levelMinPoints = [
 export default function DailyTask() {
   const { user, setUser } = useUser();
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [levelIndex, setLevelIndex] = useState(0);
   const [points, setPoints] = useState(0);
@@ -98,64 +96,63 @@ export default function DailyTask() {
     const loadTasks = async () => {
       if(!user) return;
       try {
-        setLoading(true);
+      
         const tasksData = await fetchTasks(user.id);
         console.log(tasksData)
         setTasks(tasksData);
       } catch (error) {
-        setError("Failed to load tasks");
-      } finally {
-        setLoading(false);
-      }
+console.log(error)
     };
+  }
 
     loadTasks();
   }, [user]);
 
 
-const handleTaskCompletion = async (taskId: string) => {
-  if (!user) return;
+// const handleTaskCompletion = async (taskId: string) => {
+//   if (!user) return;
 
-  try {
-    const response = await fetch("/api/completeTask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id, taskId }),
-    });
+//   try {
+//     const response = await fetch("/api/completeTask", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ userId: user.id, taskId }),
+//     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to claim task reward");
-    }
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || "Failed to claim task reward");
+//     }
 
-    // Get the updated task and user points from the response
-    const { task: updatedTask, user: updatedUser } = await response.json();
+//     // Get the updated task and user points from the response
+//     const { task: updatedTask, user: updatedUser } = await response.json();
 
-    // Update tasks with the returned task data
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-    );
+//     // Update tasks with the returned task data
+//     setTasks((prevTasks) =>
+//       prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+//     );
 
-    setUser(updatedUser)
+//     setUser(updatedUser)
 
-    // Update points with the returned user data
-    setPoints(updatedUser.coins);
+//     // Update points with the returned user data
+//     setPoints(updatedUser.coins);
 
-    toast({
-      title: "Task reward claimed successfully!",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-  } catch (error: any) {
-    toast({
-      title: error.message || "Error claiming task reward",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    });
-  }
-};
+//     toast({
+//       title: "Task reward claimed successfully!",
+//       status: "success",
+//       duration: 3000,
+//       isClosable: true,
+//     });
+ // eslint-disable-next-line @typescript-eslint/no - explicit - any;
+//   } catch (error: any) {
+//     toast({
+//       title: error.message || "Error claiming task reward",
+//       status: "error",
+//       duration: 3000,
+//       isClosable: true,
+//     });
+//   }
+// };
 
   return (
     <Box
