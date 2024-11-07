@@ -45,12 +45,14 @@ const levelMinPoints = [
 ];
 
 export default function DailyTask() {
-  const { user, setUser } = useUser();
+  const { user, 
+    // setUser 
+  } = useUser();
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
 
   const [levelIndex, setLevelIndex] = useState(0);
   const [points, setPoints] = useState(0);
-  const toast = useToast()
+  // const toast = useToast()
 
   useEffect(() => {
     if (user) {
