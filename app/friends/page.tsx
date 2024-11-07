@@ -234,7 +234,7 @@ export default function Friends() {
 
           <Image
             src="/yellow-dude.png"
-            w={"344px"}
+            w={"370px"}
             h={"295px"}
             mx={"auto"}
             alt="yellow dude"
