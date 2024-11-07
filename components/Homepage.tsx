@@ -169,9 +169,7 @@ export default function Homepage() {
    
     setIsFirstImage((prev) => !prev);
 
-     const flickerTimer = setTimeout(() => {
-       setIsFirstImage(true);
-     }, 100);
+  
 
     if (floatingEnergy <= 0) return;
     const card = e.currentTarget;
@@ -199,8 +197,19 @@ export default function Homepage() {
     if (updatedUser) {
       console.log("User updated:", updatedUser);
     }
-    return () => clearTimeout(flickerTimer);
+    
   };
+
+
+  useEffect(()=>{
+       const flickerTimer = setTimeout(() => {
+         setIsFirstImage(true);
+       }, 100);
+
+
+       return () => clearTimeout(flickerTimer);
+
+  },[isFirstImage])
 
   const handleAnimationEnd = (id: number) => {
     setClicks((prevClicks) => prevClicks.filter((click) => click.id !== id));
