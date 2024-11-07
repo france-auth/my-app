@@ -1,8 +1,23 @@
 "use client";
 
-import { Box, Text, Flex, Image, Icon, Progress, 
-  // useToast
- } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Flex,
+  Image,
+  Icon,
+  Progress,
+  useToast,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  useDisclosure,
+  Button
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
@@ -47,14 +62,15 @@ const levelMinPoints = [
 ];
 
 export default function DailyTask() {
-  const { user, 
-    // setUser 
-  } = useUser();
+  const { user, setUser } = useUser();
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
 
   const [levelIndex, setLevelIndex] = useState(0);
   const [points, setPoints] = useState(0);
-  // const toast = useToast()
+  const toast = useToast()
+  const [selectedtask, setSelectedTask]= useState<TaskResponse>()
+   const { isOpen, onOpen, onClose } = useDisclosure();
+   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -112,6 +128,53 @@ console.log(error)
     loadTasks();
   }, [user]);
 
+
+const handleTaskCompletion = async (taskId: string) => {
+  if (!user) return;
+  setLoading(true)
+  try {
+    const response = await fetch("/api/completeTask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, taskId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to claim task reward");
+    }
+
+    // Get the updated task and user points from the response
+    const { task: updatedTask, user: updatedUser } = await response.json();
+
+    // Update tasks with the returned task data
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+    // Update points with the returned user data
+    setPoints(updatedUser.coins);
+
+    setUser(updatedUser)
+
+    toast({
+      title: "Task reward claimed successfully!",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false)
+    onClose()
+  } catch (error: any) {
+    toast({
+      title: error.message || "Error claiming task reward",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    onClose()
+     setLoading(false);
+  }
+};
 
 
   return (
@@ -222,63 +285,124 @@ console.log(error)
           <Text fontSize={"16px"} fontWeight={500} color={"#fff"}>
             Task List
           </Text>
-          {tasks && tasks.length> 0 && tasks.map((task, id) => {
-            return (
-              <Link href={task.taskUrl!} target="_blank" key={id}>
-                <Flex
-                  h={"80px"}
-                  bg={"#1D222E"}
-                  borderRadius={"16px"}
-                  padding={"18px 16px"}
-                  borderBottom={"0.9px solid #4979D1"}
-                  gap={4}
-                  alignItems={"center"}
-                  justifyContent={"space-between"}
-                >
-                  <Flex alignItems={"center"} gap={4}>
-                    <Image
-                      src={task.imagePath!}
-                      w={"48px"}
-                      h={"48px"}
-                      alt="task image"
-                    />
-                    <Flex direction={"column"}>
-                      <Text
-                        fontSize={"16px"}
-                        fontWeight={500}
-                        color={"#f5f5f5"}
-                      >
-                        {task.title}
-                      </Text>
-                      <Flex alignItems={"center"}>
-                        <Image
-                          src="/icons/BigCoin.png"
-                          w={"14px"}
-                          alt="big coin"
-                        />
+          {tasks &&
+            tasks.length > 0 &&
+            tasks.map((task, id) => {
+              return (
+                <Link href={task.taskUrl!} target="_blank" key={id}>
+                  <Flex
+                    h={"80px"}
+                    bg={"#1D222E"}
+                    borderRadius={"16px"}
+                    padding={"18px 16px"}
+                    borderBottom={"0.9px solid #4979D1"}
+                    gap={4}
+                    alignItems={"center"}
+                    justifyContent={"space-between"}
+                    onClick={() => {
+                      setSelectedTask(task);
+                      onOpen();
+                    }}
+                  >
+                    <Flex alignItems={"center"} gap={4}>
+                      <Image
+                        src={task.imagePath!}
+                        w={"48px"}
+                        h={"48px"}
+                        alt="task image"
+                      />
+                      <Flex direction={"column"}>
                         <Text
-                          fontSize={"12px"}
+                          fontSize={"16px"}
                           fontWeight={500}
                           color={"#f5f5f5"}
                         >
-                          + {task.rewards} XP
+                          {task.title}
                         </Text>
+                        <Flex alignItems={"center"}>
+                          <Image
+                            src="/icons/BigCoin.png"
+                            w={"14px"}
+                            alt="big coin"
+                          />
+                          <Text
+                            fontSize={"12px"}
+                            fontWeight={500}
+                            color={"#f5f5f5"}
+                          >
+                            + {task.rewards} XP
+                          </Text>
+                        </Flex>
                       </Flex>
                     </Flex>
+                    <Box
+                      w={"12px"}
+                      h={"12px"}
+                      bg={"#f5f5f5"}
+                      borderRadius={"50%"}
+                    />
                   </Flex>
-                  <Box
-                    w={"12px"}
-                    h={"12px"}
-                    bg={"#f5f5f5"}
-                    borderRadius={"50%"}
-                  />
-                </Flex>
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })}
         </Box>
       </Flex>
       <NavigationBar />
+
+      <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton color={"white"} />
+
+          <DrawerBody
+            bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+          >
+            <Flex minH={"30vh"} p={5} alignItems={'center'} justifyContent={"center"} gap={5} direction={"column"}>
+              <Flex
+                h={"80px"}
+                bg={"#1D222E"}
+                borderRadius={"16px"}
+                padding={"18px 16px"}
+                borderBottom={"0.9px solid #4979D1"}
+                gap={4}
+                alignItems={"center"}
+                justifyContent={"center"}
+                w={"full"}
+              >
+                <Flex alignItems={"center"} gap={4}>
+                  <Image
+                    src={selectedtask && selectedtask.imagePath!}
+                    w={"48px"}
+                    h={"48px"}
+                    alt="task image"
+                  />
+                  <Flex direction={"column"}>
+                    <Text fontSize={"16px"} fontWeight={500} color={"#f5f5f5"}>
+                      {selectedtask && selectedtask.title}
+                    </Text>
+                    <Flex alignItems={"center"}>
+                      <Image
+                        src="/icons/BigCoin.png"
+                        w={"14px"}
+                        alt="big coin"
+                      />
+                      <Text
+                        fontSize={"12px"}
+                        fontWeight={500}
+                        color={"#f5f5f5"}
+                      >
+                        + {selectedtask && selectedtask.rewards} XP
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Flex>
+
+              <Button onClick={()=>selectedtask && handleTaskCompletion(selectedtask.id)} isLoading={loading} loadingText={"verifying"}>Verify</Button>
+            </Flex>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </Box>
   );
 }
