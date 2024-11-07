@@ -1,6 +1,8 @@
 "use client";
 
-import { Box, Text, Flex, Image, Icon, Progress, useToast } from "@chakra-ui/react";
+import { Box, Text, Flex, Image, Icon, Progress, 
+  // useToast
+ } from "@chakra-ui/react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
@@ -111,50 +113,6 @@ console.log(error)
   }, [user]);
 
 
-// const handleTaskCompletion = async (taskId: string) => {
-//   if (!user) return;
-
-//   try {
-//     const response = await fetch("/api/completeTask", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ userId: user.id, taskId }),
-//     });
-
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       throw new Error(errorData.message || "Failed to claim task reward");
-//     }
-
-//     // Get the updated task and user points from the response
-//     const { task: updatedTask, user: updatedUser } = await response.json();
-
-//     // Update tasks with the returned task data
-//     setTasks((prevTasks) =>
-//       prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-//     );
-
-//     setUser(updatedUser)
-
-//     // Update points with the returned user data
-//     setPoints(updatedUser.coins);
-
-//     toast({
-//       title: "Task reward claimed successfully!",
-//       status: "success",
-//       duration: 3000,
-//       isClosable: true,
-//     });
- // eslint-disable-next-line @typescript-eslint/no - explicit - any;
-//   } catch (error: any) {
-//     toast({
-//       title: error.message || "Error claiming task reward",
-//       status: "error",
-//       duration: 3000,
-//       isClosable: true,
-//     });
-//   }
-// };
 
   return (
     <Box
