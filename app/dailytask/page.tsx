@@ -1,50 +1,22 @@
 "use client";
 
-import { Box, Text, Flex, Image, Icon, Progress } from "@chakra-ui/react";
+import { Box, Text, Flex, Image, Icon, Progress, useToast } from "@chakra-ui/react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
 import { useState, useEffect } from "react";
 import { useUser } from "@/context/context";
 
-const dailyTask = [
-  {
-    image: "/icons/twitter.png",
-    name: "Follow our X account",
-    reward: "100,000",
-    path: "/",
-  },
-  {
-    image: "/icons/telegram.png",
-    name: "Join our Telegram Main Channel",
-    reward: "100,000",
-    path: "/",
-  },
-  {
-    image: "/icons/telegram.png",
-    name: "Join our Telegram New Channel",
-    reward: "100,000",
-    path: "/",
-  },
-  {
-    image: "/icons/instagram.png",
-    name: "Follow us on Instagram",
-    reward: "100,000",
-    path: "/",
-  },
-  {
-    image: "/icons/facebook.png",
-    name: "Follow us on Facebook",
-    reward: "100,000",
-    path: "/",
-  },
-  {
-    image: "/icons/gcoin.png",
-    name: "Choose your Exchange",
-    reward: "100,000",
-    path: "/",
-  },
-];
+
+
+interface TaskResponse {
+  id: string;
+  title: string;
+  imagePath?: string | null;
+  rewards: number;
+  taskUrl?: string | null;
+  claimed: boolean;
+}
 
 const levelNames = [
   "Bronze", // From 0 to 4999 coins
@@ -73,40 +45,118 @@ const levelMinPoints = [
 ];
 
 export default function DailyTask() {
-      const { user } = useUser();
-      
+  const { user, setUser } = useUser();
+  const [tasks, setTasks] = useState<TaskResponse[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-      const [levelIndex, setLevelIndex] = useState(0);
-      const [points, setPoints] = useState(0);
-      
+  const [levelIndex, setLevelIndex] = useState(0);
+  const [points, setPoints] = useState(0);
+  const toast = useToast()
 
-      useEffect(() => {
-        if (user) {
-          setPoints(user.coins);
-          setLevelIndex(user.level);
-        }
-      }, [user]);
+  useEffect(() => {
+    if (user) {
+      setPoints(user.coins);
+      setLevelIndex(user.level);
+    }
+  }, [user]);
 
-      const calculateProgress = () => {
-        if (levelIndex >= levelNames.length - 1) {
-          return 100;
-        }
-        const currentLevelMin = levelMinPoints[levelIndex];
-        const nextLevelMin = levelMinPoints[levelIndex + 1];
-        const progress =
-          ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
-        return Math.min(progress, 100);
-      };
+  const calculateProgress = () => {
+    if (levelIndex >= levelNames.length - 1) {
+      return 100;
+    }
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    const progress =
+      ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+    return Math.min(progress, 100);
+  };
 
-      useEffect(() => {
-        const currentLevelMin = levelMinPoints[levelIndex];
-        const nextLevelMin = levelMinPoints[levelIndex + 1];
-        if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
-          setLevelIndex(levelIndex + 1);
-        } else if (points < currentLevelMin && levelIndex > 0) {
-          setLevelIndex(levelIndex - 1);
-        }
-      }, [points, levelIndex, levelMinPoints, levelNames.length]);
+  useEffect(() => {
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+      setLevelIndex(levelIndex + 1);
+    } else if (points < currentLevelMin && levelIndex > 0) {
+      setLevelIndex(levelIndex - 1);
+    }
+  }, [points, levelIndex, levelMinPoints, levelNames.length]);
+
+  async function fetchTasks(userId: string): Promise<TaskResponse[]> {
+    const response = await fetch(`/api/getTasks?userId=${userId}`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch tasks");
+    }
+
+    return response.json();
+  }
+
+  useEffect(() => {
+    
+    // Fetch tasks and handle loading states
+    const loadTasks = async () => {
+      if(!user) return;
+      try {
+        setLoading(true);
+        const tasksData = await fetchTasks(user.id);
+        console.log(tasksData)
+        setTasks(tasksData);
+      } catch (error) {
+        setError("Failed to load tasks");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTasks();
+  }, [user]);
+
+
+const handleTaskCompletion = async (taskId: string) => {
+  if (!user) return;
+
+  try {
+    const response = await fetch("/api/completeTask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, taskId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to claim task reward");
+    }
+
+    // Get the updated task and user points from the response
+    const { task: updatedTask, user: updatedUser } = await response.json();
+
+    // Update tasks with the returned task data
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+
+    setUser(updatedUser)
+
+    // Update points with the returned user data
+    setPoints(updatedUser.coins);
+
+    toast({
+      title: "Task reward claimed successfully!",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+  } catch (error: any) {
+    toast({
+      title: error.message || "Error claiming task reward",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  }
+};
+
   return (
     <Box
       display={"flex"}
@@ -215,9 +265,9 @@ export default function DailyTask() {
           <Text fontSize={"16px"} fontWeight={500} color={"#fff"}>
             Task List
           </Text>
-          {dailyTask.map((task, id) => {
+          {tasks && tasks.length> 0 && tasks.map((task, id) => {
             return (
-              <Link href={"/"} key={id}>
+              <Link href={task.taskUrl!} target="_blank" key={id}>
                 <Flex
                   h={"80px"}
                   bg={"#1D222E"}
@@ -230,7 +280,7 @@ export default function DailyTask() {
                 >
                   <Flex alignItems={"center"} gap={4}>
                     <Image
-                      src={task.image}
+                      src={task.imagePath!}
                       w={"48px"}
                       h={"48px"}
                       alt="task image"
@@ -241,7 +291,7 @@ export default function DailyTask() {
                         fontWeight={500}
                         color={"#f5f5f5"}
                       >
-                        {task.name}
+                        {task.title}
                       </Text>
                       <Flex alignItems={"center"}>
                         <Image
@@ -254,7 +304,7 @@ export default function DailyTask() {
                           fontWeight={500}
                           color={"#f5f5f5"}
                         >
-                          + {task.reward} XP
+                          + {task.rewards} XP
                         </Text>
                       </Flex>
                     </Flex>

@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma"; // Adjust path to your Prisma client
 interface Task {
   taskType: "daily" | "social";
   title: string;
-  description: string;
   rewards: number
 }
 

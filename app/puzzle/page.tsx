@@ -17,22 +17,31 @@ import NavigationBar from "@/components/NavigationBar";
 import { useUser } from "@/context/context";
 
 const levelNames = [
-  "Bronze",
-  "Silver",
-  "Gold",
-  "Platinum",
-  "Diamond",
-  "Epic",
-  "Legendary",
-  "Master",
-  "GrandMaster",
-  "Lord",
+  "Bronze", // From 0 to 4999 coins
+  "Silver", // From 5000 coins to 24,999 coins
+  "Gold", // From 25,000 coins to 99,999 coins
+  "Platinum", // From 100,000 coins to 999,999 coins
+  "Diamond", // From 1,000,000 coins to 2,000,000 coins
+  "Epic", // From 2,000,000 coins to 10,000,000 coins
+  "Legendary", // From 10,000,000 coins to 50,000,000 coins
+  "Master", // From 50,000,000 coins to 100,000,000 coins
+  "GrandMaster", // From 100,000,000 coins to 1,000,000,000 coins
+  "Lord", // From 1,000,000,000 coins to ∞
 ];
 
 const levelMinPoints = [
-  0, 5000, 25000, 100000, 1000000, 2000000, 10000000, 50000000, 100000000,
-  1000000000,
+  0, // Bronze
+  5000, // Silver
+  25000, // Gold
+  100000, // Platinum
+  1000000, // Diamond
+  2000000, // Epic
+  10000000, // Legendary
+  50000000, // Master
+  100000000, // GrandMaster
+  1000000000, // Lord
 ];
+
 type UserData = {
   id: string;
   telegramId: string;
@@ -73,13 +82,22 @@ export default function Puzzle() {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [won, setWon] = useState<boolean>(false);
   const [timeLeft, setTimeLeft] = useState("");
+   const [showAll, setShowAll] = useState<boolean>(true);
 
   const { user , setUser} = useUser();
   console.log(user)
-  const [levelIndex, setLevelIndex] = useState(0);
-  const [points, setPoints] = useState(0);
+ const [levelIndex, setLevelIndex] = useState(0);
+ const [points, setPoints] = useState(0);
   const toast = useToast();
 
+
+    useEffect(() => {
+      const revealTimeout = setTimeout(() => {
+        setShowAll(false); // Hide cards after 5 seconds
+      }, 5000);
+
+      return () => clearTimeout(revealTimeout); // Cleanup the timeout if component unmounts
+    }, []);
 
 
      const updateUserProfile = async (updatedFields: UpdateData) => {
@@ -121,11 +139,13 @@ export default function Puzzle() {
     NewGame();
   }, []);
 
-  useEffect(()=>{
-    if(user){
-      setPoints(user.coins)
-    }
-  },[user])
+
+   useEffect(() => {
+     if (user) {
+       setPoints(user.coins);
+       setLevelIndex(user.level);
+     }
+   }, [user]);
 
   // Handle game stop logic after win or loss
 useEffect(() => {
@@ -210,6 +230,7 @@ useEffect(() => {
     setSecondCard(null);
     setWon(false);
     setGameOver(false);
+    setShowAll(true); 
     resetIndicate();
   }
 
@@ -271,21 +292,25 @@ useEffect(() => {
   }
 
   const calculateProgress = () => {
+    if (levelIndex >= levelNames.length - 1) {
+      return 100;
+    }
     const currentLevelMin = levelMinPoints[levelIndex];
-    const nextLevelMin = levelMinPoints[levelIndex + 1] || Infinity;
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
     const progress =
       ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
     return Math.min(progress, 100);
   };
 
   useEffect(() => {
-    if (
-      points >= levelMinPoints[levelIndex + 1] &&
-      levelIndex < levelNames.length - 1
-    ) {
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
       setLevelIndex(levelIndex + 1);
+    } else if (points < currentLevelMin && levelIndex > 0) {
+      setLevelIndex(levelIndex - 1);
     }
-  }, [points]);
+  }, [points, levelIndex, levelMinPoints, levelNames.length]);
 
   return (
     <Box
@@ -362,7 +387,7 @@ useEffect(() => {
                 item={item}
                 handleSelectedCards={handleSelectedCards}
                 toggled={
-                  item === firstCard || item === secondCard || item.matched
+                 showAll || item === firstCard || item === secondCard || item.matched
                 }
                 stopflip={stopFlip}
               />

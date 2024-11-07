@@ -148,7 +148,10 @@ export default function Roulette() {
       try {
         console.log(newPrizeNumber)
         console.log("user deets", user)
+
+        console.log("user coins", user.coins)
         const newCoin = user.coins + parseInt(data[newPrizeNumber].option)
+        console.log("new coins", newCoin)
       await new Promise((resolve) => setTimeout(resolve, 12000)); // Ensure the wheel starts
       const updatedUser = await updateUserProfile({ lastSpinTime: now, coins: newCoin});
       setUser(updatedUser);
