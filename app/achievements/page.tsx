@@ -166,17 +166,17 @@ function Achievements({}: Props) {
                       <Avatar
                         w={"71px"}
                         h={"71px"}
-                        name={topThreeUsers && topThreeUsers[1].username}
-                        src={topThreeUsers && topThreeUsers[1].photoUrl}
+                        name={topThreeUsers[1]?.username}
+                        src={topThreeUsers[1]?.photoUrl}
                       />
                     </WrapItem>
                   </Wrap>
                   <Flex direction={"column"} lineHeight={"14px"}>
                     <Text color={"white"} fontSize={"small"} fontWeight={"700"}>
-                      {topThreeUsers[1].username}
+                      {topThreeUsers[1]?.username}
                     </Text>
                     <Text color={"#4979D1"} fontSize={"2xs"} fontWeight={"700"}>
-                      {topThreeUsers[1].coins} XP
+                      {topThreeUsers[1]?.coins} XP
                     </Text>
                   </Flex>
                 </Flex>
@@ -189,8 +189,8 @@ function Achievements({}: Props) {
                       <Avatar
                         w={"79px"}
                         h={"79px"}
-                        name={topThreeUsers && topThreeUsers[0].username}
-                        src={topThreeUsers && topThreeUsers[0].photoUrl}
+                        name={topThreeUsers[0]?.username}
+                        src={ topThreeUsers[0]?.photoUrl}
                       />
                     </WrapItem>
                   </Wrap>
@@ -212,17 +212,17 @@ function Achievements({}: Props) {
                       <Avatar
                         w={"55.25px"}
                         h={"55.25px"}
-                        name={topThreeUsers && topThreeUsers[2].username}
-                        src={topThreeUsers && topThreeUsers[2].photoUrl}
+                        name={topThreeUsers[2]?.username}
+                        src={topThreeUsers[2]?.photoUrl}
                       />
                     </WrapItem>
                   </Wrap>
                   <Flex direction={"column"} lineHeight={"14px"}>
                     <Text color={"white"} fontSize={"small"} fontWeight={"700"}>
-                      {topThreeUsers[2].username}
+                      {topThreeUsers[2]?.username}
                     </Text>
                     <Text color={"#4979D1"} fontSize={"2xs"} fontWeight={"700"}>
-                      {topThreeUsers[2].coins} XP
+                      {topThreeUsers[2]?.coins} XP
                     </Text>
                   </Flex>
                 </Flex>
