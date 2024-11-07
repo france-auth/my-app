@@ -316,11 +316,11 @@ useEffect(() => {
       >
         <Box w={"90%"}>
           <Flex alignItems={"center"} gap={2}>
-            <Avatar
+           {userData && <Avatar
               size={"sm"}
-              name="Howgart Louis"
-              src={userData ? userData.photoUrl : ""}
-            />
+              name={userData.username}
+              src={userData.photoUrl}
+            />}
 
             <Text fontWeight={"700"} fontSize={"20px"} color={"#F5F5F5"}>
               {userData && userData.username}
