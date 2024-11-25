@@ -26,12 +26,13 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  WebApp.enableClosingConfirmation()
+  
 
   useEffect(() => {
     // Dynamically import WebApp to avoid issues during SSR
     const loadWebApp = async () => {
       const { default: WebApp } = await import("@twa-dev/sdk");
+      WebApp.enableClosingConfirmation();
 
       const backButton = WebApp.BackButton;
       WebApp.expand();
