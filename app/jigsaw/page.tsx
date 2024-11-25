@@ -189,7 +189,7 @@ export default function Jigsaw() {
       minHeight={"100vh"}
       alignItems={"center"}
       textColor={"white"}
-      overflow={"hidden"}
+      overflowY={"hidden"}
     >
       <Flex
         width={"100%"}
@@ -288,7 +288,7 @@ export default function Jigsaw() {
           p={4}
           maxW="600px"
           mx="auto"
-          overflow={"hidden"}
+          overflowY={"hidden"}
         >
           {/* Jigsaw Puzzle Component */}
           <JigsawPuzzle
