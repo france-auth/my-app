@@ -288,6 +288,7 @@ export default function Jigsaw() {
           p={4}
           maxW="600px"
           mx="auto"
+          overflow={"hidden"}
         >
           {/* Jigsaw Puzzle Component */}
           <JigsawPuzzle
@@ -295,6 +296,7 @@ export default function Jigsaw() {
             rows={4} // Set rows for the puzzle
             columns={6} // Set columns for the puzzle
             onSolved={handleSolved} // Trigger toast and enable button when solved
+            
           />
         </Box>
 
