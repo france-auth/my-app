@@ -165,45 +165,54 @@ export default function Homepage() {
     return () => clearInterval(intervalId);
   }, [userData?.telegramId]);
 
-  const handleCardClick = async (e: React.TouchEvent<HTMLDivElement>) => {
-    setIsFirstImage((prev) => !prev);
+ const handleCardClick = async (e: React.TouchEvent<HTMLDivElement>) => {
+   if (floatingEnergy <= 0) return;
 
-    if (floatingEnergy <= 0) return;
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
- const touches = Array.from(e.touches);
-  touches.forEach((touch) => {
-    const x = touch.clientX - rect.left - rect.width / 2;
-    const y = touch.clientY - rect.top - rect.height / 2;
+   const card = e.currentTarget;
+   const rect = card.getBoundingClientRect();
 
-    // Apply transform for each touch
-    card.style.transform = `perspective(1000px) rotateX(${
-      -y / 10
-    }deg) rotateY(${x / 10}deg)`;
+   const touches = Array.from(e.changedTouches); // Only handle new touch points
+   const newClicks : any = [];
+   let newPoints = points;
+   let newFloatingEnergy = floatingEnergy;
 
-    setTimeout(() => {
-      card.style.transform = "";
-    }, 100);
+   // Process each touch point
+   touches.forEach((touch) => {
+     const x = touch.clientX - rect.left - rect.width / 2;
+     const y = touch.clientY - rect.top - rect.height / 2;
 
-    const newPoints = points + pointsToAdd;
+     // Apply perspective transformation
+     card.style.transform = `perspective(1000px) rotateX(${
+       -y / 10
+     }deg) rotateY(${x / 10}deg)`;
 
-    setPoints(newPoints);
-    const newFLoat = floatingEnergy - 1;
-    setFloatingEnergy(newFLoat);
+     // Collect clicks and update points
+     newClicks.push({ id: Date.now(), x: touch.pageX, y: touch.pageY });
+     newPoints += pointsToAdd;
+     newFloatingEnergy -= 1;
 
-    setClicks((prevClicks) => [
-      ...prevClicks,
-      { id: Date.now(), x: touch.pageX, y: touch.pageY },
-    ]);
-  });
-   const updatedUser = await updateUserProfile({
-     coins: points + pointsToAdd * touches.length,
-     taps: floatingEnergy - touches.length,
+     // Reset card transformation after animation
+     setTimeout(() => {
+       card.style.transform = "";
+     }, 100);
    });
-    if (updatedUser) {
-      console.log("User updated:", updatedUser);
-    }
-  };
+
+   // Update states after processing all touches
+   setClicks((prev) => [...prev, ...newClicks]);
+   setPoints(newPoints);
+   setFloatingEnergy(newFloatingEnergy);
+
+   // Update the user profile in the backend
+   const updatedUser = await updateUserProfile({
+     coins: newPoints,
+     taps: newFloatingEnergy,
+   });
+
+   if (updatedUser) {
+     console.log("User updated:", updatedUser);
+   }
+ };
+
 
 
   useEffect(()=>{
