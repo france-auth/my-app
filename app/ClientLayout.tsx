@@ -5,8 +5,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { UserProvider } from "@/context/context";
 import "./globals.css";
 import { useEffect } from "react";
-import WebApp from "@twa-dev/sdk";
 import { usePathname } from "next/navigation";
+
 
 // Import local fonts
 const geistSans = localFont({
@@ -26,13 +26,12 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  
 
   useEffect(() => {
     // Dynamically import WebApp to avoid issues during SSR
     const loadWebApp = async () => {
       const { default: WebApp } = await import("@twa-dev/sdk");
-      WebApp.enableClosingConfirmation();
+      WebApp.enableClosingConfirmation()
 
       const backButton = WebApp.BackButton;
       WebApp.expand();
