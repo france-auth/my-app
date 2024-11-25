@@ -114,6 +114,7 @@ export default function Trivia() {
      });
      const now= new Date()
      setScore(correctCount);
+     handleClaim(correctCount)
      const updatedUser = await updateUserProfile({lastTriviaAttempt: now })
      setUser(updatedUser)
      onOpen(); // Open the modal
@@ -155,7 +156,7 @@ export default function Trivia() {
      };
 
 
-   const handleClaim =async()=>{
+   const handleClaim =async(score : number)=>{
     console.log("score from handleclaim",score)
     if (!user || score !== questions.length){
       onClose()
@@ -358,11 +359,10 @@ export default function Trivia() {
           <ModalFooter>
             <Button
               colorScheme="blue"
-              onClick={handleClaim}
               isDisabled={score !== questions.length} // Only enable for perfect score
             >
               {score === questions.length
-                ? "Claim 100 XP"
+                ? ""
                 : "Try Again Tomorrow"}
             </Button>
           </ModalFooter>

@@ -165,20 +165,22 @@ export default function Homepage() {
     return () => clearInterval(intervalId);
   }, [userData?.telegramId]);
 
-  const handleCardClick = async (e: React.MouseEvent<HTMLDivElement>) => {
-   
+  const handleCardClick = async (e: React.TouchEvent<HTMLDivElement>) => {
     setIsFirstImage((prev) => !prev);
-
-  
 
     if (floatingEnergy <= 0) return;
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
+ const touches = Array.from(e.touches);
+  touches.forEach((touch) => {
+    const x = touch.clientX - rect.left - rect.width / 2;
+    const y = touch.clientY - rect.top - rect.height / 2;
+
+    // Apply transform for each touch
     card.style.transform = `perspective(1000px) rotateX(${
       -y / 10
     }deg) rotateY(${x / 10}deg)`;
+
     setTimeout(() => {
       card.style.transform = "";
     }, 100);
@@ -189,15 +191,18 @@ export default function Homepage() {
     const newFLoat = floatingEnergy - 1;
     setFloatingEnergy(newFLoat);
 
-    setClicks([...clicks, { id: Date.now(), x: e.pageX, y: e.pageY }]);
-    const updatedUser = await updateUserProfile({
-      coins: newPoints,
-      taps: newFLoat,
-    });
+    setClicks((prevClicks) => [
+      ...prevClicks,
+      { id: Date.now(), x: touch.pageX, y: touch.pageY },
+    ]);
+  });
+   const updatedUser = await updateUserProfile({
+     coins: points + pointsToAdd * touches.length,
+     taps: floatingEnergy - touches.length,
+   });
     if (updatedUser) {
       console.log("User updated:", updatedUser);
     }
-    
   };
 
 
@@ -325,11 +330,13 @@ useEffect(() => {
       >
         <Box w={"90%"}>
           <Flex alignItems={"center"} gap={2}>
-           {userData && <Avatar
-              size={"sm"}
-              name={userData.username}
-              src={userData.photoUrl}
-            />}
+            {userData && (
+              <Avatar
+                size={"sm"}
+                name={userData.username}
+                src={userData.photoUrl}
+              />
+            )}
 
             <Text fontWeight={"700"} fontSize={"20px"} color={"#F5F5F5"}>
               {userData && userData.username}
@@ -496,7 +503,7 @@ useEffect(() => {
               justifyContent={"center"}
               alignItems={"center"}
               className="circle-outer h-[30vh] sm:h-[35vh]"
-              onClick={handleCardClick}
+              onTouchStart={handleCardClick}
             >
               <Box
                 width={"100%"}
@@ -537,7 +544,11 @@ useEffect(() => {
                     className="spin-reverse"
                   >
                     <Image
-                      src={isFirstImage ? "/MASCOT NORMAL.png" : "/MASCOT HAPPY.png"}
+                      src={
+                        isFirstImage
+                          ? "/MASCOT NORMAL.png"
+                          : "/MASCOT HAPPY.png"
+                      }
                       w={{ base: "80%", sm: "auto" }}
                       mx={"auto"}
                     />
@@ -555,11 +566,8 @@ useEffect(() => {
               justifyContent={"center"}
               display={"flex"}
             >
-              <Flex
-                width={"85%"}
-                alignItems={"center"}
-              >
-                <Image src="/icons/thunder.png" width={'20px'}/>
+              <Flex width={"85%"} alignItems={"center"}>
+                <Image src="/icons/thunder.png" width={"20px"} />
                 <Text fontSize={"13px"} fontWeight={500} color={"#DDE2E7"}>
                   {`${floatingEnergy} / ${userData && userData.maxTaps}`}
                 </Text>
