@@ -172,7 +172,8 @@ export default function Homepage() {
    const rect = card.getBoundingClientRect();
 
    const touches = Array.from(e.changedTouches); // Only handle new touch points
-   const newClicks : any = [];
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const newClicks: any = [];
    let newPoints = points;
    let newFloatingEnergy = floatingEnergy;
 
