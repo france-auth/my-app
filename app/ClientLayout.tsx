@@ -7,7 +7,6 @@ import "./globals.css";
 import { useEffect } from "react";
 import WebApp from "@twa-dev/sdk";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
 
 // Import local fonts
 const geistSans = localFont({
