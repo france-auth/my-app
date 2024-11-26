@@ -25,7 +25,7 @@ export async function GET(
     // Step 2: Fetch all referrals made by the user
     const referrals = await prisma.referral.findMany({
       where: {
-        userId: userId, // Use the telegramId directly as the userId in the query
+        userId: user.id, // Use the telegramId directly as the userId in the query
       },
     });
 
