@@ -28,7 +28,7 @@ function HomeContent() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ initData: telegramInitData, referralCode }),
+        body: JSON.stringify({ initData: telegramInitData, referralCode: referralCode }),
       })
         .then((res) => {
           if (!res.ok) {
