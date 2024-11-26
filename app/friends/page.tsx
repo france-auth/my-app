@@ -49,7 +49,7 @@ const levelMinPoints = [
 export default function Friends() {
   const { user } = useUser();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [referredUser, setReferredUsers] = useState<any[]>([]);
+  const [referredUsers, setReferredUsers] = useState<any[]>([]);
   const { onCopy, value, hasCopied } = useClipboard(
     `https://t.me/softnote_bot?start=${user?.telegramId}`
   );
@@ -73,7 +73,7 @@ export default function Friends() {
 
       const data = await response.json();
       setReferredUsers(data.referredUsers);
-      console.log(data.referredUsers);
+      console.log(data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -84,7 +84,7 @@ export default function Friends() {
       fetchReferredUsers(user.telegramId);
     }
   }, [user]);
-  console.log(referredUser);
+  console.log(referredUsers);
 
   const [levelIndex, setLevelIndex] = useState(0);
   const [points, setPoints] = useState(0);
@@ -318,7 +318,26 @@ export default function Friends() {
               alignItems={"center"}
               p={"2px"}
             >
-              <Box
+            {referredUsers && referredUsers.length > 0 && referredUsers.map((user, index)=>{
+              return (
+                <Box
+                key={index}
+                  width={"100%"}
+                  h={"100%"}
+                  bg={"#1d222e"}
+                  borderRadius={"10px"}
+                  fontSize={"14px"}
+                  fontWeight={500}
+                  display={"flex"}
+                  mx={"auto"}
+                  alignItems={"center"}
+                  color={"#f2f2f2"}
+                >
+                  {user.username}
+                </Box>
+              );
+            })}
+            {referredUsers && referredUsers.length <= 0 && <Box
                 width={"100%"}
                 h={"100%"}
                 bg={"#1d222e"}
@@ -332,7 +351,7 @@ export default function Friends() {
                 color={"#f2f2f2"}
               >
                 You haven’t invited anyone yet
-              </Box>
+              </Box>}
             </Box>
           </Flex>
         </Box>
