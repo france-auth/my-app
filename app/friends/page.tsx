@@ -10,6 +10,7 @@ import {
   useClipboard,
   Input,
   Button,
+  HStack,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { CheckIcon } from "@chakra-ui/icons";
@@ -321,7 +322,7 @@ export default function Friends() {
             {referredUsers && referredUsers.length > 0 && referredUsers.map((user, index)=>{
               return (
                 <Box
-                key={index}
+                  key={index}
                   width={"100%"}
                   h={"100%"}
                   bg={"#1d222e"}
@@ -330,10 +331,16 @@ export default function Friends() {
                   fontWeight={500}
                   display={"flex"}
                   mx={"auto"}
+                  justifyContent={"space-between"}
+                  p={4}
                   alignItems={"center"}
                   color={"#f2f2f2"}
                 >
-                  {user.username}
+                  <Text>{user.username}</Text>
+                  <HStack>
+                    <Image alt="coin img" src="/icons/coin.png" />
+                    <Text>{user.coins}</Text>
+                  </HStack>
                 </Box>
               );
             })}
