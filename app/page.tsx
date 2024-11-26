@@ -8,6 +8,8 @@ import { useUser } from "@/context/context";
 import { useSearchParams } from "next/navigation";
 import WebApp from "@twa-dev/sdk";
 
+export const dynamic = "force-dynamic";
+
 function HomeContent() {
   const [error, setError] = useState<string | null>(null);
   const { setUser, user } = useUser();
