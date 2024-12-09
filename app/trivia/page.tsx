@@ -100,7 +100,11 @@ export default function Trivia() {
   };
 
  const handleSubmit = async (option : string) => {
-   const newAnswers = [];
+  if (timeLeft === "00:00:00" || timeLeft === ""){
+    alert("You have to wait for 24 hours to answer trivia!")
+    return;
+  }
+    const newAnswers = [];
    newAnswers.push(option)
    setSelectedAnswers(newAnswers);
 
