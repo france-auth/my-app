@@ -265,7 +265,7 @@ const handleTaskCompletion = async (taskId: string) => {
                 justifyContent={"center"}
                 gap={1}
               >
-                <Image src="/vector.svg" />
+                <Image src="/Vector.svg" />
                 <Text>
                   {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>

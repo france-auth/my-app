@@ -412,7 +412,7 @@ useEffect(() => {
                 justifyContent={"center"}
                 gap={1}
               >
-                <Image src="/vector.svg" />
+                <Image src="/Vector.svg" />
                 <Text>
                   {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>
@@ -501,7 +501,7 @@ useEffect(() => {
                 {userData && formatProfitPerHour(profitPerHour)} per hour
               </Text>
               <Flex h={"36px"} gap={2} alignItems={"center"}>
-                <Image alt="coin img" src="/vector.svg" w={6} />
+                <Image alt="coin img" src="/Vector.svg" w={6} />
                 <Text fontSize={"29.33px"} fontWeight={600} color={"#DDE2E7"}>
                   {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>

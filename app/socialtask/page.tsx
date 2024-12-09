@@ -181,7 +181,7 @@ export default function SocialTask() {
                 justifyContent={"center"}
                 gap={1}
               >
-                <Image src="/vector.svg" />
+                <Image src="/Vector.svg" />
                 <Text>
                   {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>
@@ -229,7 +229,7 @@ export default function SocialTask() {
                       </Text>
                       <Flex alignItems={"center"}>
                         <Image
-                          src="/coin.svg"
+                          src="/Coin.svg"
                           w={"14px"}
                           alt="big coin"
                         />
