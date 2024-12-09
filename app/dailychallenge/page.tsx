@@ -11,17 +11,17 @@ const PlayList = [
     path: "/puzzle",
   },
   {
-    image: "/icons/badge.png",
+    image: "/badge.svg",
     name: "Daily Reward",
     path: "/dailyreward",
   },
   {
-    image: "/icons/list.png",
+    image: "/list.svg",
     name: "Daily Tasks",
     path: "/dailytask",
   },
   {
-    image: "/icons/app.png",
+    image: "/app.svg",
     name: "Social Tasks",
     path: "/socialtask",
   },
@@ -32,7 +32,7 @@ export default function DailyChallenge() {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -49,7 +49,7 @@ export default function DailyChallenge() {
         gap={10}
         pb={24}
       >
-        <Text color={"#93B9FF"} fontWeight={"700"} fontSize={"24px"}>
+        <Text color={"#487BFF"} fontWeight={"700"} fontSize={"24px"}>
           Daily Challenge
         </Text>
         <Box
@@ -57,18 +57,17 @@ export default function DailyChallenge() {
           px={"16px"}
           display={"flex"}
           flexDirection={"column"}
-          gap={"30px"}
+          gap={3}
         >
           {PlayList.map((list, id) => {
             return (
               <Flex
                 key={id}
-                h={"110px"}
-                bg={"#1D222EB2"}
+                h={"70px"}
+                bg={"#12161E"}
                 borderRadius={"16px"}
                 padding={"18px 16px"}
-                borderBottom={"0.9px solid #4979D1"}
-                gap={4}
+                gap={1}
                 justifyContent={"space-between"}
                 alignItems={"center"}
               >
@@ -79,18 +78,7 @@ export default function DailyChallenge() {
                   </Text>
                 </Flex>
                 <Link href={list.path}>
-                  <Button
-                    w={"60px"}
-                    h={"25px"}
-                    bg={"#4979d1"}
-                    color={"#fff"}
-                    fontSize={"10px"}
-                    fontWeight={600}
-                    _hover={{ bg: "#4979d1" }}
-                    borderRadius={"20px"}
-                  >
-                    Go
-                  </Button>
+                  <Image src="/arrow.svg" />
                 </Link>
               </Flex>
             );

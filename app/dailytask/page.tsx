@@ -181,7 +181,7 @@ const handleTaskCompletion = async (taskId: string) => {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -191,15 +191,14 @@ const handleTaskCompletion = async (taskId: string) => {
       <Flex
         width={"100%"}
         minHeight={"100vh"}
-        bg={"rgba(29, 34, 46, .7)"}
         flexDirection={"column"}
         alignItems={"center"}
         pb={32}
         gap={5}
       >
-        <Box width={"100%"} bg={"#12161E"} p={"20px"} pt={"30px"}>
+        <Box width={"100%"}  p={"20px"} pt={"30px"}>
           <Text
-            color={"#93BAFF"}
+            color={"#487BFF"}
             fontWeight={"700"}
             fontSize={"24px"}
             textAlign={"center"}
@@ -257,18 +256,19 @@ const handleTaskCompletion = async (taskId: string) => {
                 width={"80px"}
                 height={"21px"}
                 padding={"2px 12px"}
-                border={"1px solid #f5f5f5"}
-                borderRadius={"10px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
                 textAlign={"center"}
                 alignItems={"center"}
                 display={"flex"}
-                flexDirection={"column"}
                 justifyContent={"center"}
+                gap={1}
               >
-                <Text>{user && user.coins}</Text>
+                <Image src="/vector.svg" />
+                <Text>
+                  {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
+                </Text>
               </Box>
             </Box>
           </Flex>
@@ -357,7 +357,14 @@ const handleTaskCompletion = async (taskId: string) => {
           <DrawerBody
             bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
           >
-            <Flex minH={"30vh"} p={5} alignItems={'center'} justifyContent={"center"} gap={5} direction={"column"}>
+            <Flex
+              minH={"30vh"}
+              p={5}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={5}
+              direction={"column"}
+            >
               <Flex
                 h={"80px"}
                 bg={"#1D222E"}
@@ -398,7 +405,15 @@ const handleTaskCompletion = async (taskId: string) => {
                 </Flex>
               </Flex>
 
-              <Button onClick={()=>selectedtask && handleTaskCompletion(selectedtask.id)} isLoading={loading} loadingText={"verifying"}>Verify</Button>
+              <Button
+                onClick={() =>
+                  selectedtask && handleTaskCompletion(selectedtask.id)
+                }
+                isLoading={loading}
+                loadingText={"verifying"}
+              >
+                Verify
+              </Button>
             </Flex>
           </DrawerBody>
         </DrawerContent>

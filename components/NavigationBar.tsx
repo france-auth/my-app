@@ -32,8 +32,16 @@ const NavItem: React.FC<NavItemProps> = ({
       width={"72px"}
       minW={"72px"}
       className={`flex flex-col ${
-        isActive ? "text-[#f5f5f5] bg-[#1d222e]" : "text-[#4979d1] bg-[#1f2024]"
+        isActive ? "text-[#f5f5f5]" : "text-[#4979d1] bg-[#1f2024]"
       }`}
+      style={
+        isActive
+          ? {
+              background:
+                "radial-gradient(182.7% 205.47% at 50.09% -45.71%, #487BFF 14.35%, rgba(42, 79, 173, 0.67) 52.92%, rgba(31, 65, 153, 0) 100%)",
+            }
+          : {}
+      }
     >
       {icon}
       <Text

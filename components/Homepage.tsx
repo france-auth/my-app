@@ -17,8 +17,8 @@ import { useUser } from "@/context/context";
 
 const SmallCardArray = [
   {
-    image: "/icons/game-chat.png",
-    text: "Mini Games",
+    image: "/game-chat.svg",
+    text: "Play Mini Games",
     timer: "00:00",
     path: "/play2earn",
   },
@@ -322,7 +322,7 @@ useEffect(() => {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgColor={"#12161E"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -403,18 +403,19 @@ useEffect(() => {
                 width={"80px"}
                 height={"21px"}
                 padding={"2px 12px"}
-                border={"1px solid #f5f5f5"}
-                borderRadius={"10px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
                 textAlign={"center"}
                 alignItems={"center"}
                 display={"flex"}
-                flexDirection={"column"}
                 justifyContent={"center"}
+                gap={1}
               >
-                <Text>{points.toFixed(0)}</Text>
+                <Image src="/vector.svg" />
+                <Text>
+                  {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
+                </Text>
               </Box>
             </Box>
           </Flex>
@@ -433,7 +434,7 @@ useEffect(() => {
         >
           <Flex
             flexDirection={"column"}
-            bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+            bgColor={"#06070A"}
             w={"100%"}
             borderTopRadius={"15px"}
             h={"77vh"}
@@ -441,39 +442,40 @@ useEffect(() => {
             className="gap-0 pt-2 sm:pt-2 xl:pt-3"
             alignItems={"center"}
           >
-            <Flex
-              w={"80%"}
-              p={"3px"}
-              gap={"4px"}
-              borderRadius={"10px"}
-              mx={"auto"}
-              bgGradient={
-                "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
-              }
-            >
+            <Flex w={"90%"} pt={"3px"}>
               {SmallCardArray.map((card, id) => {
                 return (
                   <Link href={card.path} className="w-[100%]" key={id}>
                     <Flex
                       width={"100%"}
-                      flexDirection={"column"}
                       alignItems={"center"}
-                      height={"100px"}
-                      justifyContent={"center"}
-                      p={"22px"}
-                      bgColor={"#1D222E"}
-                      gap={"8px"}
-                      borderRadius={"10px"}
+                      justifyContent={"space-between"}
+                      bgColor={"#12161E"}
+                      h={"45px"}
+                      border={"1px solid #343C4D"}
+                      borderRadius={"15px"}
+                      px={3}
                     >
-                      <Image alt="card img" src={card.image} w={"32px"} />
+                      <Flex alignItems={"center"} gap={2}>
+                        <Image alt="card img" src={card.image} w={"20px"} />
+                        <Text
+                          w={""}
+                          textAlign={"center"}
+                          fontSize={"12px"}
+                          fontWeight={500}
+                          color={"white"}
+                        >
+                          {card.text}
+                        </Text>
+                      </Flex>
                       <Text
                         w={""}
                         textAlign={"center"}
                         fontSize={"12px"}
                         fontWeight={500}
-                        color={"white"}
+                        color={"#7585A7"}
                       >
-                        {card.text}
+                        {card.timer}
                       </Text>
                     </Flex>
                   </Link>
@@ -498,10 +500,10 @@ useEffect(() => {
                 {" "}
                 {userData && formatProfitPerHour(profitPerHour)} per hour
               </Text>
-              <Flex h={"36px"} gap={3} alignItems={"center"}>
-                <Image alt="coin img" src="/icons/coin.png" />
+              <Flex h={"36px"} gap={2} alignItems={"center"}>
+                <Image alt="coin img" src="/vector.svg" w={6} />
                 <Text fontSize={"29.33px"} fontWeight={600} color={"#DDE2E7"}>
-                  {points.toFixed(0)}
+                  {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>
               </Flex>
             </Box>
@@ -578,7 +580,7 @@ useEffect(() => {
             >
               <Flex width={"85%"} alignItems={"center"}>
                 <Image src="/icons/thunder.png" width={"20px"} />
-                <Text fontSize={"13px"} fontWeight={500} color={"#DDE2E7"}>
+                <Text fontSize={"13px"} fontWeight={500} color={"#487BFF"}>
                   {`${floatingEnergy} / ${userData && userData.maxTaps}`}
                 </Text>
               </Flex>

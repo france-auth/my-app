@@ -10,20 +10,26 @@ import { useState, useEffect } from "react";
 
 const socialTask = [
   {
-    image: "/icons/invite.png",
+    image: "/invite.svg",
     name: "Invite & Earn",
     reward: "100,000",
     path: "/",
   },
   {
-    image: "/icons/telegram.png",
+    image: "/telegram.svg",
     name: "Invite via Telegram Premium",
     reward: "100,000",
     path: "/",
   },
   {
-    image: "/icons/people-add.png",
+    image: "/people-add.svg",
     name: "Join Softnote Channel",
+    reward: "100,000",
+    path: "/",
+  },
+  {
+    image: "/group.svg",
+    name: "Join Softnote Community",
     reward: "100,000",
     path: "/",
   },
@@ -91,7 +97,7 @@ export default function SocialTask() {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -108,7 +114,7 @@ export default function SocialTask() {
       >
         <Box width={"100%"} p={"20px"} pt={"30px"}>
           <Text
-            color={"#93BAFF"}
+            color={"#487BFF"}
             fontWeight={"700"}
             fontSize={"24px"}
             textAlign={"center"}
@@ -166,18 +172,19 @@ export default function SocialTask() {
                 width={"80px"}
                 height={"21px"}
                 padding={"2px 12px"}
-                border={"1px solid #f5f5f5"}
-                borderRadius={"10px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
                 textAlign={"center"}
                 alignItems={"center"}
                 display={"flex"}
-                flexDirection={"column"}
                 justifyContent={"center"}
+                gap={1}
               >
-                <Text>{user && user.coins}</Text>
+                <Image src="/vector.svg" />
+                <Text>
+                  {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
+                </Text>
               </Box>
             </Box>
           </Flex>
@@ -197,11 +204,10 @@ export default function SocialTask() {
             return (
               <Link href={""} key={id}>
                 <Flex
-                  h={"80px"}
-                  bg={"#1D222E"}
+                  h={"70px"}
+                  bg={"#12161E"}
                   borderRadius={"16px"}
                   padding={"18px 16px"}
-                  borderBottom={"0.9px solid #4979D1"}
                   gap={4}
                   alignItems={"center"}
                   justifyContent={"space-between"}
@@ -223,7 +229,7 @@ export default function SocialTask() {
                       </Text>
                       <Flex alignItems={"center"}>
                         <Image
-                          src="/icons/BigCoin.png"
+                          src="/coin.svg"
                           w={"14px"}
                           alt="big coin"
                         />
