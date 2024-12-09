@@ -49,6 +49,13 @@ function Achievements({}: Props) {
   const [currentUserIndex, setCurrentUserindex] = useState<number>()
   const {user} = useUser()
 
+  const formatNumber = (num: number) => {
+    if (num >= 1000000000) return `${(num / 1000000000).toFixed(1)}B`;
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toString();
+  };
+
   const fetchUsers = async () => {
     try {
       const response = await fetch("/api/getUsers");
@@ -84,7 +91,7 @@ function Achievements({}: Props) {
   return (
     <Flex
       flexDirection={"column"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       // alignItems={"center"}
@@ -93,28 +100,53 @@ function Achievements({}: Props) {
     >
       <Flex direction={"column"} gap={2} p={5} bg={"#12161e"}>
         <Flex gap={1} justifyContent={"center"}>
-          <Heading fontSize={"25px"} color={"#93baff"} mt={2}>
+          <Heading fontSize={"25px"} color={"#487BFF"} mt={2}>
             {" "}
             Leaderboard
           </Heading>
         </Flex>
         <Flex direction={"column"}>
-          <Text color={"#C4C4C4"} fontSize={"xs"}>
+          <Text color={"#C4C4C4"} fontSize={"xs"} mt={2}>
             Click Picture to see Badges
           </Text>
-          <Card bg={"#12161E"} boxShadow={"0px 2px 2px 2px #19388A99"} mt={1}>
+          <Card
+            mt={1}
+            sx={{
+              position: "relative",
+              borderRadius: "15px", // Ensures the card itself is curved
+              background: "#12161E", // Background for the main card
+              boxShadow: "0px 4px 40px 0px #1656FF80", // Outer shadow
+              overflow: "hidden", // Clips pseudo-element content to fit border-radius
+              zIndex: 1, // Ensure the card content is above the pseudo-element
+              "::before": {
+                content: '""', // Required for pseudo-elements
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                borderRadius: "inherit", // Matches the card's border radius
+                padding: "1px", // Creates space for the gradient border
+                background:
+                  "linear-gradient(86.78deg, #477BFF 5.33%, #1A59FF 94.67%)", // Border gradient
+                WebkitMask:
+                  "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", // Masks the inside
+                WebkitMaskComposite: "destination-out",
+                maskComposite: "exclude", // Ensures only the border is visible
+                zIndex: -1, // Places it behind the card content
+              },
+            }}
+          >
             <CardBody>
               <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Flex alignItems={"center"} gap={2}>
                   <Wrap border={"1px solid white"} borderRadius={"50%"}>
                     <WrapItem>
-                      
-                        <Avatar
-                          size="sm"
-                          name={currentUser?.username}
-                          src={currentUser?.photoUrl}
-                        />
-                     
+                      <Avatar
+                        size="sm"
+                        name={currentUser?.username}
+                        src={currentUser?.photoUrl}
+                      />
                     </WrapItem>
                   </Wrap>
                   <Flex direction={"column"} lineHeight={"14px"}>
@@ -127,7 +159,11 @@ function Achievements({}: Props) {
                   </Flex>
                 </Flex>
 
-                <Text color={"white"}>#{currentUserIndex && currentUserIndex + 1}</Text>
+                <Text color={"white"}>
+                  #
+                  {currentUserIndex &&
+                    new Intl.NumberFormat().format(currentUserIndex! + 1)}
+                </Text>
               </Flex>
             </CardBody>
           </Card>
@@ -143,89 +179,156 @@ function Achievements({}: Props) {
         </Heading>
       </Flex>
 
-      <Flex direction={"column"} p={5} gap={4} pb={32}>
+      <Flex direction={"column"} p={5} gap={2} pb={32}>
         <Flex minH={"60vh"} direction={"column"} align={"center"} w={"100%"}>
           {topThreeUsers.length > 0 && (
             <Flex
-              justifyContent={"space-around"}
-              p={5}
-              w={"100%"}
-              alignItems={"center"}
-              textAlign={"center"}
-              borderWidth={"1px"}
-              sx={{
-                borderImageSource:
-                  "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)",
-                borderImageSlice: 1,
-              }}
+              justifyContent="space-around"
+              alignItems="center"
+              p={4}
+              w="100%"
+              textAlign="center"
+              bg="#12161E"
+              borderRadius="15px"
+              gap={2}
+              position="relative"
             >
-              <Flex>
-                <Flex direction={"column"} alignItems={"center"} p={2} gap={2}>
-                  <Wrap border={"1px solid white"} borderRadius={"50%"}>
-                    <WrapItem>
-                      <Avatar
-                        w={"71px"}
-                        h={"71px"}
-                        name={topThreeUsers[1]?.username}
-                        src={topThreeUsers[1]?.photoUrl}
-                      />
-                    </WrapItem>
-                  </Wrap>
-                  <Flex direction={"column"} lineHeight={"14px"}>
-                    <Text color={"white"} fontSize={"small"} fontWeight={"700"}>
-                      {topThreeUsers[1]?.username}
-                    </Text>
-                    <Text color={"#4979D1"} fontSize={"2xs"} fontWeight={"700"}>
-                      {topThreeUsers[1]?.coins} XP
-                    </Text>
-                  </Flex>
-                </Flex>
+              {/* Second place */}
+              <Flex direction="column" alignItems="center" position="relative">
+                <Wrap
+                  borderRadius="50%"
+                  p={0.5} // Reduced padding for a thinner border
+                  bg="linear-gradient(86.78deg, #D4D4D4 5.33%, #748398 94.67%)"
+                >
+                  <WrapItem>
+                    <Avatar
+                      w="65px"
+                      h="65px"
+                      name={topThreeUsers[1]?.username}
+                      src={topThreeUsers[1]?.photoUrl}
+                    />
+                  </WrapItem>
+                </Wrap>
+                <Text
+                  color="white"
+                  fontSize="xs"
+                  fontWeight="700"
+                  position="absolute"
+                  top="40%" // Fixed position above the avatar
+                  left="50%"
+                  transform="translateX(-50%)" // Centers the rank text
+                  bg="linear-gradient(86.78deg, #D4D4D4 5.33%, #748398 94.67%)"
+                  borderRadius="full"
+                  px={2}
+                  py={1}
+                  w="30px"
+                  h="30px"
+                  lineHeight="30px"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  zIndex={1} // Ensure it's above other content
+                >
+                  2
+                </Text>
+                <Text color="white" fontSize="sm" fontWeight="600" mt={"10px"}>
+                  {topThreeUsers[1]?.username}
+                </Text>
+                <Text color="white" fontSize="sm" fontWeight="600">
+                  {formatNumber(topThreeUsers[1]?.coins)}
+                </Text>
               </Flex>
 
-              <Flex>
-                <Flex direction={"column"} alignItems={"center"} p={2} gap={2}>
-                  <Wrap border={"1px solid white"} borderRadius={"50%"}>
-                    <WrapItem>
-                      <Avatar
-                        w={"79px"}
-                        h={"79px"}
-                        name={topThreeUsers[0]?.username}
-                        src={ topThreeUsers[0]?.photoUrl}
-                      />
-                    </WrapItem>
-                  </Wrap>
-                  <Flex direction={"column"} lineHeight={"14px"}>
-                    <Text color={"white"} fontSize={"small"} fontWeight={"700"}>
-                      {topThreeUsers[0].username}
-                    </Text>
-                    <Text color={"#4979D1"} fontSize={"2xs"} fontWeight={"700"}>
-                      {topThreeUsers[0].coins} XP
-                    </Text>
-                  </Flex>
-                </Flex>
+              {/* First place */}
+              <Flex direction="column" alignItems="center" position="relative">
+                <Wrap
+                  borderRadius="50%"
+                  p={0.5} // Reduced padding for a thinner border
+                  bg="linear-gradient(86.78deg, #FDE26C 5.33%, #C88800 94.67%)"
+                >
+                  <WrapItem>
+                    <Avatar
+                      w="84px"
+                      h="84px"
+                      name={topThreeUsers[0]?.username}
+                      src={topThreeUsers[0]?.photoUrl}
+                    />
+                  </WrapItem>
+                </Wrap>
+                <Text
+                  color="white"
+                  fontSize="xs"
+                  fontWeight="700"
+                  position="absolute"
+                  top="50%" // Fixed position above the avatar
+                  left="50%"
+                  transform="translateX(-50%)" // Centers the rank text
+                  bg="linear-gradient(86.78deg, #FDE26C 5.33%, #C88800 94.67%)"
+                  borderRadius="full"
+                  px={2}
+                  py={1}
+                  w="30px"
+                  h="30px"
+                  lineHeight="30px"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  zIndex={1} // Ensure it's above other content
+                >
+                  1
+                </Text>
+                <Text color="white" fontSize="sm" fontWeight="600" mt="10px">
+                  {topThreeUsers[0]?.username}
+                </Text>
+                <Text color="white" fontSize="sm" fontWeight="600">
+                  {formatNumber(topThreeUsers[0]?.coins)}
+                </Text>
               </Flex>
 
-              <Flex>
-                <Flex direction={"column"} alignItems={"center"} p={2} gap={2}>
-                  <Wrap border={"1px solid white"} borderRadius={"50%"}>
-                    <WrapItem>
-                      <Avatar
-                        w={"55.25px"}
-                        h={"55.25px"}
-                        name={topThreeUsers[2]?.username}
-                        src={topThreeUsers[2]?.photoUrl}
-                      />
-                    </WrapItem>
-                  </Wrap>
-                  <Flex direction={"column"} lineHeight={"14px"}>
-                    <Text color={"white"} fontSize={"small"} fontWeight={"700"}>
-                      {topThreeUsers[2]?.username}
-                    </Text>
-                    <Text color={"#4979D1"} fontSize={"2xs"} fontWeight={"700"}>
-                      {topThreeUsers[2]?.coins} XP
-                    </Text>
-                  </Flex>
-                </Flex>
+              {/* Third place */}
+              <Flex direction="column" alignItems="center" position="relative">
+                <Wrap
+                  borderRadius="50%"
+                  p={0.5} // Reduced padding for a thinner border
+                  bg="linear-gradient(86.78deg, #FA9339 5.33%, #C86400 94.67%)"
+                >
+                  <WrapItem>
+                    <Avatar
+                      w="65px"
+                      h="65px"
+                      name={topThreeUsers[2]?.username}
+                      src={topThreeUsers[2]?.photoUrl}
+                    />
+                  </WrapItem>
+                </Wrap>
+                <Text
+                  color="white"
+                  fontSize="xs"
+                  fontWeight="700"
+                  position="absolute"
+                  top="40%" // Fixed position above the avatar
+                  left="50%"
+                  transform="translateX(-50%)" // Centers the rank text
+                  bg="linear-gradient(86.78deg, #FA9339 5.33%, #C86400 94.67%)"
+                  borderRadius="full"
+                  px={2}
+                  py={1}
+                  w="30px"
+                  h="30px"
+                  lineHeight="30px"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  zIndex={1} // Ensure it's above other content
+                >
+                  3
+                </Text>
+                <Text color="white" fontSize="sm" fontWeight="600" mt="10px">
+                  {topThreeUsers[2]?.username}
+                </Text>
+                <Text color="white" fontSize="sm" fontWeight="600">
+                  {formatNumber(topThreeUsers[2]?.coins)}
+                </Text>
               </Flex>
             </Flex>
           )}
@@ -233,18 +336,15 @@ function Achievements({}: Props) {
           {remainingUsers.map((user: User, index: number) => {
             return (
               <Flex
-              key={index}
+                key={index}
                 mt={4}
-                h={"10vh"}
-                w={"95%"}
-                borderWidth={"1px"}
-                sx={{
-                  borderImageSource:
-                    "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)",
-                  borderImageSlice: 1,
-                }}
+                h={"8vh"}
+                w={"100%"}
+                px={2}
+                borderRadius={"15px"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
+                bg={"#12161E"}
               >
                 <Flex alignItems={"center"} p={2} gap={2}>
                   <Wrap border={"1px solid white"} borderRadius={"50%"}>
@@ -260,12 +360,14 @@ function Achievements({}: Props) {
                     <Text color={"white"} fontSize={"small"} fontWeight={"700"}>
                       {user.username}
                     </Text>
-                    <Text color={"#4979D1"} fontSize={"2xs"} fontWeight={"700"}>
+                    <Text color={"#487BFF"} fontSize={"2xs"} fontWeight={"700"}>
                       {user.coins} XP
                     </Text>
                   </Flex>
                 </Flex>
-                <Text p={2}>#{topThreeUsers.length + index + 1}</Text>
+                <Text p={2} color={"#487BFF"}>
+                  {topThreeUsers.length + index + 1}
+                </Text>
               </Flex>
             );
           })}

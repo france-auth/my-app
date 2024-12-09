@@ -122,7 +122,7 @@ export default function Friends() {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -139,7 +139,7 @@ export default function Friends() {
       >
         <Box width={"100%"} p={"20px"} pt={"30px"}>
           <Text
-            color={"#93BAFF"}
+            color={"#487BFF"}
             fontWeight={"700"}
             fontSize={"24px"}
             textAlign={"center"}
@@ -197,18 +197,19 @@ export default function Friends() {
                 width={"80px"}
                 height={"21px"}
                 padding={"2px 12px"}
-                border={"1px solid #f5f5f5"}
-                borderRadius={"10px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
                 textAlign={"center"}
                 alignItems={"center"}
                 display={"flex"}
-                flexDirection={"column"}
                 justifyContent={"center"}
+                gap={1}
               >
-                <Text>{user && user.coins}</Text>
+                <Image src="/Vector.svg" />
+                <Text>
+                  {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
+                </Text>
               </Box>
             </Box>
           </Flex>
@@ -221,6 +222,13 @@ export default function Friends() {
           flexDirection={"column"}
           gap={5}
         >
+          <Image
+            src="/USDT.svg"
+            w={"343px"}
+            h={"236px"}
+            mx={"auto"}
+            alt="yellow dude"
+          />
           <Text
             fontSize={"25px"}
             w={"251px"}
@@ -233,21 +241,10 @@ export default function Friends() {
             <span className="text-[#93BAFF]">cool rewards</span>
           </Text>
 
-          <Image
-            src="/yellow-dude.png"
-            w={"370px"}
-            h={"295px"}
-            mx={"auto"}
-            alt="yellow dude"
-          />
-
           <Flex
             w={"90%"}
             borderRadius={"10px"}
             mx={"auto"}
-            bgGradient={
-              "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
-            }
             p={"2px"}
             alignItems={"center"}
           >
@@ -255,7 +252,7 @@ export default function Friends() {
               display={"flex"}
               w={"100%"}
               h={"100%"}
-              bg={"#1d222e"}
+              bg={"#12161E"}
               borderRadius={"10px"}
               alignItems={"center"}
             >
@@ -278,7 +275,7 @@ export default function Friends() {
                 w={"41px"}
                 height={"41px"}
                 onClick={onCopy}
-                bg={"#4979d1"}
+                bg={"#487BFF"}
                 borderRadius={"0px"}
                 mr={"0.5"}
                 _hover={{ bg: "#4979d1", border: "none", outline: "none" }}
@@ -294,7 +291,7 @@ export default function Friends() {
                 w={"41px"}
                 height={"41px"}
                 onClick={handleInviteFriend}
-                bg={"#4979d1"}
+                bg={"#487BFF"}
                 borderRadius={"0px 10px 10px 0px"}
                 _hover={{ bg: "#4979d1", border: "none", outline: "none" }}
               >
@@ -309,9 +306,6 @@ export default function Friends() {
               Friend List
             </Text>
             <Box
-              bgGradient={
-                "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
-              }
               borderRadius={"10px"}
               h={"67px"}
               display={"flex"}
@@ -319,46 +313,50 @@ export default function Friends() {
               alignItems={"center"}
               p={"2px"}
             >
-            {referredUsers && referredUsers.length > 0 && referredUsers.map((user, index)=>{
-              return (
+              {referredUsers &&
+                referredUsers.length > 0 &&
+                referredUsers.map((user, index) => {
+                  return (
+                    <Box
+                      key={index}
+                      width={"100%"}
+                      h={"100%"}
+                      bg={"#1d222e"}
+                      borderRadius={"10px"}
+                      fontSize={"14px"}
+                      fontWeight={500}
+                      display={"flex"}
+                      mx={"auto"}
+                      justifyContent={"space-between"}
+                      p={4}
+                      alignItems={"center"}
+                      color={"#f2f2f2"}
+                    >
+                      <Text>{user.username}</Text>
+                      <HStack>
+                        <Image alt="coin img" src="/Vector.svg" />
+                        <Text>{user.coins}</Text>
+                      </HStack>
+                    </Box>
+                  );
+                })}
+              {referredUsers && referredUsers.length <= 0 && (
                 <Box
-                  key={index}
                   width={"100%"}
                   h={"100%"}
-                  bg={"#1d222e"}
+                  bg={"#12161E"}
                   borderRadius={"10px"}
                   fontSize={"14px"}
                   fontWeight={500}
                   display={"flex"}
                   mx={"auto"}
-                  justifyContent={"space-between"}
-                  p={4}
+                  justifyContent={"center"}
                   alignItems={"center"}
                   color={"#f2f2f2"}
                 >
-                  <Text>{user.username}</Text>
-                  <HStack>
-                    <Image alt="coin img" src="/icons/coin.png" />
-                    <Text>{user.coins}</Text>
-                  </HStack>
+                  You haven’t invited anyone yet
                 </Box>
-              );
-            })}
-            {referredUsers && referredUsers.length <= 0 && <Box
-                width={"100%"}
-                h={"100%"}
-                bg={"#1d222e"}
-                borderRadius={"10px"}
-                fontSize={"14px"}
-                fontWeight={500}
-                display={"flex"}
-                mx={"auto"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                color={"#f2f2f2"}
-              >
-                You haven’t invited anyone yet
-              </Box>}
+              )}
             </Box>
           </Flex>
         </Box>

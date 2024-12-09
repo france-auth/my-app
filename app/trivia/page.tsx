@@ -99,26 +99,43 @@ export default function Trivia() {
     }
   };
 
-   const handleSubmit = async () => {
-     // Ensure the last selected answer is stored before submitting
-     const newAnswers = [...selectedAnswers];
-     newAnswers[currentQuestionIndex] = selectedValue;
-     setSelectedAnswers(newAnswers);
+ const handleSubmit = async (option : string) => {
+   const newAnswers = [];
+   newAnswers.push(option)
+   setSelectedAnswers(newAnswers);
 
-     let correctCount = 0;
+   console.log("Final Answers:", newAnswers);
 
-     newAnswers.forEach((answer, index) => {
-       if (answer === questions[index].answer) {
-         correctCount++;
-       }
-     });
-     const now= new Date()
-     setScore(correctCount);
-     handleClaim(correctCount)
-     const updatedUser = await updateUserProfile({lastTriviaAttempt: now })
-     setUser(updatedUser)
-     onOpen(); // Open the modal
-   };
+   let correctCount = 0;
+
+   newAnswers.forEach((answer, index) => {
+     const isCorrect =
+       answer?.trim().toLowerCase() ===
+       questions[index].answer?.trim().toLowerCase();
+     console.log(
+       `Question ${index + 1}:`,
+       "Your Answer:",
+       answer,
+       "Correct Answer:",
+       questions[index].answer,
+       "Match:",
+       isCorrect
+     );
+
+     if (isCorrect) {
+       correctCount++;
+     }
+   });
+
+   const now = new Date();
+   setScore(correctCount);
+   handleClaim(correctCount);
+
+   const updatedUser = await updateUserProfile({ lastTriviaAttempt: now });
+   setUser(updatedUser);
+   onOpen();
+ };
+
 
      const updateUserProfile = async (updatedFields: UpdateData) => {
        if (!user || !user.telegramId) {
@@ -224,7 +241,7 @@ export default function Trivia() {
     <Box
       display="flex"
       flexDirection="column"
-      bgGradient="linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"
+      bgColor={"#06070A"}
       width="100vw"
       minHeight="100vh"
       alignItems="center"
@@ -241,7 +258,7 @@ export default function Trivia() {
         gap={5}
         pb={32}
       >
-        <Text color="#93BAFF" fontWeight="700" fontSize="24px">
+        <Text color={"#487BFF"} fontWeight="700" fontSize="24px">
           Crypto Trivia
         </Text>
 
@@ -262,27 +279,31 @@ export default function Trivia() {
 
           <Box py="15px" mt={5} w="90%" mx="auto">
             {currentQuestion.options.map((option, id) => (
-              <Box
-                key={id}
-                p="2px"
-                bgGradient="conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
-                borderRadius="10px"
-                mb={3}
-              >
+              <Box key={id} p="2px">
                 <Button
-                  onClick={() => setSelectedValue(option)}
-                  bg={
+                  onClick={() => {
+                    // Submit the answers or go to the next question
+                    if (currentQuestionIndex >= questions.length - 1) {
+                      handleSubmit(option); // Submit if this is the last question
+                    } else {
+                      handleNextQuestion(); // Otherwise, move to the next question
+                    }
+                  }}
+                  sx={
                     selectedValue === option
-                      ? "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)"
-                      : "#293042"
+                      ? {
+                          background:
+                            "radial-gradient(145.42% 255.78% at 50.09% -35.73%, #487BFF 14.35%, rgba(42, 79, 173, 0.67) 52.92%, rgba(31, 65, 153, 0) 100%)",
+                          boxShadow:
+                            "0px 48px 130px 0px #090628D9, 0px 0px 100.36px 0px #416BFF3D inset",
+                          color: "#ffffff", // Ensure text is visible
+                        }
+                      : {
+                          background: "#12161E", // Fallback for unselected state
+                          boxShadow: "none", // Remove shadow for unselected state
+                          color: "#ffffff",
+                        }
                   }
-                  color="white"
-                  _hover={{
-                    bg: "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)",
-                  }}
-                  _focus={{
-                    bg: "linear-gradient(90deg, #4979D1 0%, #4979D1 52.17%, #ADC9FE 100%)",
-                  }}
                   w="100%"
                   minHeight="69px"
                   borderRadius="10px"
@@ -290,6 +311,21 @@ export default function Trivia() {
                   fontWeight={600}
                   textAlign="center"
                   whiteSpace="normal"
+                  border={
+                    selectedValue === option ? "none" : "1px solid #343C4D"
+                  }
+                  _hover={{
+                    background:
+                      "radial-gradient(145.42% 255.78% at 50.09% -35.73%, #487BFF 14.35%, rgba(42, 79, 173, 0.67) 52.92%, rgba(31, 65, 153, 0) 100%)",
+                  }}
+                  _active={{
+                    background:
+                      "radial-gradient(145.42% 255.78% at 50.09% -35.73%, #487BFF 14.35%, rgba(42, 79, 173, 0.67) 52.92%, rgba(31, 65, 153, 0) 100%)",
+                  }}
+                  _focus={{
+                    outline: "none",
+                    boxShadow: "none",
+                  }}
                 >
                   {option}
                 </Button>
@@ -297,33 +333,30 @@ export default function Trivia() {
             ))}
           </Box>
 
-          <Box
-            p="2px"
-            bgGradient="conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
-            borderRadius="20px"
-            mx="auto"
-            w="80%"
-          >
-            <Button
-              onClick={() =>
-                currentQuestionIndex >= questions.length - 1
-                  ? handleSubmit()
-                  : handleNextQuestion()
-              }
-              w="100%"
-              h="49px"
-              fontSize="24px"
-              color="#f5f5f5"
-              fontWeight={700}
+          {timeLeft && (
+            <Box
+              p="2px"
+              bgGradient="conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
               borderRadius="20px"
-              bg="#4979D1"
-              _hover={{ bg: "#4979D1" }}
-              isDisabled={!selectedValue || timeLeft !== "" }
-              _disabled={{ bg: "#293042" }}
+              mx="auto"
+              w="80%"
             >
-              {timeLeft === "00:00:00" || timeLeft === "" ? "Submit" : timeLeft}
-            </Button>
-          </Box>
+              <Button
+                w="100%"
+                h="49px"
+                fontSize="24px"
+                color="#f5f5f5"
+                fontWeight={700}
+                borderRadius="20px"
+                bg="#4979D1"
+                _hover={{ bg: "#4979D1" }}
+                isDisabled={!selectedValue || timeLeft !== ""}
+                _disabled={{ bg: "#293042" }}
+              >
+                {timeLeft === "00:00:00" || timeLeft === "" ? "" : timeLeft}
+              </Button>
+            </Box>
+          )}
         </Box>
       </Flex>
 
@@ -361,9 +394,7 @@ export default function Trivia() {
               colorScheme="blue"
               isDisabled={score !== questions.length} // Only enable for perfect score
             >
-              {score === questions.length
-                ? ""
-                : "Try Again Tomorrow"}
+              {score === questions.length ? "" : "Try Again Tomorrow"}
             </Button>
           </ModalFooter>
         </ModalContent>

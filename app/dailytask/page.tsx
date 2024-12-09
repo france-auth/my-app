@@ -59,6 +59,27 @@ const levelMinPoints = [
   1000000000, // Lord
 ];
 
+const ytTask = [
+  {
+    image: "/Youtube.svg",
+    name: "SoftNote YouTube Introduction",
+    reward: 100000,
+    path: "/",
+  },
+  {
+    image: "/Youtube.svg",
+    name: "SoftNote XP Rush",
+    reward: 100000,
+    path: "/",
+  },
+  {
+    image: "/Youtube.svg",
+    name: "Crypto Funds Work-Out",
+    reward: 100000,
+    path: "/",
+  },
+];
+
 export default function DailyTask() {
   const { user, setUser } = useUser();
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
@@ -196,7 +217,7 @@ const handleTaskCompletion = async (taskId: string) => {
         pb={32}
         gap={5}
       >
-        <Box width={"100%"}  p={"20px"} pt={"30px"}>
+        <Box width={"100%"} p={"20px"} pt={"30px"}>
           <Text
             color={"#487BFF"}
             fontWeight={"700"}
@@ -283,6 +304,54 @@ const handleTaskCompletion = async (taskId: string) => {
           justifyContent={"space-between"}
         >
           <Text fontSize={"16px"} fontWeight={500} color={"#fff"}>
+            SoftNote YouTube
+          </Text>
+
+          {ytTask.map((task, id) => {
+            return (
+              <Link href={""} key={id}>
+                <Flex
+                  h={"70px"}
+                  bg={"#12161E"}
+                  borderRadius={"16px"}
+                  padding={"18px 16px"}
+                  gap={4}
+                  alignItems={"center"}
+                  justifyContent={"space-between"}
+                >
+                  <Flex alignItems={"center"} gap={4}>
+                    <Image
+                      src={task.image}
+                      w={"48px"}
+                      h={"48px"}
+                      alt="task img"
+                    />
+                    <Flex direction={"column"}>
+                      <Text
+                        fontSize={"16px"}
+                        fontWeight={500}
+                        color={"#f5f5f5"}
+                      >
+                        {task.name}
+                      </Text>
+                      <Flex alignItems={"center"}>
+                        {/* <Image src="/Coin.svg" w={"14px"} alt="big coin" /> */}
+                        <Text
+                          fontSize={"12px"}
+                          fontWeight={500}
+                          color={"#f5f5f5"}
+                        >
+                          + {new Intl.NumberFormat().format(task.reward)} XP
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Link>
+            );
+          })}
+
+          <Text fontSize={"16px"} fontWeight={500} color={"#fff"}>
             Task List
           </Text>
           {tasks &&
@@ -291,12 +360,9 @@ const handleTaskCompletion = async (taskId: string) => {
               return (
                 <Link href={task.taskUrl!} target="_blank" key={id}>
                   <Flex
-                    h={"80px"}
-                    bg={"#1D222E"}
-                    borderRadius={"16px"}
+                    h={"60px"}
                     padding={"18px 16px"}
-                    borderBottom={"0.9px solid #4979D1"}
-                    gap={4}
+                    gap={2}
                     alignItems={"center"}
                     justifyContent={"space-between"}
                     onClick={() => {
@@ -307,39 +373,33 @@ const handleTaskCompletion = async (taskId: string) => {
                     <Flex alignItems={"center"} gap={4}>
                       <Image
                         src={task.imagePath!}
-                        w={"48px"}
-                        h={"48px"}
+                        w={"28px"}
+                        h={"28px"}
                         alt="task image"
                       />
                       <Flex direction={"column"}>
                         <Text
-                          fontSize={"16px"}
-                          fontWeight={500}
+                          fontSize={"14px"}
+                          fontWeight={300}
                           color={"#f5f5f5"}
                         >
                           {task.title}
                         </Text>
-                        <Flex alignItems={"center"}>
-                          <Image
-                            src="/icons/BigCoin.png"
-                            w={"14px"}
-                            alt="big coin"
-                          />
+                        <Flex alignItems={"center"} gap={1}>
+                          <Image src="/Vector.svg" w={"14px"} alt="big coin" />
                           <Text
                             fontSize={"12px"}
                             fontWeight={500}
                             color={"#f5f5f5"}
                           >
-                            + {task.rewards} XP
+                            +{new Intl.NumberFormat().format(task.rewards)} XP
                           </Text>
                         </Flex>
                       </Flex>
                     </Flex>
-                    <Box
-                      w={"12px"}
-                      h={"12px"}
-                      bg={"#f5f5f5"}
-                      borderRadius={"50%"}
+
+                    <Image
+                      src={task.claimed ? "/checkmart.svg" : "/arrow.svg"}
                     />
                   </Flex>
                 </Link>

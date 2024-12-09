@@ -71,6 +71,12 @@ export default function Upgrades() {
       const [levelIndex, setLevelIndex] = useState(0);
       const [points, setPoints] = useState(0);
       
+const formatNumber = (num: number) => {
+  if (num >= 1000000000) return `${(num / 1000000000).toFixed(1)}B`;
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+  return num.toString();
+};
 
       useEffect(() => {
         if (user) {
@@ -274,7 +280,7 @@ export default function Upgrades() {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgColor={"#12161E"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -342,18 +348,19 @@ export default function Upgrades() {
                 width={"80px"}
                 height={"21px"}
                 padding={"2px 12px"}
-                border={"1px solid #f5f5f5"}
-                borderRadius={"10px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
                 textAlign={"center"}
                 alignItems={"center"}
                 display={"flex"}
-                flexDirection={"column"}
                 justifyContent={"center"}
+                gap={1}
               >
-                <Text>{user && user.coins}</Text>
+                <Image src="/Vector.svg" />
+                <Text>
+                  {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
+                </Text>
               </Box>
             </Box>
           </Flex>
@@ -383,8 +390,8 @@ export default function Upgrades() {
                   borderRadius={"16px"}
                   border={"1px solid #4979D133"}
                   // p={"20px 30px"}
-                  alignItems={'center'}
-                  justifyContent={'center'}
+                  alignItems={"center"}
+                  justifyContent={"center"}
                   gap={"10px"}
                   display={"flex"}
                   flexDirection={"column"}
@@ -415,7 +422,7 @@ export default function Upgrades() {
                     w={"100%"}
                     borderRadius={"16px"}
                     border={"0.67px solid #99999933"}
-                    bg={"#1f2024"}
+                    bg={"#12161E"}
                     p={"16px 6px"}
                     onClick={() => {
                       if (!user) return; // Ensure the user exists
@@ -428,12 +435,18 @@ export default function Upgrades() {
                     }}
                   >
                     <Flex alignItems={"center"} gap={"10px"}>
-                      <Image src={card.imagePath} w={"60px"} borderRadius={'10px'} alt="detail img" />
+                      <Image
+                        src={card.imagePath}
+                        w={"60px"}
+                        borderRadius={"10px"}
+                        alt="detail img"
+                      />
                       <Flex flexDirection={"column"} w={"99px"}>
                         <Text
                           fontSize={"14px"}
                           fontWeight={600}
                           lineHeight={"19.36px"}
+                          color={"#487BFF"}
                         >
                           {card.name}
                         </Text>
@@ -441,19 +454,21 @@ export default function Upgrades() {
                           fontSize={"11px"}
                           fontWeight={500}
                           lineHeight={"14.52px"}
+                          color={"#7585A7"}
                         >
                           Profit per Hour
                         </Text>
-                        <Flex alignItems={"center"}>
+                        <Flex alignItems={"center"} gap={1}>
                           <Image
-                            src="/icons/coin.png"
+                            src="/Vector.svg"
                             w={"16px"}
                             alt="coin img"
                           />
+                          {""}
                           <Text fontSize={"14px"} fontWeight={500}>
                             {card.nextProfitPerHour
-                              ? card.nextProfitPerHour
-                              : card.baseProfit}
+                              ? formatNumber(card.nextProfitPerHour)
+                              : formatNumber(card.baseProfit)}
                           </Text>
                         </Flex>
                       </Flex>
@@ -469,12 +484,12 @@ export default function Upgrades() {
                       </Text>
                       <Flex alignItems={"center"}>
                         <Image
-                          src="/icons/coin.png"
+                          src="/Vector.svg"
                           w={"16px"}
                           alt="coin img"
                         />
                         <Text fontSize={"14px"} fontWeight={500}>
-                          {card.nextCost ? card.nextCost : card.baseCost}
+                          {card.nextCost ? formatNumber(card.nextCost) : formatNumber(card.baseCost)}
                         </Text>
                       </Flex>
                     </Flex>

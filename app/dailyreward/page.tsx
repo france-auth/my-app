@@ -9,7 +9,7 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { ChevronRightIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon, Image } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
 import { useState, useEffect } from "react";
 import { useUser } from "@/context/context";
@@ -139,10 +139,12 @@ function DailyReward({}: Props) {
         }
       };
 
+      console.log(activeDay)
+
   return (
     <Flex
       minH={"100vh"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+      bgColor={"#06070A"}
       minW={"100vw"}
       color={"white"}
       direction={"column"}
@@ -150,7 +152,7 @@ function DailyReward({}: Props) {
     >
       <Flex direction={"column"} gap={2} p={5}>
         <Flex gap={1} justifyContent={"center"}>
-          <Heading fontSize={"24px"} color={"#93BAFF"}>
+          <Heading fontSize={"24px"} color={"#487BFF"}>
             Daily Reward
           </Heading>
         </Flex>
@@ -191,14 +193,21 @@ function DailyReward({}: Props) {
               XP Reward
             </Text>
             <Box
-              border={"1px solid white"}
-              p={1}
-              borderRadius={"20px"}
-              w={"27vw"}
-              h={"4vh"}
+              width={"80px"}
+              height={"21px"}
+              padding={"2px 12px"}
+              fontWeight={"600"}
+              fontSize={"14px"}
+              color={"#f5f5f5"}
+              textAlign={"center"}
+              alignItems={"center"}
+              display={"flex"}
+              justifyContent={"center"}
+              gap={1}
             >
-              <Text textAlign={"center"} fontSize={"xs"}>
-                {user && user.coins}
+              <Image src="/Vector.svg" />
+              <Text>
+                {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
               </Text>
             </Box>
           </Flex>
@@ -209,7 +218,7 @@ function DailyReward({}: Props) {
       <Box
         display="grid"
         gridTemplateColumns="repeat(5, 1fr)" // Ensures 5 cards per row
-        gap={2} // Space between the cards
+        // gap={1} // Space between the cards
         p={5}
         alignSelf={"center"}
         justifyContent={"center"}
@@ -218,31 +227,38 @@ function DailyReward({}: Props) {
         {cards.map((card, index) => (
           <Box
             key={index}
-            mt={3}
-            position="relative"
-            border={
-              activeDay === index ? "1px solid #00FF29" : "1px solid #4979D1"
-            }
+            mt={1}
             p={2}
             borderRadius={"8px"}
             textAlign="center"
+            border={"0.5px solid #5C6987"}
+            bg={activeDay === index ? "#487BFF" : "#12161F"}
           >
             {/* Green dot for active day */}
-            {activeDay === card.day && (
+            {/* {activeDay === card.day && (
               <Box
                 position="absolute"
                 top="-5px"
                 right="-5px"
                 width="10px"
                 height="10px"
-                bg="#00FF29"
+                bg="#12161F"
                 borderRadius="full"
                 boxShadow="0 0 8px rgba(0, 255, 41, 0.8)"
               />
-            )}
+            )} */}
 
-            <Text fontSize={"xs"}>Day {card.day}</Text>
-            <Text fontWeight={"900"} fontSize={"18px"} color={"#4979D1"}>
+            <Text
+              fontSize={"xs"}
+              color={activeDay === index ? "white" : "#5C6987"}
+            >
+              Day {card.day}
+            </Text>
+            <Text
+              fontWeight={"800"}
+              fontSize={"18px"}
+              color={activeDay === index ? "white" : "#487BFF"}
+            >
               {card.reward}
             </Text>
           </Box>
@@ -251,13 +267,19 @@ function DailyReward({}: Props) {
 
       <Button
         alignSelf={"center"}
-        bgColor={"#4979D1"}
         color={"#fff"}
-        w={"85vw"}
-        borderRadius={"20px"}
+        w={"55vw"}
+        borderRadius={"10px"}
         fontWeight={"500"}
         fontSize={"20px"}
         onClick={claimBonus}
+        sx={{
+          background:
+            "radial-gradient(145.42% 255.78% at 50.09% -35.73%, #487BFF 14.35%, rgba(42, 79, 173, 0.67) 52.92%, rgba(31, 65, 153, 0) 100%)",
+          boxShadow:
+            "0px 48px 130px 0px #090628D9, 0px 0px 100.36px 0px #416BFF3D inset",
+          backdropFilter: "blur(91.9367px)",
+        }}
       >
         Claim Bonus
       </Button>

@@ -7,6 +7,7 @@ import {
   Text,
   useToast,
   Icon,
+  Image,
   Progress,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
@@ -184,7 +185,7 @@ export default function Jigsaw() {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -203,7 +204,7 @@ export default function Jigsaw() {
       >
         <Box width={"100%"} px={"20px"}>
           <Text
-            color={"#93BAFF"}
+            color={"#487BFF"}
             fontWeight={"700"}
             fontSize={"24px"}
             textAlign={"center"}
@@ -261,18 +262,19 @@ export default function Jigsaw() {
                 width={"80px"}
                 height={"21px"}
                 padding={"2px 12px"}
-                border={"1px solid #f5f5f5"}
-                borderRadius={"10px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
                 textAlign={"center"}
                 alignItems={"center"}
                 display={"flex"}
-                flexDirection={"column"}
                 justifyContent={"center"}
+                gap={1}
               >
-                <Text>{user && user.coins}</Text>
+                <Image src="/Vector.svg" />
+                <Text>
+                  {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
+                </Text>
               </Box>
             </Box>
           </Flex>
@@ -296,7 +298,6 @@ export default function Jigsaw() {
             rows={4} // Set rows for the puzzle
             columns={6} // Set columns for the puzzle
             onSolved={handleSolved} // Trigger toast and enable button when solved
-            
           />
         </Box>
 

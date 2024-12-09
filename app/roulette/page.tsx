@@ -196,7 +196,7 @@ export default function Roulette() {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+      bgColor={"#06070A"}
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
@@ -213,7 +213,7 @@ export default function Roulette() {
         gap={{ base: 5, sm: 14 }}
         pb={32}
       >
-        <Text color={"#93BAFF"} fontWeight={"700"} fontSize={"24px"}>
+        <Text color={"#487BFF"} fontWeight={"700"} fontSize={"24px"}>
           Resource Roulette
         </Text>
         <Box
@@ -260,22 +260,6 @@ export default function Roulette() {
             />
           </Box>
         </Box>
-        <Button
-          onClick={handleSpinClick}
-          w={"342px"}
-          h={"49px"}
-          bg={"#4979d1"}
-          boxShadow={"0px -2px 8px 0px #F8F9FD33 inset"}
-          fontSize={"24px"}
-          fontWeight={700}
-          color={"#f5f5f5"}
-          borderRadius={"20px"}
-          _hover={{ bg: "#4979d1", outline: "none" }}
-          isDisabled={!canSpin}
-        >
-          {canSpin ? "Spin and Win!" : timeRemaining}
-        </Button>
-
         <Flex
           alignItems={"center"}
           gap={2}
@@ -284,16 +268,30 @@ export default function Roulette() {
           mt={{ base: 1, sm: -10 }}
           justifyContent={"center"}
         >
-          <Box w={"6px"} h={"6px"} bg={"#8D9094"} borderRadius={"50%"} />
-          <Box w={"6px"} h={"6px"} bg={"#8D9094"} borderRadius={"50%"} />
-
-          <Text fontWeight={500} fontSize={"12px"} color={"#999999"}>
+          <Text fontWeight={500} fontSize={"12px"} color={"#8D9094"}>
             You get one attempt per day, make it count
           </Text>
-
-          <Box w={"6px"} h={"6px"} bg={"#8D9094"} borderRadius={"50%"} />
-          <Box w={"6px"} h={"6px"} bg={"#8D9094"} borderRadius={"50%"} />
         </Flex>
+        <Button
+          onClick={handleSpinClick}
+          w={"302px"}
+          h={"49px"}
+          sx={{
+            background:
+              "radial-gradient(145.42% 255.78% at 50.09% -35.73%, #487BFF 14.35%, rgba(42, 79, 173, 0.67) 52.92%, rgba(31, 65, 153, 0) 100%)",
+            boxShadow:
+              "0px 48px 130px 0px #090628D9, 0px 0px 100.36px 0px #416BFF3D inset",
+            backdropFilter: "blur(91.9367px)",
+          }}
+          fontSize={"24px"}
+          fontWeight={600}
+          color={"#f5f5f5"}
+          borderRadius={"15px"}
+          _hover={{ bg: "#4979d1", outline: "none" }}
+          isDisabled={!canSpin}
+        >
+          {canSpin ? "Spin and Win!" : timeRemaining}
+        </Button>
       </Flex>
       <NavigationBar />
     </Box>
