@@ -28,7 +28,7 @@ const socialTask = [
     path: "/",
   },
   {
-    image: "/group.svg",
+    image: "/Group.svg",
     name: "Join Softnote Community",
     reward: "100,000",
     path: "/",
