@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
+import { Box, Flex,  Image, } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
 export default function Loading() {
