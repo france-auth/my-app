@@ -6,7 +6,6 @@ import {
   Flex,
   Text,
   Image,
-  Icon,
   Avatar,
   Progress,
 } from "@chakra-ui/react";
