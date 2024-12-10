@@ -290,7 +290,7 @@ const formatNumber = (num: number) => {
       <Flex
         width={"100%"}
         minHeight={"100vh"}
-        bg={"#12161F"}
+        bgColor={"#06070A"}
         flexDirection={"column"}
         alignItems={"center"}
         pb={32}
@@ -418,7 +418,8 @@ const formatNumber = (num: number) => {
             gap={"16px"}
             mt={5}
           >
-            {user && cards &&
+            {user &&
+              cards &&
               cards.map((card, index) => {
                 const isAffordable =
                   user?.coins >=
