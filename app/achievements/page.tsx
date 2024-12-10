@@ -137,10 +137,14 @@ function Achievements({}: Props) {
               },
             }}
           >
-            <CardBody>
+            <CardBody
+              bg={
+                "linear-gradient(to right, rgba(23, 33, 58, 0.9) 30%, rgba(23, 23, 46, 0.04) 70%)"
+              }
+            >
               <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Flex alignItems={"center"} gap={2}>
-                  <Wrap border={"1px solid white"} borderRadius={"50%"}>
+                  <Wrap border={"1px solid #212C48"} borderRadius={"50%"}>
                     <WrapItem>
                       <Avatar
                         size="sm"
@@ -149,12 +153,18 @@ function Achievements({}: Props) {
                       />
                     </WrapItem>
                   </Wrap>
-                  <Flex direction={"column"} lineHeight={"14px"}>
-                    <Text color={"white"} fontSize={"small"} fontWeight={"700"}>
+                  <Flex direction={"column"} lineHeight={"16px"}>
+                    <Text color={"white"} fontSize={"small"} fontWeight={"600"}>
                       {currentUser?.username}
                     </Text>
-                    <Text color={"#4979D1"} fontSize={"2xs"} fontWeight={"700"}>
-                      {currentUser?.coins} XP
+                    <Text
+                      color={"#487BFF"}
+                      fontSize={"smaller"}
+                      fontWeight={"500"}
+                    >
+                      {currentUser &&
+                        new Intl.NumberFormat().format(currentUser?.coins)}{" "}
+                      XP
                     </Text>
                   </Flex>
                 </Flex>
@@ -347,7 +357,7 @@ function Achievements({}: Props) {
                 bg={"#12161E"}
               >
                 <Flex alignItems={"center"} p={2} gap={2}>
-                  <Wrap border={"1px solid white"} borderRadius={"50%"}>
+                  <Wrap border={"1px solid #212C48"} borderRadius={"50%"}>
                     <WrapItem>
                       <Avatar
                         size="sm"
@@ -356,12 +366,20 @@ function Achievements({}: Props) {
                       />
                     </WrapItem>
                   </Wrap>
-                  <Flex direction={"column"} lineHeight={"14px"}>
-                    <Text color={"white"} fontSize={"small"} fontWeight={"700"}>
+                  <Flex direction={"column"} lineHeight={"18px"}>
+                    <Text
+                      color={"white"}
+                      fontSize={"medium"}
+                      fontWeight={"600"}
+                    >
                       {user.username}
                     </Text>
-                    <Text color={"#487BFF"} fontSize={"2xs"} fontWeight={"700"}>
-                      {user.coins} XP
+                    <Text
+                      color={"#487BFF"}
+                      fontSize={"smaller"}
+                      fontWeight={"500"}
+                    >
+                      {new Intl.NumberFormat().format(user.coins)} XP
                     </Text>
                   </Flex>
                 </Flex>

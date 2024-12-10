@@ -188,21 +188,30 @@ function DailyReward({}: Props) {
             </Flex>
           </Flex>
 
-          <Flex direction={"column"}>
-            <Text fontSize={"xs"} textAlign={"center"}>
+          <Box
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"flex-end"} // Align to the end of the container
+            justifyContent={"center"}
+          >
+            <Text
+              fontWeight={500}
+              fontSize={"12px"}
+              color={"#f5f5f5"}
+              textAlign={"right"} // Ensure the text is right-aligned
+            >
               XP Reward
             </Text>
             <Box
-              width={"80px"}
+              width={"100%"}
               height={"21px"}
-              padding={"2px 12px"}
               fontWeight={"600"}
               fontSize={"14px"}
               color={"#f5f5f5"}
-              textAlign={"center"}
+              textAlign={"right"} // Align text to the right
               alignItems={"center"}
               display={"flex"}
-              justifyContent={"center"}
+              justifyContent={"flex-end"} // Align the content inside to the end
               gap={1}
             >
               <Image src="/Vector.svg" />
@@ -210,7 +219,7 @@ function DailyReward({}: Props) {
                 {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
               </Text>
             </Box>
-          </Flex>
+          </Box>
         </Flex>
       </Flex>
 
@@ -218,7 +227,7 @@ function DailyReward({}: Props) {
       <Box
         display="grid"
         gridTemplateColumns="repeat(5, 1fr)" // Ensures 5 cards per row
-        // gap={1} // Space between the cards
+        gap={0.5}
         p={5}
         alignSelf={"center"}
         justifyContent={"center"}
@@ -231,7 +240,7 @@ function DailyReward({}: Props) {
             p={2}
             borderRadius={"8px"}
             textAlign="center"
-            border={"0.5px solid #5C6987"}
+            // border={"0.5px solid #5C6987"}
             bg={activeDay === index ? "#487BFF" : "#12161F"}
           >
             {/* Green dot for active day */}

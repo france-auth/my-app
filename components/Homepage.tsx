@@ -50,6 +50,7 @@ type UserData = {
   updatedAt: Date;
 };
 
+
 const levelNames = [
   "Bronze", // From 0 to 4999 coins
   "Silver", // From 5000 coins to 24,999 coins
@@ -230,26 +231,26 @@ export default function Homepage() {
     setClicks((prevClicks) => prevClicks.filter((click) => click.id !== id));
   };
 
-  const calculateProgress = () => {
-    if (levelIndex >= levelNames.length - 1) {
-      return 100;
-    }
-    const currentLevelMin = levelMinPoints[levelIndex];
-    const nextLevelMin = levelMinPoints[levelIndex + 1];
-    const progress =
-      ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
-    return Math.min(progress, 100);
-  };
+    const calculateProgress = () => {
+      if (levelIndex >= levelNames.length - 1) {
+        return 100;
+      }
+      const currentLevelMin = levelMinPoints[levelIndex];
+      const nextLevelMin = levelMinPoints[levelIndex + 1];
+      const progress =
+        ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+      return Math.min(progress, 100);
+    };
 
-  useEffect(() => {
-    const currentLevelMin = levelMinPoints[levelIndex];
-    const nextLevelMin = levelMinPoints[levelIndex + 1];
-    if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
-      setLevelIndex(levelIndex + 1);
-    } else if (points < currentLevelMin && levelIndex > 0) {
-      setLevelIndex(levelIndex - 1);
-    }
-  }, [points, levelIndex, levelMinPoints, levelNames.length]);
+    useEffect(() => {
+      const currentLevelMin = levelMinPoints[levelIndex];
+      const nextLevelMin = levelMinPoints[levelIndex + 1];
+      if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+        setLevelIndex(levelIndex + 1);
+      } else if (points < currentLevelMin && levelIndex > 0) {
+        setLevelIndex(levelIndex - 1);
+      }
+    }, [points, levelIndex, levelMinPoints, levelNames.length]);
 
   const formatProfitPerHour = (profit: number) => {
     if (profit >= 1000000000) return `+${(profit / 1000000000).toFixed(2)}B`;
@@ -365,11 +366,12 @@ useEffect(() => {
               gap={1}
             >
               <Flex justifyContent={"space-between"}>
-                <Text fontSize={"12px"} color={"#F5F5F5"}>
+                <Text fontSize={"small"}>
                   {levelNames[levelIndex]}
-                  <Icon as={ChevronRightIcon} />
+                  <ChevronRightIcon />
                 </Text>
-                <Text fontSize={"12px"} color={"#F5F5F5"}>
+                <Text fontSize={"small"}>
+                  {" "}
                   {levelIndex + 1} / {levelNames.length}
                 </Text>
               </Flex>
@@ -393,23 +395,27 @@ useEffect(() => {
             <Box
               display={"flex"}
               flexDirection={"column"}
-              alignItems={"center"}
+              alignItems={"flex-end"} // Align to the end of the container
               justifyContent={"center"}
             >
-              <Text fontWeight={500} fontSize={"12px"} color={"#f5f5f5"}>
+              <Text
+                fontWeight={500}
+                fontSize={"12px"}
+                color={"#f5f5f5"}
+                textAlign={"right"} // Ensure the text is right-aligned
+              >
                 XP Reward
               </Text>
               <Box
-                width={"80px"}
+                width={"100%"}
                 height={"21px"}
-                padding={"2px 12px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
-                textAlign={"center"}
+                textAlign={"right"} // Align text to the right
                 alignItems={"center"}
                 display={"flex"}
-                justifyContent={"center"}
+                justifyContent={"flex-end"} // Align the content inside to the end
                 gap={1}
               >
                 <Image src="/Vector.svg" />

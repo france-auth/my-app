@@ -338,23 +338,27 @@ const formatNumber = (num: number) => {
             <Box
               display={"flex"}
               flexDirection={"column"}
-              alignItems={"center"}
+              alignItems={"flex-end"} // Align to the end of the container
               justifyContent={"center"}
             >
-              <Text fontWeight={500} fontSize={"12px"} color={"#f5f5f5"}>
+              <Text
+                fontWeight={500}
+                fontSize={"12px"}
+                color={"#f5f5f5"}
+                textAlign={"right"} // Ensure the text is right-aligned
+              >
                 XP Reward
               </Text>
               <Box
-                width={"80px"}
+                width={"100%"}
                 height={"21px"}
-                padding={"2px 12px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
-                textAlign={"center"}
+                textAlign={"right"} // Align text to the right
                 alignItems={"center"}
                 display={"flex"}
-                justifyContent={"center"}
+                justifyContent={"flex-end"} // Align the content inside to the end
                 gap={1}
               >
                 <Image src="/Vector.svg" />
@@ -414,16 +418,24 @@ const formatNumber = (num: number) => {
             gap={"16px"}
             mt={5}
           >
-            {cards &&
+            {user && cards &&
               cards.map((card, index) => {
+                const isAffordable =
+                  user?.coins >=
+                  (card.nextCost ? card.nextCost : card.baseCost);
+
                 return (
                   <Box
                     key={index}
                     w={"100%"}
+                    h={"180px"} // Fixed card height
                     borderRadius={"16px"}
                     border={"0.67px solid #99999933"}
                     bg={"#12161E"}
                     p={"16px 6px"}
+                    display={"flex"}
+                    flexDirection={"column"}
+                    justifyContent={"space-between"} // Space between card sections
                     onClick={() => {
                       if (!user) return; // Ensure the user exists
 
@@ -434,37 +446,38 @@ const formatNumber = (num: number) => {
                       }
                     }}
                   >
+                    {/* Top Section */}
                     <Flex alignItems={"center"} gap={"10px"}>
                       <Image
                         src={card.imagePath}
                         w={"60px"}
+                        h={"60px"}
                         borderRadius={"10px"}
                         alt="detail img"
                       />
-                      <Flex flexDirection={"column"} w={"99px"}>
+                      <Flex flexDirection={"column"} flex={1}>
+                        {/* Title */}
                         <Text
                           fontSize={"14px"}
                           fontWeight={600}
-                          lineHeight={"19.36px"}
+                          lineHeight={"108%"} // Title line height
                           color={"#487BFF"}
+                          noOfLines={2} // Limit to two lines
                         >
                           {card.name}
                         </Text>
+                        {/* Profit per Hour */}
                         <Text
                           fontSize={"11px"}
                           fontWeight={500}
                           lineHeight={"14.52px"}
                           color={"#7585A7"}
+                          mt={2} // Adds spacing based on title length
                         >
                           Profit per Hour
                         </Text>
                         <Flex alignItems={"center"} gap={1}>
-                          <Image
-                            src="/Vector.svg"
-                            w={"16px"}
-                            alt="coin img"
-                          />
-                          {""}
+                          <Image src="/Vector.svg" w={"16px"} alt="coin img" />
                           <Text fontSize={"14px"} fontWeight={500}>
                             {card.nextProfitPerHour
                               ? formatNumber(card.nextProfitPerHour)
@@ -473,23 +486,41 @@ const formatNumber = (num: number) => {
                         </Flex>
                       </Flex>
                     </Flex>
+
+                    {/* Horizontal Line */}
+                    <hr
+                      style={{
+                        marginTop: "auto", // Pushes the line to a consistent position
+                        marginBottom: "10px", // Add space below the line
+                        border: "0.5px solid #99999933",
+                      }}
+                    />
+
+                    {/* Bottom Section */}
                     <Flex
                       justifyContent={"space-between"}
-                      w={"147px"}
-                      mt={3}
-                      lineHeight={"10px"}
+                      alignItems={"center"}
+                      w={"100%"}
                     >
-                      <Text fontSize={"12px"} fontWeight={500}>
+                      {/* Level */}
+                      <Text
+                        fontSize={"12px"}
+                        fontWeight={500}
+                        color={isAffordable ? "#FFFFFF" : "#3D475B"} // Change color based on affordability
+                      >
                         Level {card.level}
                       </Text>
-                      <Flex alignItems={"center"}>
-                        <Image
-                          src="/Vector.svg"
-                          w={"16px"}
-                          alt="coin img"
-                        />
-                        <Text fontSize={"14px"} fontWeight={500}>
-                          {card.nextCost ? formatNumber(card.nextCost) : formatNumber(card.baseCost)}
+                      {/* Price */}
+                      <Flex alignItems={"center"} gap={1}>
+                        <Image src="/Vector.svg" w={"16px"} alt="coin img" />
+                        <Text
+                          fontSize={"14px"}
+                          fontWeight={500}
+                          color={isAffordable ? "#FFFFFF" : "#3D475B"} // Change color based on affordability
+                        >
+                          {card.nextCost
+                            ? formatNumber(card.nextCost)
+                            : formatNumber(card.baseCost)}
                         </Text>
                       </Flex>
                     </Flex>

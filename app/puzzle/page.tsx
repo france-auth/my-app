@@ -316,7 +316,7 @@ useEffect(() => {
     <Box
       display="flex"
       flexDirection="column"
-      bgGradient="linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"
+      bg={"#06070A"}
       width="100vw"
       height="100vh"
       alignItems="center"

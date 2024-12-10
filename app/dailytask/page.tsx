@@ -267,23 +267,27 @@ const handleTaskCompletion = async (taskId: string) => {
             <Box
               display={"flex"}
               flexDirection={"column"}
-              alignItems={"center"}
+              alignItems={"flex-end"} // Align to the end of the container
               justifyContent={"center"}
             >
-              <Text fontWeight={500} fontSize={"12px"} color={"#f5f5f5"}>
+              <Text
+                fontWeight={500}
+                fontSize={"12px"}
+                color={"#f5f5f5"}
+                textAlign={"right"} // Ensure the text is right-aligned
+              >
                 XP Reward
               </Text>
               <Box
-                width={"80px"}
+                width={"100%"}
                 height={"21px"}
-                padding={"2px 12px"}
                 fontWeight={"600"}
                 fontSize={"14px"}
                 color={"#f5f5f5"}
-                textAlign={"center"}
+                textAlign={"right"} // Align text to the right
                 alignItems={"center"}
                 display={"flex"}
-                justifyContent={"center"}
+                justifyContent={"flex-end"} // Align the content inside to the end
                 gap={1}
               >
                 <Image src="/Vector.svg" />
