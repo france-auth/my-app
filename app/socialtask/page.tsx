@@ -195,7 +195,7 @@ const handleTaskCompletion = async (
     });
     setLoading(false);
     onClose();
-  } catch (error: any) {
+  } catch (error) {
     toast({
       title: error.message || "Error claiming task reward",
       status: "error",
