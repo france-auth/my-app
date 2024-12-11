@@ -16,11 +16,6 @@ const PlayList = [
     path: "/dailyreward",
   },
   {
-    image: "/list.svg",
-    name: "Daily Tasks",
-    path: "/dailytask",
-  },
-  {
     image: "/app.svg",
     name: "Social Tasks",
     path: "/socialtask",

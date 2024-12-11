@@ -377,40 +377,7 @@ const formatNumber = (num: number) => {
           gap={3}
           justifyContent={"space-between"}
         >
-          <Flex
-            width={"100%"}
-            height={"105px"}
-            py={"8px"}
-            gap={"19px"}
-            alignContent={"center"}
-            justifyContent={"center"}
-          >
-            {Upgrade.map((upgrade, id) => {
-              return (
-                <Box
-                  key={id}
-                  width={"94px"}
-                  height={"89px"}
-                  borderRadius={"16px"}
-                  border={"1px solid #4979D133"}
-                  // p={"20px 30px"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
-                  gap={"10px"}
-                  display={"flex"}
-                  flexDirection={"column"}
-                >
-                  <Image
-                    src={upgrade.image}
-                    w={"80%"}
-                    // h={"59px"}
-                    // mx={'auto'}
-                    alt="upgrade img"
-                  />
-                </Box>
-              );
-            })}
-          </Flex>
+         
           <Box
             w={"100%"}
             display={"grid"}

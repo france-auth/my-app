@@ -1,39 +1,36 @@
 "use client";
 
-import { Box, Text, Flex, Image, Icon, Progress} from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Flex,
+  Image,
+  Icon,
+  Progress,
+  useToast,
+  Drawer,
+  DrawerBody,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  useDisclosure,
+  Button,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import NavigationBar from "@/components/NavigationBar";
-import { useUser } from "@/context/context";
 import { useState, useEffect } from "react";
+import { useUser } from "@/context/context";
 
+interface TaskResponse {
+  id: string;
+  title: string;
+  imagePath?: string | null;
+  rewards: number;
+  taskUrl?: string | null;
+  claimed: boolean;
+}
 
-const socialTask = [
-  {
-    image: "/invite.svg",
-    name: "Invite & Earn",
-    reward: "100,000",
-    path: "/",
-  },
-  {
-    image: "/telegram.svg",
-    name: "Invite via Telegram Premium",
-    reward: "100,000",
-    path: "/",
-  },
-  {
-    image: "/people-add.svg",
-    name: "Join Softnote Channel",
-    reward: "100,000",
-    path: "/",
-  },
-  {
-    image: "/Group.svg",
-    name: "Join Softnote Community",
-    reward: "100,000",
-    path: "/",
-  },
-];
 const levelNames = [
   "Bronze", // From 0 to 4999 coins
   "Silver", // From 5000 coins to 24,999 coins
@@ -60,39 +57,143 @@ const levelMinPoints = [
   1000000000, // Lord
 ];
 
+const ytTask = [
+  {
+    image: "/Youtube.svg",
+    name: "SoftNote YouTube Introduction",
+    reward: 100000,
+    path: "/",
+  },
+  {
+    image: "/Youtube.svg",
+    name: "SoftNote XP Rush",
+    reward: 100000,
+    path: "/",
+  },
+  {
+    image: "/Youtube.svg",
+    name: "Crypto Funds Work-Out",
+    reward: 100000,
+    path: "/",
+  },
+];
+
 export default function SocialTask() {
-    const { user } = useUser();
+  const { user, setUser } = useUser();
+  const [tasks, setTasks] = useState<TaskResponse[]>([]);
 
-    const [levelIndex, setLevelIndex] = useState(0);
-    const [points, setPoints] = useState(0);
+  const [levelIndex, setLevelIndex] = useState(0);
+  const [points, setPoints] = useState(0);
+  const toast = useToast();
+  const [selectedtask, setSelectedTask] = useState<TaskResponse>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-      if (user) {
-        setPoints(user.coins);
-        setLevelIndex(user.level);
+  useEffect(() => {
+    if (user) {
+      setPoints(user.coins);
+      setLevelIndex(user.level);
+    }
+  }, [user]);
+
+  const calculateProgress = () => {
+    if (levelIndex >= levelNames.length - 1) {
+      return 100;
+    }
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    const progress =
+      ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+    return Math.min(progress, 100);
+  };
+
+  useEffect(() => {
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+      setLevelIndex(levelIndex + 1);
+    } else if (points < currentLevelMin && levelIndex > 0) {
+      setLevelIndex(levelIndex - 1);
+    }
+  }, [points, levelIndex, levelMinPoints, levelNames.length]);
+
+  async function fetchTasks(userId: string): Promise<TaskResponse[]> {
+    const response = await fetch(`/api/getTasks?userId=${userId}`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch tasks");
+    }
+
+    return response.json();
+  }
+
+  useEffect(() => {
+    // Fetch tasks and handle loading states
+    const loadTasks = async () => {
+      if (!user) return;
+      try {
+        const tasksData = await fetchTasks(user.id);
+        console.log(tasksData);
+        setTasks(tasksData);
+      } catch (error) {
+        console.log(error);
       }
-    }, [user]);
-
-    const calculateProgress = () => {
-      if (levelIndex >= levelNames.length - 1) {
-        return 100;
-      }
-      const currentLevelMin = levelMinPoints[levelIndex];
-      const nextLevelMin = levelMinPoints[levelIndex + 1];
-      const progress =
-        ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
-      return Math.min(progress, 100);
     };
 
-    useEffect(() => {
-      const currentLevelMin = levelMinPoints[levelIndex];
-      const nextLevelMin = levelMinPoints[levelIndex + 1];
-      if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
-        setLevelIndex(levelIndex + 1);
-      } else if (points < currentLevelMin && levelIndex > 0) {
-        setLevelIndex(levelIndex - 1);
+    loadTasks();
+  }, [user]);
+
+  const handleTaskCompletion = async (taskId: string) => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const response = await fetch("/api/completeTask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, taskId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to claim task reward");
       }
-    }, [points, levelIndex, levelMinPoints, levelNames.length]);
+
+      // Get the updated task and user points from the response
+      const { task: updatedTask, user: updatedUser } = await response.json();
+
+      // Update tasks with the returned task data
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updatedTask.id ? updatedTask : task
+        )
+      );
+      // Update points with the returned user data
+      setPoints(updatedUser.coins);
+
+      setUser(updatedUser);
+
+      toast({
+        title: "Task reward claimed successfully!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false);
+      onClose();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast({
+        title: error.message || "Error claiming task reward",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      onClose();
+      setLoading(false);
+    }
+  };
+
   return (
     <Box
       display={"flex"}
@@ -101,7 +202,7 @@ export default function SocialTask() {
       width={"100vw"}
       minHeight={"100vh"}
       alignItems={"center"}
-      color={"white"}
+      textColor={"white"}
       overflow={"hidden"}
     >
       <Flex
@@ -119,7 +220,7 @@ export default function SocialTask() {
             fontSize={"24px"}
             textAlign={"center"}
           >
-            Social Tasks
+            Daily Tasks
           </Text>
           <Flex
             w={"100%"}
@@ -159,7 +260,7 @@ export default function SocialTask() {
                 />
               </Flex>
             </Box>
-           <Box
+            <Box
               display={"flex"}
               flexDirection={"column"}
               alignItems={"flex-end"} // Align to the end of the container
@@ -193,6 +294,7 @@ export default function SocialTask() {
             </Box>
           </Flex>
         </Box>
+
         <Box
           width={"100%"}
           px={"16px"}
@@ -201,65 +303,137 @@ export default function SocialTask() {
           gap={3}
           justifyContent={"space-between"}
         >
+          
+
+         
+
           <Text fontSize={"16px"} fontWeight={500} color={"#fff"}>
             Task List
           </Text>
-          {socialTask.map((task, id) => {
-            return (
-              <Link href={""} key={id}>
-                <Flex
-                  h={"70px"}
-                  bg={"#12161E"}
-                  borderRadius={"16px"}
-                  padding={"18px 16px"}
-                  gap={4}
-                  alignItems={"center"}
-                  justifyContent={"space-between"}
-                >
-                  <Flex alignItems={"center"} gap={4}>
-                    <Image
-                      src={task.image}
-                      w={"48px"}
-                      h={"48px"}
-                      alt="task img"
-                    />
-                    <Flex direction={"column"}>
-                      <Text
-                        fontSize={"16px"}
-                        fontWeight={500}
-                        color={"#f5f5f5"}
-                      >
-                        {task.name}
-                      </Text>
-                      <Flex alignItems={"center"}>
-                        <Image
-                          src="/Coin.svg"
-                          w={"14px"}
-                          alt="big coin"
-                        />
+          {tasks &&
+            tasks.length > 0 &&
+            tasks.map((task, id) => {
+              return (
+                <Link href={task.taskUrl!} target="_blank" key={id}>
+                  <Flex
+                    h={"60px"}
+                    padding={"18px 16px"}
+                    gap={2}
+                    alignItems={"center"}
+                    justifyContent={"space-between"}
+                    onClick={() => {
+                      setSelectedTask(task);
+                      onOpen();
+                    }}
+                  >
+                    <Flex alignItems={"center"} gap={4}>
+                      <Image
+                        src={task.imagePath!}
+                        w={"28px"}
+                        h={"28px"}
+                        alt="task image"
+                      />
+                      <Flex direction={"column"}>
                         <Text
-                          fontSize={"12px"}
-                          fontWeight={500}
+                          fontSize={"14px"}
+                          fontWeight={300}
                           color={"#f5f5f5"}
                         >
-                          + {task.reward} XP
+                          {task.title}
                         </Text>
+                        <Flex alignItems={"center"} gap={1}>
+                          <Image src="/Vector.svg" w={"14px"} alt="big coin" />
+                          <Text
+                            fontSize={"12px"}
+                            fontWeight={500}
+                            color={"#f5f5f5"}
+                          >
+                            +{new Intl.NumberFormat().format(task.rewards)} XP
+                          </Text>
+                        </Flex>
                       </Flex>
                     </Flex>
+
+                    <Image
+                      src={task.claimed ? "/checkmart.svg" : "/arrow.svg"}
+                    />
                   </Flex>
-                  <Box
-                    w={"12px"}
-                    h={"12px"}
-                    bg={"#f5f5f5"}
-                    borderRadius={"50%"}
-                  />
-                </Flex>
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })}
         </Box>
       </Flex>
       <NavigationBar />
+
+      <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton color={"white"} />
+
+          <DrawerBody
+            bgGradient={"linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"}
+          >
+            <Flex
+              minH={"30vh"}
+              p={5}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={5}
+              direction={"column"}
+            >
+              <Flex
+                h={"80px"}
+                bg={"#1D222E"}
+                borderRadius={"16px"}
+                padding={"18px 16px"}
+                borderBottom={"0.9px solid #4979D1"}
+                gap={4}
+                alignItems={"center"}
+                justifyContent={"center"}
+                w={"full"}
+              >
+                <Flex alignItems={"center"} gap={4}>
+                  <Image
+                    src={selectedtask && selectedtask.imagePath!}
+                    w={"48px"}
+                    h={"48px"}
+                    alt="task image"
+                  />
+                  <Flex direction={"column"}>
+                    <Text fontSize={"16px"} fontWeight={500} color={"#f5f5f5"}>
+                      {selectedtask && selectedtask.title}
+                    </Text>
+                    <Flex alignItems={"center"}>
+                      <Image
+                        src="/icons/BigCoin.png"
+                        w={"14px"}
+                        alt="big coin"
+                      />
+                      <Text
+                        fontSize={"12px"}
+                        fontWeight={500}
+                        color={"#f5f5f5"}
+                      >
+                        + {selectedtask && selectedtask.rewards} XP
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Flex>
+
+              <Button
+                onClick={() =>
+                  selectedtask && handleTaskCompletion(selectedtask.id)
+                }
+                isLoading={loading}
+                loadingText={"verifying"}
+              >
+                Verify
+              </Button>
+            </Flex>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </Box>
   );
 }

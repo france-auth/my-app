@@ -216,15 +216,19 @@ export default function Homepage() {
 
 
 
-  useEffect(()=>{
-       const flickerTimer = setTimeout(() => {
-         setIsFirstImage(true);
-       }, 100);
+ useEffect(() => {
+   if (!isFirstImage) {
+     const flickerTimer = setTimeout(() => {
+       setIsFirstImage(true);
+     }, 100);
 
+     return () => clearTimeout(flickerTimer);
+   }
+ }, [isFirstImage]);
 
-       return () => clearTimeout(flickerTimer);
-
-  },[isFirstImage])
+ const triggerFlicker = () => {
+   setIsFirstImage(false); // Trigger the flicker effect
+ };
 
   const handleAnimationEnd = (id: number) => {
     setClicks((prevClicks) => prevClicks.filter((click) => click.id !== id));
@@ -559,13 +563,10 @@ useEffect(() => {
                     borderRadius={"50%"}
                     overflow={"hidden"}
                     className="spin-reverse"
+                    onClick={triggerFlicker}
                   >
                     <Image
-                      src={
-                        isFirstImage
-                          ? "/MASCOT NORMAL.png"
-                          : "/MASCOT HAPPY.png"
-                      }
+                      src={isFirstImage ? "/NORMAL.png" : "/HAPPY.png"}
                       w={{ base: "80%", sm: "auto" }}
                       mx={"auto"}
                     />

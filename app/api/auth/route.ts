@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
             where: { telegramId: referralId },
             data: {
               referralCount: { increment: 1 },
-              coins: referringUser.coins + 100000
+              coins: referringUser.coins + 5000
             },
           });
 
