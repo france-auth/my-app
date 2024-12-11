@@ -57,26 +57,7 @@ const levelMinPoints = [
   1000000000, // Lord
 ];
 
-const ytTask = [
-  {
-    image: "/Youtube.svg",
-    name: "SoftNote YouTube Introduction",
-    reward: 100000,
-    path: "/",
-  },
-  {
-    image: "/Youtube.svg",
-    name: "SoftNote XP Rush",
-    reward: 100000,
-    path: "/",
-  },
-  {
-    image: "/Youtube.svg",
-    name: "Crypto Funds Work-Out",
-    reward: 100000,
-    path: "/",
-  },
-];
+
 
 export default function SocialTask() {
   const { user, setUser } = useUser();
