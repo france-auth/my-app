@@ -197,7 +197,7 @@ const handleTaskCompletion = async (
     onClose();
   } catch (error) {
     toast({
-      title: error || "Error claiming task reward",
+      title:  "Error claiming task reward",
       status: "error",
       duration: 3000,
       isClosable: true,
