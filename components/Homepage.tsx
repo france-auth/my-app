@@ -456,7 +456,7 @@ useEffect(() => {
                     <Flex
                       width={"100%"}
                       alignItems={"center"}
-                      justifyContent={"space-between"}
+                      justifyContent={"center"}
                       bgColor={"#12161E"}
                       h={"45px"}
                       border={"1px solid #343C4D"}
