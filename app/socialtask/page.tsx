@@ -124,56 +124,89 @@ export default function SocialTask() {
     loadTasks();
   }, [user]);
 
-  const handleTaskCompletion = async (taskId: string) => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const response = await fetch("/api/completeTask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, taskId }),
-      });
+const handleTaskCompletion = async (
+  taskId: string,
+  taskType: string,
+  channelUsername?: string
+) => {
+  if (!user) return;
+  setLoading(true);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to claim task reward");
+  try {
+    // Telegram-specific membership check
+    if (taskType === "Join our Telegram Main Channel" && channelUsername) {
+  const membershipResponse = await fetch('/api/check-membership', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          telegramId: user.telegramId,
+          channelUsername,
+        }),
+      })
+  
+
+      if (!membershipResponse.ok) {
+        const errorData = await membershipResponse.json();
+        throw new Error(
+          errorData.error || "Failed to verify Telegram channel membership"
+        );
       }
 
-      // Get the updated task and user points from the response
-      const { task: updatedTask, user: updatedUser } = await response.json();
+      const { isMember } = await membershipResponse.json();
 
-      // Update tasks with the returned task data
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === updatedTask.id ? updatedTask : task
-        )
-      );
-      // Update points with the returned user data
-      setPoints(updatedUser.coins);
-
-      setUser(updatedUser);
-
-      toast({
-        title: "Task reward claimed successfully!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      setLoading(false);
-      onClose();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      toast({
-        title: error.message || "Error claiming task reward",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      onClose();
-      setLoading(false);
+      if (!isMember) {
+        throw new Error(
+          "You must join the Telegram channel to claim this reward"
+        );
+      }
     }
-  };
+
+    // Proceed with claiming the task reward for all task types
+    const response = await fetch("/api/completeTask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, taskId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to claim task reward");
+    }
+
+    // Get the updated task and user points from the response
+    const { task: updatedTask, user: updatedUser } = await response.json();
+
+    // Update tasks with the returned task data
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+    // Update points with the returned user data
+    setPoints(updatedUser.coins);
+
+    setUser(updatedUser);
+
+    toast({
+      title: "Task reward claimed successfully!",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setLoading(false);
+    onClose();
+  } catch (error: any) {
+    toast({
+      title: error.message || "Error claiming task reward",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+    onClose();
+    setLoading(false);
+  }
+};
+
 
   return (
     <Box
@@ -404,7 +437,7 @@ export default function SocialTask() {
 
               <Button
                 onClick={() =>
-                  selectedtask && handleTaskCompletion(selectedtask.id)
+                  selectedtask && handleTaskCompletion(selectedtask.id, selectedtask.title, 'tectumglobal')
                 }
                 isLoading={loading}
                 loadingText={"verifying"}

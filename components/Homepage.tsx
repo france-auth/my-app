@@ -444,10 +444,11 @@ useEffect(() => {
             bgColor={"#06070A"}
             w={"100%"}
             borderTopRadius={"15px"}
-            h={"77vh"}
+            h={"70vh"}
             // bg={'yellow'}
             className="gap-0 pt-2 sm:pt-2 xl:pt-3"
             alignItems={"center"}
+            justifyContent={"space-between"}
           >
             <Flex w={"90%"} pt={"3px"}>
               {SmallCardArray.map((card, id) => {
@@ -475,7 +476,6 @@ useEffect(() => {
                           {card.text}
                         </Text>
                       </Flex>
-                    
                     </Flex>
                   </Link>
                 );
@@ -566,13 +566,13 @@ useEffect(() => {
             <Box
               w={"100%"}
               h={"35.33px"}
-              mt={5}
+              mt={2}
               px={"10.67px"}
               alignItems={"center"}
               justifyContent={"center"}
               display={"flex"}
             >
-              <Flex width={"85%"} alignItems={"center"}>
+              <Flex width={"85%"} h={"100%"} alignItems={"end"} pb={2}>
                 <Image src="/icons/thunder.png" width={"20px"} />
                 <Text fontSize={"13px"} fontWeight={500} color={"#487BFF"}>
                   {`${floatingEnergy} / ${userData && userData.maxTaps}`}
