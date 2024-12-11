@@ -167,6 +167,8 @@ export default function Homepage() {
 
  const handleCardClick = async (e: React.TouchEvent<HTMLDivElement>) => {
    if (floatingEnergy <= 0) return;
+   console.log(isFirstImage);
+   setIsFirstImage(false); //
 
    const card = e.currentTarget;
    const rect = card.getBoundingClientRect();
@@ -216,19 +218,15 @@ export default function Homepage() {
 
 
 
- useEffect(() => {
-   if (!isFirstImage) {
-     const flickerTimer = setTimeout(() => {
-       setIsFirstImage(true);
-     }, 100);
+useEffect(() => {
+  const flickerTimer = setTimeout(() => {
+    setIsFirstImage(true);
+  }, 200);
 
-     return () => clearTimeout(flickerTimer);
-   }
- }, [isFirstImage]);
+  return () => clearTimeout(flickerTimer);
+}, [isFirstImage]);
 
- const triggerFlicker = () => {
-   setIsFirstImage(false); // Trigger the flicker effect
- };
+
 
   const handleAnimationEnd = (id: number) => {
     setClicks((prevClicks) => prevClicks.filter((click) => click.id !== id));
@@ -477,15 +475,7 @@ useEffect(() => {
                           {card.text}
                         </Text>
                       </Flex>
-                      <Text
-                        w={""}
-                        textAlign={"center"}
-                        fontSize={"12px"}
-                        fontWeight={500}
-                        color={"#7585A7"}
-                      >
-                        {card.timer}
-                      </Text>
+                    
                     </Flex>
                   </Link>
                 );
@@ -562,8 +552,6 @@ useEffect(() => {
                     }
                     borderRadius={"50%"}
                     overflow={"hidden"}
-                    className="spin-reverse"
-                    onClick={triggerFlicker}
                   >
                     <Image
                       src={isFirstImage ? "/NORMAL.png" : "/HAPPY.png"}
