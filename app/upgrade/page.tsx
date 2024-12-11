@@ -6,17 +6,7 @@ import NavigationBar from "@/components/NavigationBar";
 import { useState, useEffect } from "react";
 import { useUser } from "@/context/context";
 
-const Upgrade = [
-  {
-    image: "/upgrade.png",
-  },
-  {
-    image: "/upgrade.png",
-  },
-  {
-    image: "/upgrade.png",
-  },
-];
+
 
 interface Card {
   id: string;
