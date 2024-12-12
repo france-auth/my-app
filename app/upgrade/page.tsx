@@ -261,7 +261,14 @@ const formatNumber = (num: number) => {
 
   if (loading) {
     return (
-      <Flex justify="center" align="center" height="100vh" direction={'column'} w={"full"}>
+      <Flex
+        justify="center"
+        align="center"
+        height="100vh"
+        direction={"column"}
+        w={"full"}
+        bg={"#06070A"}
+      >
         <Spinner size="xl" color="blue.500" />
       </Flex>
     );
@@ -435,7 +442,12 @@ const formatNumber = (num: number) => {
                           Profit per Hour
                         </Text>
                         <Flex alignItems={"center"} gap={1}>
-                          <Image src="/Vector.svg" w={"16px"} alt="coin img" />
+                          <Image
+                            src="/Vector.svg"
+                            w={"16px"}
+                            alt="coin img"
+                            // opacity={isAffordable ? 1 : 0.2}
+                          />
                           <Text fontSize={"14px"} fontWeight={500}>
                             {card.nextProfitPerHour
                               ? formatNumber(card.nextProfitPerHour)
@@ -470,7 +482,12 @@ const formatNumber = (num: number) => {
                       </Text>
                       {/* Price */}
                       <Flex alignItems={"center"} gap={1}>
-                        <Image src="/Vector.svg" w={"16px"} alt="coin img" />
+                        <Image
+                          src="/Vector.svg"
+                          w={"16px"}
+                          alt="coin img"
+                          opacity={isAffordable ? 1 : 0.2}
+                        />
                         <Text
                           fontSize={"14px"}
                           fontWeight={500}

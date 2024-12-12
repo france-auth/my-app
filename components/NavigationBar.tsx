@@ -163,7 +163,7 @@ const NavigationBar: React.FC = () => {
               />
             </svg>
           }
-          label="Daily Challenge"
+          label="Daily Rewards"
           isActive={
             isDailyActive ||
             isDailyRewardActive ||

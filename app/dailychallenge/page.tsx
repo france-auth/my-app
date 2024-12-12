@@ -20,6 +20,16 @@ const PlayList = [
     name: "Social Tasks",
     path: "/socialtask",
   },
+    {
+        image: "/Roulette.svg",
+        name: "Resource Roulette",
+        path: "/roulette",
+    },
+    {
+        image: "/puzzle.svg",
+        name: "Crypto Trivia",
+        path: "/trivia",
+    },
 ];
 
 export default function DailyChallenge() {
@@ -45,7 +55,7 @@ export default function DailyChallenge() {
         pb={24}
       >
         <Text color={"#487BFF"} fontWeight={"700"} fontSize={"24px"}>
-          Daily Challenge
+          Daily Rewards
         </Text>
         <Box
           width={"100%"}

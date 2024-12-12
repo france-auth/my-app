@@ -154,6 +154,12 @@ export default function Roulette() {
         console.log("new coins", newCoin)
       await new Promise((resolve) => setTimeout(resolve, 12000)); // Ensure the wheel starts
       const updatedUser = await updateUserProfile({ lastSpinTime: now, coins: newCoin});
+      toast({
+        title: `You've successfully claimed ${parseInt(data[newPrizeNumber].option)}`,
+        duration: 3000,
+        status: "success",
+        isClosable: true
+      })
       setUser(updatedUser);
     } catch (error) {
       console.log("Error updating user profile:", error);

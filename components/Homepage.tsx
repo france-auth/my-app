@@ -19,7 +19,7 @@ const SmallCardArray = [
     image: "/game-chat.svg",
     text: "Play Mini Games",
     timer: "00:00",
-    path: "/play2earn",
+    path: "/dailychallenge",
   },
 ];
 

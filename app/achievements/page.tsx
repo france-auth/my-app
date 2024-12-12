@@ -106,9 +106,7 @@ function Achievements({}: Props) {
           </Heading>
         </Flex>
         <Flex direction={"column"}>
-          <Text color={"#C4C4C4"} fontSize={"xs"} mt={2}>
-            Click Picture to see Badges
-          </Text>
+
           <Card
             mt={1}
             sx={{

@@ -242,7 +242,7 @@ export default function Friends() {
             mx={"auto"}
           >
             Invite <span className="text-[#93BAFF]"> your friends</span> & Earn{" "}
-            <span className="text-[#93BAFF]">cool rewards</span>
+            <span className="text-[#93BAFF]">1000 XP Points</span>
           </Text>
 
           <Flex

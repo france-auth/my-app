@@ -234,8 +234,9 @@ export default function Trivia() {
         w="full"
         height="100vh"
         direction="column"
+        bg={"#06070A"}
       >
-        <Spinner size="xl" />
+        <Spinner size="xl" color="blue.500" />
       </Flex>
     );
   }
