@@ -2,19 +2,19 @@
 
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Box, Flex, Text, Image, Avatar, Progress } from "@chakra-ui/react";
-import Link from "next/link";
+// import Link from "next/link";
 import NavigationBar from "@/components/NavigationBar";
 import { useState, useEffect } from "react";
 import { useUser } from "@/context/context";
 
-const SmallCardArray = [
-  {
-    image: "/game-chat.svg",
-    text: "Play Mini Games",
-    timer: "00:00",
-    path: "/dailychallenge",
-  },
-];
+// const SmallCardArray = [
+//   {
+//     image: "/game-chat.svg",
+//     text: "Play Mini Games",
+//     timer: "00:00",
+//     path: "/dailychallenge",
+//   },
+// ];
 
 type UserData = {
   id: string;
