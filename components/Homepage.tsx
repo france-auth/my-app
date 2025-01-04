@@ -1,14 +1,7 @@
 "use client";
 
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Flex,
-  Text,
-  Image,
-  Avatar,
-  Progress,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, Image, Avatar, Progress } from "@chakra-ui/react";
 import Link from "next/link";
 import NavigationBar from "@/components/NavigationBar";
 import { useState, useEffect } from "react";
@@ -49,7 +42,6 @@ type UserData = {
   updatedAt: Date;
 };
 
-
 const levelNames = [
   "Bronze", // From 0 to 4999 coins
   "Silver", // From 5000 coins to 24,999 coins
@@ -79,26 +71,25 @@ const levelMinPoints = [
 type UpdateData = Partial<UserData>;
 
 export default function Homepage() {
-  const {user} = useUser()
-  const [userData, setUserData] = useState<UserData | null>()
+  const { user } = useUser();
+  const [userData, setUserData] = useState<UserData | null>();
   const [levelIndex, setLevelIndex] = useState(0);
   const [coins, setCoins] = useState(0);
   const [clicks, setClicks] = useState<{ id: number; x: number; y: number }[]>(
     []
   );
-   const [isFirstImage, setIsFirstImage] = useState(true);
+  const [isFirstImage, setIsFirstImage] = useState(true);
 
   const [points, setPoints] = useState(0);
   const [pointsToAdd, setPointsToAdd] = useState(0);
   const [profitPerHour, setProfitPerHour] = useState(0);
   const [floatingEnergy, setFloatingEnergy] = useState(0);
 
-  useEffect(()=>{
-    if(user){
-    setUserData(user);
+  useEffect(() => {
+    if (user) {
+      setUserData(user);
     }
-    
-  }, [user])
+  }, [user]);
 
   const updateUserProfile = async (updatedFields: UpdateData) => {
     if (!userData || !userData.telegramId) {
@@ -156,7 +147,7 @@ export default function Homepage() {
         console.error("Error refilling taps:", error);
       }
     };
-    console.log(coins)
+    console.log(coins);
 
     // Set an interval to refill taps every 5 seconds
     const intervalId = setInterval(refillTaps, 10000);
@@ -165,102 +156,96 @@ export default function Homepage() {
     return () => clearInterval(intervalId);
   }, [userData?.telegramId]);
 
- const handleCardClick = async (e: React.TouchEvent<HTMLDivElement>) => {
-   if (floatingEnergy <= 0) return;
-   console.log(isFirstImage);
-   setIsFirstImage(false); //
+  const handleCardClick = async (e: React.TouchEvent<HTMLDivElement>) => {
+    if (floatingEnergy <= 0) return;
+    console.log(isFirstImage);
+    setIsFirstImage(false); //
 
-   const card = e.currentTarget;
-   const rect = card.getBoundingClientRect();
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
 
-   const touches = Array.from(e.changedTouches); // Only handle new touch points
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const newClicks: any = [];
-   let newPoints = points;
-   let newFloatingEnergy = floatingEnergy;
+    const touches = Array.from(e.changedTouches); // Only handle new touch points
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const newClicks: any = [];
+    let newPoints = points;
+    let newFloatingEnergy = floatingEnergy;
 
-   // Process each touch point
-   touches.forEach((touch) => {
-     const x = touch.clientX - rect.left - rect.width / 2;
-     const y = touch.clientY - rect.top - rect.height / 2;
+    // Process each touch point
+    touches.forEach((touch) => {
+      const x = touch.clientX - rect.left - rect.width / 2;
+      const y = touch.clientY - rect.top - rect.height / 2;
 
-     // Apply perspective transformation
-     card.style.transform = `perspective(1000px) rotateX(${
-       -y / 10
-     }deg) rotateY(${x / 10}deg)`;
+      // Apply perspective transformation
+      card.style.transform = `perspective(1000px) rotateX(${
+        -y / 10
+      }deg) rotateY(${x / 10}deg)`;
 
-     // Collect clicks and update points
-     newClicks.push({ id: Date.now(), x: touch.pageX, y: touch.pageY });
-     newPoints += pointsToAdd;
-     newFloatingEnergy -= 1;
+      // Collect clicks and update points
+      newClicks.push({ id: Date.now(), x: touch.pageX, y: touch.pageY });
+      newPoints += pointsToAdd;
+      newFloatingEnergy -= 1;
 
-     // Reset card transformation after animation
-     setTimeout(() => {
-       card.style.transform = "";
-     }, 100);
-   });
+      // Reset card transformation after animation
+      setTimeout(() => {
+        card.style.transform = "";
+      }, 100);
+    });
 
-   // Update states after processing all touches
-   setClicks((prev) => [...prev, ...newClicks]);
-   setPoints(newPoints);
-   setFloatingEnergy(newFloatingEnergy);
+    // Update states after processing all touches
+    setClicks((prev) => [...prev, ...newClicks]);
+    setPoints(newPoints);
+    setFloatingEnergy(newFloatingEnergy);
 
-   // Update the user profile in the backend
-   const updatedUser = await updateUserProfile({
-     coins: newPoints,
-     taps: newFloatingEnergy,
-   });
+    // Update the user profile in the backend
+    const updatedUser = await updateUserProfile({
+      coins: newPoints,
+      taps: newFloatingEnergy,
+    });
 
-   if (updatedUser) {
-     console.log("User updated:", updatedUser);
-   }
- };
+    if (updatedUser) {
+      console.log("User updated:", updatedUser);
+    }
+  };
 
+  useEffect(() => {
+    const flickerTimer = setTimeout(() => {
+      setIsFirstImage(true);
+    }, 200);
 
-
-useEffect(() => {
-  const flickerTimer = setTimeout(() => {
-    setIsFirstImage(true);
-  }, 200);
-
-  return () => clearTimeout(flickerTimer);
-}, [isFirstImage]);
-
-
+    return () => clearTimeout(flickerTimer);
+  }, [isFirstImage]);
 
   const handleAnimationEnd = (id: number) => {
     setClicks((prevClicks) => prevClicks.filter((click) => click.id !== id));
   };
 
-    const calculateProgress = () => {
-      if (levelIndex >= levelNames.length - 1) {
-        return 100;
-      }
-      const currentLevelMin = levelMinPoints[levelIndex];
-      const nextLevelMin = levelMinPoints[levelIndex + 1];
-      const progress =
-        ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
-      return Math.min(progress, 100);
-    };
+  const calculateProgress = () => {
+    if (levelIndex >= levelNames.length - 1) {
+      return 100;
+    }
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    const progress =
+      ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+    return Math.min(progress, 100);
+  };
 
-    useEffect(() => {
-      const currentLevelMin = levelMinPoints[levelIndex];
-      const nextLevelMin = levelMinPoints[levelIndex + 1];
-      if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
-        setLevelIndex(levelIndex + 1);
-      } else if (points < currentLevelMin && levelIndex > 0) {
-        setLevelIndex(levelIndex - 1);
-      }
-    }, [points, levelIndex, levelMinPoints, levelNames.length]);
+  useEffect(() => {
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+      setLevelIndex(levelIndex + 1);
+    } else if (points < currentLevelMin && levelIndex > 0) {
+      setLevelIndex(levelIndex - 1);
+    }
+  }, [points, levelIndex, levelMinPoints, levelNames.length]);
 
   const formatProfitPerHour = (profit: number) => {
     if (profit >= 1000000000) return `+${(profit / 1000000000).toFixed(2)}B`;
     if (profit >= 1000000) return `+${(profit / 1000000).toFixed(2)}M`;
     if (profit >= 1000) return `+${(profit / 1000).toFixed(2)}K`;
-    return `+${profit}`;
+    return `${profit}`;
   };
-
-
 
   useEffect(() => {
     if (userData) {
@@ -273,52 +258,46 @@ useEffect(() => {
     }
   }, [userData]);
 
-   useEffect(() => {
-    const handlePPh = async ()=>{
-         if (user) {
-       const now = new Date();
-       const lastUpdate = user.lastEarningsUpdate
-         ? new Date(user.lastEarningsUpdate)
-         : now; // If null, set to now
-       const elapsedSeconds = Math.floor(
-         (now.getTime() - lastUpdate.getTime()) / 1000
-       );
+  useEffect(() => {
+    const handlePPh = async () => {
+      if (user) {
+        const now = new Date();
+        const lastUpdate = user.lastEarningsUpdate
+          ? new Date(user.lastEarningsUpdate)
+          : now; // If null, set to now
+        const elapsedSeconds = Math.floor(
+          (now.getTime() - lastUpdate.getTime()) / 1000
+        );
 
-       // Calculate the earned coins since the last update
-       const earnedCoins = (user.profitPerHour / 3600) * elapsedSeconds;
+        // Calculate the earned coins since the last update
+        const earnedCoins = (user.profitPerHour / 3600) * elapsedSeconds;
 
-       // Update the points and sync with backend
-       const newPoints = user.coins + earnedCoins;
-       
+        // Update the points and sync with backend
+        const newPoints = user.coins + earnedCoins;
 
-       // Update the backend with new coins and the latest earnings update time
-       await updateUserProfile({ coins: newPoints, lastEarningsUpdate: now });
-    
-       setPoints(newPoints);
-       
-     }
-    }
+        // Update the backend with new coins and the latest earnings update time
+        await updateUserProfile({ coins: newPoints, lastEarningsUpdate: now });
 
-    if(user){
+        setPoints(newPoints);
+      }
+    };
+
+    if (user) {
       handlePPh();
     }
-   }, [user]);
+  }, [user]);
 
-useEffect(() => {
-  if (profitPerHour > 0) {
-  
-    const interval = setInterval(() => {
-      const pointsToAdd = profitPerHour / 3600; // Fractional points per second
-      
+  useEffect(() => {
+    if (profitPerHour > 0) {
+      const interval = setInterval(() => {
+        const pointsToAdd = profitPerHour / 3600; // Fractional points per second
 
-      setPoints((prevPoints) => prevPoints + pointsToAdd); // Add fractional points
-      
-    }, 1000); // Every second
+        setPoints((prevPoints) => prevPoints + pointsToAdd); // Add fractional points
+      }, 1000); // Every second
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }
-}, [profitPerHour]);
-
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [profitPerHour]);
 
   return (
     <Box
@@ -337,8 +316,8 @@ useEffect(() => {
         flexDirection={"column"}
         alignItems={"center"}
         justifyContent={"center"}
-        pt={3}
-        gap={3}
+        pt={1}
+        gap={1}
       >
         <Box w={"90%"}>
           <Flex alignItems={"center"} gap={2}>
@@ -402,10 +381,10 @@ useEffect(() => {
               <Text
                 fontWeight={500}
                 fontSize={"12px"}
-                color={"#f5f5f5"}
+                color={"rgba(117, 133, 167, 1)"}
                 textAlign={"right"} // Ensure the text is right-aligned
               >
-                XP Reward
+                {userData && formatProfitPerHour(profitPerHour)} per hour
               </Text>
               <Box
                 width={"100%"}
@@ -419,7 +398,7 @@ useEffect(() => {
                 justifyContent={"flex-end"} // Align the content inside to the end
                 gap={1}
               >
-                <Image src="/Vector.svg" />
+                <Image src="/xp.svg" />
                 <Text>
                   {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>
@@ -435,9 +414,9 @@ useEffect(() => {
           borderTopRadius={"10px"}
           justifyContent={"center"}
           alignItems={"center"}
-          bgGradient={
-            "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
-          }
+          // bgGradient={
+          //   "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
+          // }
         >
           <Flex
             flexDirection={"column"}
@@ -450,7 +429,7 @@ useEffect(() => {
             alignItems={"center"}
             justifyContent={"space-between"}
           >
-            <Flex w={"90%"} pt={"3px"}>
+            {/* <Flex w={"90%"} pt={"3px"}>
               {SmallCardArray.map((card, id) => {
                 return (
                   <Link href={card.path} className="w-[100%]" key={id}>
@@ -480,7 +459,7 @@ useEffect(() => {
                   </Link>
                 );
               })}
-            </Flex>
+            </Flex> */}
 
             <Box
               display={"flex"}
@@ -490,17 +469,8 @@ useEffect(() => {
               alignItems={"center"}
               justifyContent={"center"}
             >
-              <Text
-                fontSize={"12px"}
-                fontWeight={600}
-                color={"#7585A7"}
-                lineHeight={"14.52px"}
-              >
-                {" "}
-                {userData && formatProfitPerHour(profitPerHour)} per hour
-              </Text>
               <Flex h={"36px"} gap={2} alignItems={"center"}>
-                <Image alt="coin img" src="/Vector.svg" w={6} />
+                <Image alt="coin img" src="/xpmid.svg" />
                 <Text fontSize={"29.33px"} fontWeight={600} color={"#DDE2E7"}>
                   {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>
@@ -524,38 +494,38 @@ useEffect(() => {
                 justifyContent={"center"}
                 alignItems={"center"}
                 // overflow={'hidden'}
-                mt={2}
-                className="circle-inner"
+                // mt={2}
+                // className="circle-inner"
               >
-                <Image
+                {/* <Image
                   alt="floating coin img"
                   src="/FloatingCoins.png"
                   position={"relative"}
                   zIndex={1}
                   className="w-[70%] sm:w-[100%]"
-                />
+                /> */}
                 <Box
-                  className="spin w-[200px] h-[200px] sm:w-[300px] sm:h-[300px]"
-                  bgGradient={
-                    "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
-                  }
-                  // w={"200px"}
-                  // h={"200÷px"}
-                  borderRadius={"50%"}
-                  position={"absolute"}
+                  // className="spin w-[200px] h-[200px] sm:w-[300px] sm:h-[300px]"
+                  // bgGradient={
+                  //   "conic-gradient(from 180deg at 50% 50%, #19388A 0deg, #1A59FF 25.2deg, #D9D9D9 117deg, #1948C1 212.4deg, #F5F5F5 284.4deg, #19388A 360deg)"
+                  // }
+                  // // w={"200px"}
+                  // // h={"200÷px"}
+                  // borderRadius={"50%"}
+                  // position={"absolute"}
                   p={"5px"}
                   display={"flex"}
                 >
                   <Box
-                    bgGradient={
-                      "linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"
-                    }
+                    // bgGradient={
+                    //   "linear-gradient(360deg, #00283A 0%, #12161E 88.17%)"
+                    // }
                     borderRadius={"50%"}
                     overflow={"hidden"}
                   >
                     <Image
-                      src={isFirstImage ? "/NORMAL.png" : "/HAPPY.png"}
-                      w={{ base: "80%", sm: "auto" }}
+                      src={"/XPCoin.svg"}
+                      // w={{ base: "80%", sm: "auto" }}
                       mx={"auto"}
                     />
                   </Box>
@@ -572,8 +542,15 @@ useEffect(() => {
               justifyContent={"center"}
               display={"flex"}
             >
-              <Flex width={"85%"} h={"100%"} alignItems={"end"} pb={2}>
-                <Image src="/icons/thunder.png" width={"20px"} />
+              <Flex
+                width={"85%"}
+                h={"100%"}
+                alignItems={"center"}
+                pb={2}
+                justifyContent={"center"}
+                gap={1}
+              >
+                <Image src="/bolt.svg" />
                 <Text fontSize={"13px"} fontWeight={500} color={"#487BFF"}>
                   {`${floatingEnergy} / ${userData && userData.maxTaps}`}
                 </Text>

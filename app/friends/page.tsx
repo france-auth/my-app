@@ -118,6 +118,13 @@ export default function Friends() {
     }
   }, [points, levelIndex, levelMinPoints, levelNames.length]);
 
+   const formatProfitPerHour = (profit: number) => {
+     if (profit >= 1000000000) return `+${(profit / 1000000000).toFixed(2)}B`;
+     if (profit >= 1000000) return `+${(profit / 1000000).toFixed(2)}M`;
+     if (profit >= 1000) return `+${(profit / 1000).toFixed(2)}K`;
+     return `${profit}`;
+   };
+
   return (
     <Box
       display={"flex"}
@@ -135,9 +142,9 @@ export default function Friends() {
         flexDirection={"column"}
         alignItems={"center"}
         pb={32}
-        gap={5}
+        gap={1}
       >
-        <Box width={"100%"} p={"20px"} pt={"30px"}>
+        <Box width={"100%"} p={"20px"} >
           <Text
             color={"#487BFF"}
             fontWeight={"700"}
@@ -149,7 +156,7 @@ export default function Friends() {
           <Flex
             w={"100%"}
             alignItems={"center"}
-            mt={4}
+            mt={1}
             justifyContent={"space-between"}
           >
             <Box
@@ -193,10 +200,10 @@ export default function Friends() {
               <Text
                 fontWeight={500}
                 fontSize={"12px"}
-                color={"#f5f5f5"}
+                color={"rgba(117, 133, 167, 1)"}
                 textAlign={"right"} // Ensure the text is right-aligned
               >
-                XP Reward
+                {user && formatProfitPerHour(user.profitPerHour)} per hour
               </Text>
               <Box
                 width={"100%"}
@@ -210,7 +217,7 @@ export default function Friends() {
                 justifyContent={"flex-end"} // Align the content inside to the end
                 gap={1}
               >
-                <Image src="/Vector.svg" />
+                <Image src="/xp.svg" />
                 <Text>
                   {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>
@@ -227,9 +234,7 @@ export default function Friends() {
           gap={5}
         >
           <Image
-            src="/USDT.svg"
-            w={"343px"}
-            h={"236px"}
+            src="/refXP.svg"
             mx={"auto"}
             alt="yellow dude"
           />

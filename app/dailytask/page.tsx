@@ -89,12 +89,14 @@ export default function DailyTask() {
   const toast = useToast()
   const [selectedtask, setSelectedTask]= useState<TaskResponse>()
    const { isOpen, onOpen, onClose } = useDisclosure();
+   const [profitPerHour, setProfitPerHour] = useState(0)
    const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (user) {
       setPoints(user.coins);
       setLevelIndex(user.level);
+      setProfitPerHour(user.profitPerHour)
     }
   }, [user]);
 
@@ -197,6 +199,13 @@ const handleTaskCompletion = async (taskId: string) => {
   }
 };
 
+  const formatProfitPerHour = (profit: number) => {
+    if (profit >= 1000000000) return `+${(profit / 1000000000).toFixed(2)}B`;
+    if (profit >= 1000000) return `+${(profit / 1000000).toFixed(2)}M`;
+    if (profit >= 1000) return `+${(profit / 1000).toFixed(2)}K`;
+    return `${profit}`;
+  };
+
 
   return (
     <Box
@@ -273,10 +282,10 @@ const handleTaskCompletion = async (taskId: string) => {
               <Text
                 fontWeight={500}
                 fontSize={"12px"}
-                color={"#f5f5f5"}
+                color={"rgba(117, 133, 167, 1)"}
                 textAlign={"right"} // Ensure the text is right-aligned
               >
-                XP Reward
+                {user && formatProfitPerHour(profitPerHour)} per hour
               </Text>
               <Box
                 width={"100%"}
@@ -290,7 +299,7 @@ const handleTaskCompletion = async (taskId: string) => {
                 justifyContent={"flex-end"} // Align the content inside to the end
                 gap={1}
               >
-                <Image src="/Vector.svg" />
+                <Image src="/xp.svg" />
                 <Text>
                   {new Intl.NumberFormat().format(parseInt(points.toFixed(0)))}
                 </Text>
